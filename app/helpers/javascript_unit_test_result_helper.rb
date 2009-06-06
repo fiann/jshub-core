@@ -1,0 +1,2 @@
+module JavascriptUnitTestResultHelper
+end

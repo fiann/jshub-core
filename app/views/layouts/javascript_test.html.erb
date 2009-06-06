@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Test Page: <%= h title %></title>
+    
+  <!-- Test pages stylesheet -->
+  <%= stylesheet_link_tag :jshub, :cache => "cache/jshub" %>
+  
+  <!-- jsHub tag files -->
+  <%= javascript_include_tag :jquery, :cache => "cache/jquery" %>
+  <%= javascript_include_tag "/js/src/hub" %>
+  <%= javascript_include_tag "/js/src/api" %>
+
+
+  <% # If you need to include a reference to specific Javascript files, either for
+     # plugin libraries or for inline test harness code, create a
+     # "content_for :javascripts" block in the page %>
+  <!-- Javascripts specific to this test case -->
+  <%= yield :javascripts %>
+  
+  <!-- YUI Test framework -->
+  <%= javascript_include_tag :yui3, :cache => "cache/yui3"  %>
+  <%= javascript_include_tag :yuitest, :cache => "cache/yuitest"  %>
+
+  <!-- Create a test suite for the page -->
+  <script type="text/javascript">
+    // Create new YUI instance, and populate it with the required modules
+    YUI().use("yuitest", function(Y) {
+    
+      /*
+       * Place a reference to the YUI object in the global space for the
+       * tests to access
+       */
+      window.Y = Y;
+      
+      /*
+       * Create a test suite, the actual test page can add test cases to this.
+       */
+      window.suite = new Y.Test.Suite("<%= title %>");
+    });
+  </script>
+</head>
+<body class="jshub">
+  <%= render :partial => '/jshub_title' %>
+  <h2 id="navigation"><%= h title %></h2>
+
+  <% # This is an html description of the purpose of the code, which will appear
+     # above the test results output. %>
+  <%= yield :intro %>
+
+  <!-- Test results will be placed here -->
+  <div id="results"></div>
+
+  <h2 id="examples">HTML to test.</h2>
+
+  <%= yield :layout %>
+
+  <!-- Execute the tests -->
+  <%= stylesheet_link_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>
+  <%= javascript_include_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>
+
+</body>
+</html>

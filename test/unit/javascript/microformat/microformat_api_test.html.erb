@@ -1,0 +1,288 @@
+<% set_title "Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <!-- None required. Functionality under test is in src/api.js -->
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests the core microformat excerpting API provided to data capture plugins.
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Microformat API check",
+    
+    "test Microformat API dependencies": function() {
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a function");
+      var $ = jsHub.safe('$');
+      Y.Assert.isFunction($, "jsHub.safe('$') did not provide a jQuery instance");
+      Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
+    }
+  }));
+</script>
+
+<!-- 
+      Microformat values
+  -->
+<div id="example1">
+  <h2>Example 1: no value for the property we are looking for</h2>
+  <div class="hpage">
+    <ul>
+      <li>name: required field, not present</li>
+    </ul>
+  </div>
+</div>
+<div id="example2">
+  <h2>Example 2: explicit value for property</h2>
+  <div class="hpage">
+    <ul>
+      <li>name = <span class="name">page name</span>.</li>
+    </ul>
+  </div>
+</div>
+<div id="example3">
+  <h2>Example 3: value using the value class pattern</h2>
+  <div class="hpage">
+    <ul>
+      <li>name = 
+         <span class="name">
+           This value is set with the <span class="value">value class</span> pattern.
+         </span>
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Simple value excerpting",
+    
+    "test value not specified should be null": function() {
+      var value = $("#example1 .name").getMicroformatPropertyValue();
+      Y.Assert.isNull(value, 'name is not defined, it should be null');
+    },
+    
+    "test value from containing element": function() {
+      var value = $("#example2 .name").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page name', value, 'Page name');
+    },
+    
+    "test value from a child 'value' element": function() {
+      var value = $("#example3 .name").getMicroformatPropertyValue();
+      Y.Assert.areEqual('value class', value, 'Page name');
+    }
+  }));
+</script>
+
+<!-- 
+      Whitespace
+  -->
+<div id="example4">
+  <h2>Example 4: normalization of whitespace</h2>
+  <div class="hpage">
+    <ul>
+      <li>name = 
+         <span class="name">
+           This value is set to  
+             <span class="value">
+	           page name with newlines
+	         </span> before and after.
+         </span>
+      </li>
+      <li>title = 
+         <span class="title">
+           This value is set to <span class="value">        page title    with spaces     </span>.
+         </span>
+      </li>
+      <li>referrer = 
+         <span class="referrer">
+           This value is set to <span class="value">		page referrer	 with tabs		</span>.
+         </span>
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Whitespace",
+    
+    "test value with newlines": function() {
+      var value = $("#example4 .name").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page name with newlines', value);
+    },
+	  
+    "test value with spaces": function() {
+      value = $("#example4 .title").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page title with spaces', value);
+    },
+	  
+    "test value with tabs": function() {
+      value = $("#example4 .referrer").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page referrer with tabs', value);
+    }
+  }));
+</script>
+
+<div id="example5">
+  <h2>Example 5: embedded HTML in values</h2>
+  <div class="hpage">
+    <ul>
+      <li>name: <span class="name">name with an <a href="#">embedded link</a></span>.
+      </li>
+      <li>title: <span class="title">title with whitespace
+	    and an <a href="#">embedded link</a></span>.
+      </li>
+      <li>referrer: <span class="referrer">referrer with a 
+	    <span class="value">value class nesting more <a href="#">html</a></span></span>.
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+/* <![CDATA[  // this script contains html, so escape it for Rhino parser */
+
+  // the ugly regex's are required because of the way Rhino reserializes the innerHTML
+
+  suite.add(new Y.Test.Case({
+    name: "Embedded HTML",
+    
+    "test inline HTML is preserved": function() {
+      var value = $("#example5 .name").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/name with an <a( id="")? href="#"\s*>embedded link<\/a>/.test(value), "Excerpted: " + value);
+    },
+    
+    "test whitespace in inline HTML is normalized": function() {
+      var value = $("#example5 .title").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/title with whitespace and an <a( id="")? href="#"\s*>embedded link<\/a>/.test(value), "Excerpted: " + value);
+    },
+    
+    "test HTML is preserved within value class": function() {
+      var value = $("#example5 .referrer").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/value class nesting more <a( id="")? href="#"\s*>html<\/a>/.test(value), "Excerpted: " + value);
+    }
+  }));
+// ]]>
+</script>
+
+
+<div id="example6">
+  <h2>Example 6: Values with further nested values (mis-implementation)</h2>
+  <div class="hpage">
+    <ul>
+      <li>name = 
+         <span class="name">
+           This value is set to <span class="value">name with a <span class="value">nested value</span></span>.
+         </span>
+      </li>
+      <li>title = 
+         <span class="title">
+           This value is set to <span class="value">title with a <span>nested span</span> and <span class="value">nested value</span> inside</span>.
+         </span>
+      </li>
+      <li>referrer = 
+         <span class="referrer">
+           This value is set to <span class="value">referrer with a <span>nested span and <span class="value">nested value</span> inside that</span></span>.
+         </span>
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+/* <![CDATA[  // this script contains html, so escape it for Rhino parser */
+
+  // the ugly regex's are required because of the way Rhino reserializes the innerHTML
+
+  suite.add(new Y.Test.Case({
+    name: "Nested value classes",
+    
+    "test nested value classes are treated as html": function() {
+      var value = $("#example6 .name").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/name with a <span( id="")? class="value"\s*>nested value<\/span>/.test(value), "Excerpted page name: " + value);
+      value = $("#example6 .title").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/title with a <span( id="" )?>nested span<\/span> and <span( id="")? class="value"\s*>nested value<\/span> inside/.test(value), "Excerpted title: " + value);
+      value = $("#example6 .referrer").getMicroformatPropertyValue();
+      Y.Assert.isTrue(/referrer with a <span( id="" )?>nested span and <span( id="")? class="value"\s*>nested value<\/span> inside that<\/span>/.test(value), "Excerpted referrer: " + value);
+    }	
+  }));
+// ]]>
+</script>
+
+<div id="example7">
+  <h2>Example 7: Sibling value class nodes</h2>
+  <p>Sibling value class nodes should be concatenated and the overall value taken as the 
+    composite of all the declared values.</p>
+  <div class="hpage">
+    <ul>
+      <li class="name">name = 
+         <span>
+           This value is set to <span class="value">page</span> or document <span class="value">name</span> via multiple values.
+         </span>
+      </li>
+      <li>title = 
+         <span class="title">
+           This value is set to <span class="value">page</span> or <span>document</span> and <span class="value">title</span> via multiple values.
+         </span>
+      </li>
+      <li>categories = 
+         <span class="category">
+           This value is set to 
+           <span class="value">a</span> 
+           <span class="value">lot</span> 
+           <span class="value">of</span> 
+           <span class="value">values</span> 
+           via multiple values.
+         </span>
+      </li>
+    </ul>
+  </div>
+</div>
+<script language="javascript" type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Value class siblings",
+
+    "test sibling value classes are combined": function() {
+      var value = $("#example7 .name").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page name', value, 'Page name');
+      value = $("#example7 .title").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page title', value, 'Page title');
+      value = $("#example7 .category").getMicroformatPropertyValue();
+      Y.Assert.areEqual('a lot of values', value, 'Categories');
+    }
+  }));
+
+
+  /*
+   * Test the underlying jQuery selector engine is working as expected
+   */
+  suite.add(new Y.Test.Case({
+    name: "jQuery selector tests",
+    
+    "test simple selector": function() {
+      var value = $('#example2 .name').text();
+      Y.Assert.areEqual('page name', value, 'getting text of simple selector failed');
+    },
+    
+    // used for identifying the value as a subset of the whole field with span class="value"
+	"test find() function": function() {
+      var selector = $('#example3 .name');
+      var value = selector.find('.value').text();
+      Y.Assert.areEqual('value class', value, 'find() function failed');
+    },
+	
+	// used for normalising value spans
+	"test not() function": function() {
+      var selector = $('#example6 .name .value');
+	  var value = selector.not(selector.find('.value')).text();
+      Y.Assert.areEqual('name with a nested value', value, 'not() function failed');
+	}
+  }));
+</script>

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title><%= h @title %></title>
+    <%= javascript_include_tag :yui3, :cache => "cache/yui3"  %>
+    <%= stylesheet_link_tag '/javascripts/yui-3.0.0pr2/assets/dpSyntaxHighlighter.css' %>
+    <%= javascript_include_tag 'yui-3.0.0pr2/assets/dpSyntaxHighlighter.js' %>
+    <script type="text/javascript">
+    (function() {
+      YUI().use('*', function(Y) {
+        Y.on("domready", function() {
+          dp.SyntaxHighlighter.HighlightAll('code');
+        });
+      });
+    })();
+    </script>
+	<%= stylesheet_link_tag 'jshub' %>
+  </head>
+  <body class="jshub">
+    <%= render :partial => '/jshub_title' %>
+
+    <%= yield :layout %>
+  </body>
+</html>

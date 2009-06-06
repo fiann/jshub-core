@@ -1,0 +1,111 @@
+<% set_title "hProduct value excerpting < Microformat Parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hProduct-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests the <strong><a href="https://intra.causata.com/code/causata/JavascriptTag/Microformat/hProduct/parser" title="hProduct parser specification">hProduct</a> microformat parser behaviour</strong>.
+</p>
+<p>
+  This page tests the rules for determining the value of a property (value excerpting) and the default values of undeclared properties.
+</p>
+<% end %>
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+
+  // tests for hProduct parser
+  suite.parse = function(selector) {
+    var data = null, count = 0;
+    jsHub.bind("product-view", "unittest", function(evt) {
+      data = evt.data;
+      count++;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(1, count, 'wrong number of product view events have been generated');
+    Y.Assert.isNotNull(data, 'product view event had no data');
+	return data;
+  };  
+</script>
+  
+<!-- 
+     Standard, well formed, hProduct
+  -->
+<div id="example1">
+  <div class="hproduct">
+    Example 1: No hProduct properties are set:
+    <ul>
+      <li>n: required field, not present</li>
+      <li>price: optional field, not present</li>
+      <li>quantity: required field, not present</li>
+    </ul>
+  </div>
+</div>
+
+<div id="example2">
+  <div class="hproduct">
+    Example 2: hProduct properties are set:
+    <ul>
+      <li>n: required field, value is <span class="n">Product name</span></li>
+      <li>price: optional field, not present</li>
+      <li>quantity: optional field, not present</li>
+    </ul>
+  </div>
+</div>
+
+<div id="example3">
+  <div class="hproduct">
+    Example 3: hProduct properties are set:
+    <ul>
+      <li>n: required field, value is <span class="n">A great product</span></li>
+      <li>price: optional field, value is £<span class="price">23.99</span></li>
+      <li>quantity: optional field, value is <span class="quantity">6</span></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({ 
+    name : "Microformat parsing",
+
+    // see #234, we still send the event even if it is not well-formed, and the server
+	// sends back an error message	
+    "test product view is generated without required fields" : function () {
+      var data = suite.parse("#example1");
+      Y.Assert.isUndefined(data['n'], 'n is not specified, it is required');
+    },
+
+    "test required values specified" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual("Product name", data['n'], 'n is not the same as the declaration');
+    },
+
+    "test optional values specified" : function () {
+      var data = suite.parse("#example3");
+      Y.Assert.areEqual("23.99", data['price'], 'price is not the same as the declaration');
+      Y.Assert.areEqual("6", data['quantity'], 'quantity is not the same as the declaration');
+    }
+  }));
+</script> 

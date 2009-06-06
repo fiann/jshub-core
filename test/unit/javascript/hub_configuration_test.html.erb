@@ -1,0 +1,62 @@
+<% set_title "Plugin Configuration < Hub" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>Tests for the hub's core event functionality.</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "jsHub plugin configuration",
+    
+    "test plugins are read correctly": function() {
+      Y.Assert.isFunction(jsHub.getPluginInfo, "jsHub.getPluginInfo() is not a Function");
+      var plugins = jsHub.getPluginInfo();
+	  Y.Assert.isNotNull(plugins, "Plugins array should never be empty");
+      Y.Assert.areEqual(1, plugins.length, "hPage plugin registered at start of test");
+	  var metadata = plugins[0];
+	  Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name);
+	  Y.Assert.areEqual('data-capture', metadata.type);
+    },
+	
+    "test plugin metadata cannot be modified": function() {
+      Y.Assert.isFunction(jsHub.getPluginInfo, "jsHub.getPluginInfo() is not a Function");
+      var plugins = jsHub.getPluginInfo();
+      var metadata = plugins[0];
+      Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name);
+	  metadata.name = 'tampered data';
+	  metadata = jsHub.getPluginInfo()[0];
+      Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name, 
+	    "Plugin metadata should not be changed from outside");
+    }	
+  }));
+})();
+
+  
+</script> 

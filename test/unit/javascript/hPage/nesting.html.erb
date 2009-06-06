@@ -1,0 +1,199 @@
+<% set_title "Nested declarations < hPage value excerpting < Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">hPage test suite</a> tests <strong><a href="https://intra.causata.com/code/causata/wiki/JavascriptTag/Microformat/hPage" title="hPage specification">hPage</a>
+  microformat declarations and parser functionality</strong>.
+</p>
+<p>
+  This page tests the rules for nested hPage nodes.
+</p>
+<% end %>
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Capture the data from a hPage-found event
+   */
+  suite.parse = function(selector, hPageCount) {
+    var data = null, count = 0;
+    if (typeof hPageCount != 'number') {
+      hPageCount = 1;
+    }
+    jsHub.bind("hpage-found", "unittest", function(evt) {
+	  count ++;
+      data = evt.data.hpage;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
+	return data;
+  };
+</script>
+
+<!-- 
+     Standard, well formed, hPage
+  -->
+<div id="example1">
+  <h2>Example 1: Simple hPage declaration</h2>
+  <div class="hpage">
+  	<p>This hPage contains multiple values for name. The last value found should be
+	  taken as the value for the whole hPage.</p>
+    <ul>
+      <li>Page name: <span class="name">Top of page</span></li>
+      <li>Page name: <span class="name">Last name instance</span></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Single hPage node",
+    
+    "test last name declared in page should be returned": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('Last name instance', data.name, 'Page name');
+    }
+  }));
+</script>
+
+<!-- 
+     hPage node containing nested hPage nodes
+  -->
+<div id="example2">
+  <h2>Example 2: Nested hPage data</h2>
+  <div class="hpage outer">
+  	<p>Outer hPage node.</p>
+    <ul>
+      <li>Page name: <span class="name">Outer Page name</span> at top</li>
+    </ul>
+
+    <div class="hpage inner">
+      <p>2a. Nested hPage data (inner). This node contains a second page name, and this
+	    should used as the name for the whole hPage, as if it were not nested.</p>
+      <ul>
+        <li>Page name: <span class="name">Inner Page name</span></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Single nested hPage node",
+    
+    "test last name should be returned even if nested": function() {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
+    }
+  }));
+</script>	
+
+<!-- 
+     hPage node containing nested hPage nodes
+  -->
+<div id="example3">
+  <h2>Example 3: Nested hPage data before outer data</h2>
+  <div class="hpage outer">
+    <div class="hpage inner">
+      <p>Nested hPage data (inner 1)</p>
+      <ul>
+        <li>Page name: <span class="name">Inner Page name</span></li>
+      </ul>
+    </div>
+
+    <p>Top level hPage data (outer)</p>
+    <ul>
+      <li>Page name: <span class="name">Outer Page name</span></li>
+    </ul>
+  </div>
+</div> 
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Outer declaration after nested data",
+    
+    "test outer value is declared last": function() {
+      var data = suite.parse("#example3");
+      Y.Assert.areEqual('Outer Page name', data.name, 'Wrong page name used');
+    }
+  }));
+</script>	
+	
+<!-- 
+     hPage node containing nested hPage nodes
+  -->
+<div id="example4">
+  <h2>Example 4: Merging singular data from inner and outer nodes</h2>
+  <div class="hpage outer">
+    <div class="hpage inner">
+      <p>Nested hPage data (inner 1)</p>
+      <ul>
+        <li>Page name: <span class="name">Inner Page name</span></li>
+      </ul>
+    </div>
+
+    <p>Top level hPage data (outer)</p>
+    <ul>
+      <li>Page title: <span class="title">Outer Page title</span></li>
+    </ul>
+  </div>
+</div>
+<div id="example5">
+  <h2>Example 5: Merging multiple data from inner and outer nodes</h2>
+  <div class="hpage outer">
+    <div class="hpage inner">
+      <p>Nested hPage data (inner 1)</p>
+      <ul>
+        <li>Page name: <span class="name">Inner Page name</span></li>
+        <li>Categories: <span class="category">hpage nested values</span></li>
+      </ul>
+    </div>
+
+    <p>Top level hPage data (outer)</p>
+    <ul>
+      <li>Categories: <span class="category">merge values</span></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Merging data from nested nodes",
+    
+    "test non-overlapping values": function() {
+      var data = suite.parse("#example4");
+      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
+      Y.Assert.areEqual('Outer Page title', data.title, 'Wrong title used');
+    },
+	
+    "test multiple values": function() {
+      var data = suite.parse("#example5");
+      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
+      Y.ArrayAssert.itemsAreEqual('hpage nested values merge'.split(' '), data.category, 
+	    "Categories are not merged correctly");
+    }
+	
+  }));
+</script>

@@ -1,0 +1,65 @@
+<h1>New test run</h1>
+
+<% form_for(@test_run) do |f| %>
+  <%= f.error_messages %>
+
+  <p> 
+    <%= f.label :label %><br /> 
+    <%= f.text_field :label, :value => "External test" %> 
+  </p> 
+
+  <h2>Test Pages</h2>
+
+  <p>
+    Select the pages to include in this Test Run:
+  </p>
+
+  <% fields_for('urls') do |fields| %>
+    <% @test_pages.each_with_index do |test_page, idx| %>  
+    <p> 
+      <%= fields.check_box "#{idx.to_s}", {:checked => true}, "#{test_page}", nil %>
+      <%= fields.label "#{idx.to_s}", test_page %>
+    </p> 
+    <% end %>  
+  <% end %>
+
+<h2>Testing Vendor</h2>
+
+<p>
+  A Testing Vendor provides a convienient way to run the Test Pages through multiple combinations of browser, operating system and a selection of common plug-ins (e.g. Flash).
+</p>
+
+<p>
+  Use of a Testing Vendor requires an account and the appropriate details entered into the <code>config/app_config.yaml</code> file.
+</p>
+
+<h3><input type="radio" name="vendor" value="litmus" checked="checked" /> Litmus</h3>
+
+  <% if APP_CONFIG[:test_run][:vendor][:name] == 'Litmus' %>
+  <p>
+    &nbsp; &nbsp; &nbsp; <%= f.check_box :use_defaults, {:checked => true}, 'true', 'false' %>
+    <%= f.label :use_defaults, 'Use Litmus default browser settings' %> for account <code><%= "#{APP_CONFIG[:test_run][:vendor][:user]}" %></code>
+  </p>
+  <% else %>
+    <p>
+      &nbsp; &nbsp; &nbsp; Not currently available.
+    </p>
+  <% end %>
+
+<h3><input type="radio" name="vendor" value="browsercam" disabled="true" /> BrowserCam</h3>
+
+  <p>
+    &nbsp; &nbsp; &nbsp; Not currently available.
+  </p>
+  	
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', litmus_test_runs_path %>
+
+<h2>Debug</h2>
+
+<%= debug @test_run.to_xml %>
+<%= debug @LitmusError %>
+<%= debug @test %>

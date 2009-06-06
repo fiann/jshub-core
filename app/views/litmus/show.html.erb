@@ -1,0 +1,10 @@
+
+<p>
+  Name: <%= @testset.name %>
+</p>
+
+<%= link_to 'Back', :controller => 'litmus' %>
+
+<h2>Debug</h2>
+
+<%= debug @testset.to_xml %>

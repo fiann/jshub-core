@@ -1,0 +1,249 @@
+<% set_title "Single nodes < hPage value excerpting < Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">hPage test suite</a> tests <strong><a href="https://intra.causata.com/code/causata/wiki/JavascriptTag/Microformat/hPage" title="hPage specification">hPage</a>
+  microformat declarations and parser functionality</strong>.
+</p>
+<p>
+  This page tests the rules for determining the value of a property (value excerpting) from a single node
+  declaration.
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Capture the data from a hPage-found event
+   */
+  suite.parse = function(selector, hPageCount) {
+    var data = null, count = 0;
+    if (typeof hPageCount != 'number') {
+      hPageCount = 1;
+    }
+    jsHub.bind("hpage-found", "unittest", function(evt) {
+	  count ++;
+      data = evt.data.hpage;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
+	return data;
+  };
+</script>
+
+<!-- 
+     Standard, well formed, hPage
+  -->
+<div id="example1">
+  <h2>Example 1: standard, well formed hPage</h2>
+  <div class="hpage">
+    All simple text hPage properties have values. Definitions are from the specification:
+    <ul>
+      <li>version <em>(optional, singular)</em>: <span class="version">1.0</span><br/>
+	    Specify a particular version of hPage that their content uses. By omitting this field, 
+		the publisher is stating that implementations may interpret the hPage according to any
+	    version of the hPage specification. 
+	  </li>
+      <li>name <em>(<strong>required</strong>, singular)</em>: <span class="name">page name</span>.<br/>
+        The page name. 
+	  </li>
+      <li>title <em>(optional, singular)</em>: <span class="title">page title</span>.<br/>
+        The page title. If not present, parsers may assume an implicit value from document.title
+	    in a web browser. 
+	  </li>
+      <li>referrer <em>(optional, singular)</em>: <span class="referrer">referrer URL</span>.<br/>
+        The URL of the referring page. If not present, parsers may assume an implied technographic 
+		value from <code>document.referrer</code> in a web browser. 
+	  </li>
+	  <li>type <em>(optional, multiple)</em>: <span class="type">Homepage</span>.<br/>
+	    The page type. Where one of the standard enumerated values is applicable, it should be used, 
+		as this will allow consumers of the microformat data to make inferences about user behaviour, 
+		e.g. <code>Homepage|Landing Page|Product|Review|Funnel|Checkout|Login|Logout|etc</code>
+	  </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Text field values",
+    
+    "test version field": function() {
+      var data = suite.parse("#example1");
+	  console.log("norks", data);
+      Y.Assert.areEqual('1.0', data.version);
+    },
+	
+    "test name field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('page name', data.name);
+    },
+	
+    "test title field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('page title', data.title);
+    },
+	
+    "test referrer field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('referrer URL', data.referrer);
+    },
+	
+    "test type field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('Homepage', data.type);
+    }
+  }));
+</script>  
+
+<!-- 
+      Empty hPage
+  -->
+<div id="example2">
+  <h2>Example 2: Invalid hPage, missing required field</h2>
+  <div class="hpage">
+    No hPage properties are set. This hPage is <strong>not valid</strong> and should not 
+	produce any output.
+  </div>
+</div>
+<div id="example3">
+  <h2>Example 3: Invalid hPage, missing required field</h2>
+  <div class="hpage">
+    Some hPage properties are set. The required field <code>name</code> is not specified. 
+	This hPage is <strong>not valid</strong> and should not produce any output.
+    <ul>
+      <li>title: <span class="title">implicit page title value</span>.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "hPage without required fields",
+    
+    "test no hPage found when no fields are specified": function() {
+      var data = suite.parse("#example2", 0);
+	  Y.Assert.isNull(data);
+    },
+	
+    "test no hPage found when required fields are not specified": function() {
+      var data = suite.parse("#example3", 0);
+	  Y.Assert.isNull(data);
+    }
+  }));
+</script>
+
+
+<!-- 
+      Whitespace normalization
+  -->
+<div id="example4">
+  <h2>Example 4: Whitespace normalization</h2>
+  <div class="hpage">
+    All values with additional whitespace in source code:
+    <ul>
+      <li>name = 
+         <span class="name">
+	           page name with newlines
+	         </span> before and after.
+      </li>
+      <li>title = 
+         <span class="title">        page title with spaces     </span> before and after.
+      </li>
+      <li>referrer = 
+         <span class="referrer">		page referrer with tabs		</span>  before and after.
+      </li>
+      <li>category = 
+         <span class="version">version with inline
+		   	newlines and     spaces</span>.
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Whitespace normalization",
+    
+    "test leading and trailing newlines removed": function() {
+      var data = suite.parse("#example4");
+      Y.Assert.areEqual('page name with newlines', data.name);
+	},
+	
+    "test leading and trailing spaces removed": function() {
+      var data = suite.parse("#example4");
+      Y.Assert.areEqual('page title with spaces', data.title);
+	},
+	
+    "test leading and trailing tabs removed": function() {
+      var data = suite.parse("#example4");
+      Y.Assert.areEqual('page referrer with tabs', data.referrer);
+	},
+	
+    "test inline whitespace normalized": function() {
+      var data = suite.parse("#example4");
+      Y.Assert.areEqual('version with inline newlines and spaces', data.version);
+    }
+  }));
+</script> 
+
+<!-- 
+      HTML in values
+  -->
+<div id="example5">
+  <h2>Example 5: HTML in values</h2>
+  <div class="hpage">
+    Values with additional HTML in source code:
+    <ul>
+      <li>name: <span class="name">name with an <a href="#">embedded link</a></span>.
+      </li>
+      <li>title: <span class="title">title with whitespace
+	    and an <a href="#">embedded link</a></span>.
+      </li>
+      <li>referrer: <span class="referrer">referrer with a 
+	    <span>span nesting more <a href="#">html</a></span></span>.
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+/* <![CDATA[  // this script contains html, so escape it for Rhino parser */
+  suite.add(new Y.Test.Case({
+    name: "Embedded HTML",
+    
+    "test inline HTML is preserved": function() {
+      var data = suite.parse("#example5");	
+	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
+      Y.Assert.isTrue(/name with an <a( id=""\s*)? href="#"\s*>embedded link<\/a>/.test(data.name), "Excerpted page name: " + data.name);
+      Y.Assert.isTrue(/title with whitespace and an <a( id=""\s*)? href="#"\s*>embedded link<\/a>/.test(data.title), "Excerpted title: " + data.title);
+      Y.Assert.isTrue(/referrer with a <span( id=""\s*)?>span nesting more <a( id=""\s*)? href="#"\s*>html<\/a><\/span>/.test(data.referrer), "Excerpted referrer: " + data.referrer);
+    }
+  }));
+// ]]>
+</script>
+
+

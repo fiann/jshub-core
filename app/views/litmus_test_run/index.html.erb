@@ -1,0 +1,64 @@
+<h2>Test Runs</h2>
+
+<p>
+A Test Run is a list of Test Pages (specifically their URLs) that have each been loaded 
+in a number of User Agents (browsers, mobiles, etc). The results from each test are aggregated
+for the whole test run.
+</p>
+
+<p>e.g.</p>
+
+<ul>
+  <li>1 Test run contains</li>
+  <li>4 Test page URLs</li>
+  <li>5 User-Agents execute each URL</li>
+  <li class="total"><span>20 Unit Test results (comprising of many, many Unit Test assertions)</span></li>
+</ul>
+
+<h2>New test run</h2>
+
+<%= link_to 'Create a Test Run', :new_litmus_test_run %>
+
+
+<h2>Latest test run</h2>
+
+<p>
+For use by continuous integration servers, the link below returns the ID of the last <em>complete</em> test.
+</p>
+
+<%= link_to 'Latest complete test run id', litmus_external_latest_path  %>
+
+<h2>Earlier tests runs</h2>
+
+<p>
+Below is the list of Tests Runs hosted on this server.
+</p>
+
+<p>
+  Most recent first 
+  ( <%= link_to image_tag("minus.png"), { :action => 'destroy_all' }, :method => :post %>
+  <%= link_to "Delete all", { :action => 'destroy_all' }, :method => :post %>)
+</p>
+
+<table class="logtable">
+  <thead>
+    <tr>
+      <th>Run #</th>
+      <th>Time</th>
+      <th>Label</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+<% for test_run in @test_runs %>
+  <tbody class="loglines">
+    <tr>
+      <td><%= link_to "##{test_run.id}", test_run %></td>
+      <td>
+        <%= time_ago_in_words(test_run.created_at) %> ago
+      </td>      
+      <td><%= test_run.label %></td>
+      <td><%= link_to 'JUnit XML', :action => 'results', :id => test_run.id,  :format => 'xml' %></td>
+    </tr>
+  </tbody>
+<% end %>
+</table>

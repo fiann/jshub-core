@@ -1,0 +1,110 @@
+<% set_title "Product Purchase < Data Capture" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPurchase-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests the <strong><a href="https://intra.causata.com/code/causata/wiki/JavascriptTag/Microformat/hPurchase/parser" title="hPurchase parser specification">hPurchase</a> microformat parser behaviour</strong>.
+</p>
+
+<p>
+  This page tests the rules for determining the value of a property (value excerpting) and the default values of undeclared properties.
+</p>
+<% end %>
+
+<div id="example1">
+  <div class="hpurchase">
+    Example 1: No hPurchaseEvent properties are set:
+    <ul>
+      <li>cart-id: optional field, not present</li>
+      <li>product-id: optional field, not present</li>
+      <li>status: optional field, not present</li>
+    </ul>
+  </div>
+</div>
+
+<div id="example2">
+  <div class="hpurchase">
+    Example 2: hPurchaseEvent properties are set:
+    <ul>
+      <li>cart-id: optional field, value is <span class="cart-id">ABCDEF</span></li>
+      <li>product-id: optional field, not present</li>
+      <li>status: optional field, not present</li>
+    </ul>
+  </div>
+</div>
+
+<div id="example3">
+  <div class="hpurchase">
+    Example 3: hPurchaseEvent properties are set:
+    <ul>
+      <li>product-id: optional field, value is <span class="product-id">123456</span></li>
+      <li>cart-id: optional field, value is <span class="cart-id">ABCDEF</span></li>
+      <li>status: optional field, not present</li>
+    </ul>
+  </div>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+(function() {
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+
+  // tests for hPurchaseEvent parser
+  suite.parse = function(selector) {
+    var data = null, count = 0;
+    jsHub.bind("checkout", "unittest", function(evt) {
+      data = evt.data;
+      count++;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(1, count, 'wrong number of checkout events have been generated');
+    Y.Assert.isNotNull(data, 'checkout event had no data');
+	return data;
+  };  
+  
+  suite.add(new Y.Test.Case({ 
+    name : "hPurchaseEvent - required default properties",
+    
+    "test values not specified" : function () {
+      var data = suite.parse("#example1");
+      Y.Assert.isUndefined(data['cart-id'], 'cart-id is not specified, it should be undefined');
+      Y.Assert.isUndefined(data['product-id'], 'product-id is not specified, it should be undefined');
+    },
+
+    "test optional cart-id value specified" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual(data['cart-id'], "ABCDEF", 'cart-id is not the same as the declaration');
+    },
+
+    "test optional values specified" : function () {
+      var data = suite.parse("#example3");
+      Y.Assert.areEqual(data['product-id'], "123456", 'product-id is not the same as the declaration');
+      Y.Assert.areEqual(data['cart-id'], "ABCDEF", 'cart-id is not the same as the declaration');
+    }
+  }));
+})();
+</script> 

@@ -1,0 +1,22 @@
+    <div class="yui-g links-header">
+        &nbsp;
+    </div>
+    <div class="yui-g links">
+      <ul>
+        <li class="first"><%= link_to("jshub.org") %></li>
+        <li><%= link_to("About", { :controller => 'tag_configurations', :action => "index" }) %></li>
+        <li><%= link_to("Tools", { :controller => 'tag_configurations', :action => "index" }) %></li>
+        <li><%= link_to("Community", { :controller => 'tag_configurations', :action => "index" }) %></li>
+        <li><%= link_to("Our blog", { :controller => 'tag_configurations', :action => "index" }) %></li>
+        <% if @user != nil %>
+          <li><%= link_to 'Your account', @user %></li>
+        <% end %>
+      </ul>
+    </div> 
+
+    <div class="yui-g footer">
+      <p class="legal">
+        &copy; 2009 jsHub.org - see <a href="#">Terms and conditions</a> for full details. 
+        <span class="scm">(<%= render :partial => 'shared/version' %>)</span>        
+      </p>
+    </div>

@@ -1,0 +1,59 @@
+<h1>Test Run</h1>
+<p>
+  Label: <%= @test_run.label %> has <%= @test_run.litmus_test_pages.count || 0 %> test pages.
+</p>
+
+<%# link_to 'Edit', edit_litmus_test_run_path(@test_run) %>
+<%= link_to 'JUnit XML', :action => 'results', :format => 'xml' %> |
+<%= link_to 'Back', litmus_test_runs_path %>
+
+<% for test_page in @test_run.litmus_test_pages %> 
+
+<h2>Test Page #<%= test_page.id %></h2>
+  <ul>
+    <li>
+      Results: <%= test_page.javascript_test_results.count || 'none' %>
+    </li>
+    <li>
+      URL: <%= link_to(test_page.url, test_page.url) %>
+    </li>
+    <li>
+    	External Id: <%= test_page.external_id == nil ? "none" : link_to(test_page.external_id, :controller => "litmus", :action => "show", :id => test_page.external_id) %>
+    </li>
+  </ul>
+  
+  <table class="logtable">
+    <thead>
+      <tr>
+        <th>Result #</th>
+        <th>Time</th>
+        <th>Results</th>
+        <th>Browser</th>
+      </tr>
+    </thead>
+    <tbody class="loglines">
+  <% for test_result in test_page.javascript_test_results %>
+      <tr class="<%= test_result.failed > 0 ? 'failed' : 'passed' %>">
+      <td>
+        <%= link_to "##{test_result.id}", test_result %>
+      </td>
+      <td>
+        <%= time_ago_in_words(test_result.created_at) %> ago
+      </td>
+      <td>
+        <%= test_result.passed %> passed, <%= test_result.failed %> failed, <%= test_result.ignored %> ignored
+      </td>
+      <td>
+        <%= test_result.user_agent.short_name %>
+      </td>
+	  </tr>
+  <% end %>
+    </tbody>
+  </table>
+  
+<% end %>
+
+
+<h2>Debug</h2>
+
+<%= debug @test_run.to_xml %>

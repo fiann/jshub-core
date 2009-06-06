@@ -1,0 +1,37 @@
+    <div class="yui-g nav1">
+    
+      <div class="yui-u first buttons">
+        <div class="yui-gb first group1">
+          <div class="yui-u first nav-item">
+            <%= link_to("Home", { :controller => 'tag_configurations', :action => "index" }, :class => "home") %>
+          </div>
+          <div class="yui-u nav-item">
+            <%= link_to("About", { :controller => 'tag_configurations', :action => "index" }, :class => "about") %>
+          </div>
+          <div class="yui-u nav-item">
+            <%= link_to("Tools", { :controller => 'tag_configurations', :action => "index" }, :class => "tools") %>
+          </div> 
+        </div> 
+        <div class="yui-g group2">
+          <div class="yui-u first nav-item">
+            <%= link_to("Community", { :controller => 'tag_configurations', :action => "index" }, :class => "community") %>
+          </div> 
+          <div class="yui-u nav-item">
+            <%= link_to("Blog", { :controller => 'tag_configurations', :action => "index" }, :class => "blog") %>
+          </div>      
+        </div> 
+      </div> 
+      
+      <div class="yui-u tools">
+      
+        <% 
+          # save ourselves some consitency headaches with user managment
+          if controller.controller_name != 'users'
+        %>
+          <%= render :partial => '/users/login_status' %>
+        <% end %>
+        
+      </div> 
+      
+      
+    </div>

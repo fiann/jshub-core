@@ -1,0 +1,232 @@
+<% set_title "Core Events < Hub" %>
+
+<% content_for :javascripts do %>  
+<% end %>
+
+<% content_for :intro do %>
+<p>Tests for the hub's core event functionality.</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  // mock object
+  function MockListener(authToken) {
+    var self = this;
+    self.authToken = authToken;
+    self.events = [];
+    this.eventFired = function(evt) {
+      self.events.push(evt);
+    };
+  };
+
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "jsHub event dispatcher",
+    
+    setUp: function() {
+      window.listener1 = new MockListener("jshub");
+      window.listener2 = new MockListener("adserver");
+      window.listener3 = new MockListener("trustedService");
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
+      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
+    },
+    
+    "test event triggered with no listeners": function() {
+      jsHub.trigger("someEvent", {});
+      Y.Assert.isTrue(true, "No errors were thrown");
+    },
+    
+    "test registering listener multiple times": function() {
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener1.events.length, "Event should be recorded once");
+    },
+    
+    "test custom event type, with implicit global visibility": function() {
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener1.events.length, "First event recorded");
+      evtRecorded = listener1.events[0];
+      Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
+	  for (prop in evtRecorded.data) {
+        Y.Assert.areEqual(eventData[prop], evtRecorded.data[prop], 
+		  "Event data field does not match: "+prop);
+	  }
+    },
+    
+    "test custom event type, with explicit '*' visibility": function() {
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page",
+        event_visibility: "*"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener1.events.length, "First event recorded");
+      evtRecorded = listener1.events[0];
+      Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
+      var eventData_filtered = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+	  for (prop in evtRecorded.data) {
+        Y.Assert.areEqual(eventData_filtered[prop], evtRecorded.data[prop], 
+		  "Event data field does not match: "+prop);
+	  }
+    },
+    
+    "test restricted visibility": function() {
+      // implicit data-visibility of '*', seen by all
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener1.events.length, "Unrestricted event should be recorded by listener 'jshub'");
+      Y.Assert.areEqual(1, listener2.events.length, "Unrestricted event should be recorded by listener 'adserver'");
+      // this one can only be seen by the 'jshub' service
+      eventData = {
+        pageName: "test page",
+        referrer: "previous page",
+        event_visibility: "jshub"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(2, listener1.events.length, "Restricted event should be recorded by listener 'jshub'");
+      Y.Assert.areEqual(1, listener2.events.length, "Restricted event should not be visible to listener 'adserver'");
+    },
+    
+    "test multiple visibility values": function() {
+      // this one can only be seen by one registered service
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page",
+        event_visibility: "jshub, trustedService"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener1.events.length, "Restricted event should be recorded by listener 'jshub'");
+      Y.Assert.areEqual(0, listener2.events.length, "Restricted event should not be visible to listener 'adserver'");
+      Y.Assert.areEqual(1, listener3.events.length, "Restricted event should be recorded by listener 'trustedService'");
+    }
+  }));
+  
+  // tests for hub event passing
+  suite.add(new Y.Test.Case({
+    name: "Field level security",
+    
+    setUp: function() {
+      window.listener1 = new MockListener("jshub");
+      window.listener2 = new MockListener("adserver");
+      window.listener3 = new MockListener("trustedService");
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
+      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
+    },
+    
+    "test validation of field level restrictions": function() {
+      var eventData = {
+        // implicit global visibility
+        pageName: "test page",
+        // specified single viewer
+        referrer: "http://www.example.com/",
+        referrer_visibility: "jshub",
+        // specified multiple viewers
+        search: "Christmas",
+        search_visibility: "jshub, trustedService",
+        // implicit global visibility through empty string
+        search_results: "12",
+        search_results_visibility: "",
+        // implicit global visibility through empty string
+        section: "Product listings",
+        section_visibility: "",
+        // explicit global visibility with "*"
+        subsection: "Christmas gifts",
+        subsection_visibility: "*",
+        // no registered services will match this
+        products_displayed: "6",
+        products_displayed_visibility: "none"
+      };
+      jsHub.trigger("page-view", eventData);
+      
+      var eventData_jshub = {
+        pageName: eventData.pageName,
+        referrer: eventData.referrer,
+        search: eventData.search,
+        search_results: eventData.search_results,
+        section: eventData.section,
+        subsection: eventData.subsection
+      };
+      Y.Assert.areEqual(1, listener1.events.length, "Event should be recorded");
+      var evtRecorded = listener1.events[0];
+      Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
+      Y.Assert.isUndefined(evtRecorded.data.referrer_visibility, "Visibility fields should not be passed to event listeners");
+	  for (prop in evtRecorded.data) {
+        Y.Assert.areEqual(eventData_jshub[prop], evtRecorded.data[prop], 
+		  "Event data field does not match: "+prop);
+	  }
+      
+      var eventData_adserver = {
+        pageName: eventData.pageName,
+        search_results: eventData.search_results,
+        section: eventData.section,
+        subsection: eventData.subsection
+      };
+      Y.Assert.areEqual(1, listener2.events.length, "Event should be recorded");
+      evtRecorded = listener2.events[0];
+      Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
+	  for (prop in evtRecorded.data) {
+        Y.Assert.areEqual(eventData_adserver[prop], evtRecorded.data[prop], 
+		  "Event data field does not match: "+prop);
+	  }
+      
+      var eventData_trustedService = {
+        pageName: eventData.pageName,
+        search: eventData.search,
+        search_results: eventData.search_results,
+        section: eventData.section,
+        subsection: eventData.subsection
+      };
+      Y.Assert.areEqual(1, listener3.events.length, "Event should be recorded");
+      evtRecorded = listener3.events[0];
+      Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
+	  for (prop in evtRecorded.data) {
+        Y.Assert.areEqual(eventData_trustedService[prop], evtRecorded.data[prop], 
+		  "Event data field does not match: "+prop);
+	  }
+    }
+    
+  }));
+})();
+
+  
+</script> 

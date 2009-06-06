@@ -1,0 +1,343 @@
+<% set_title "Attributes < hPage value excerpting < Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests the <strong><a href="http://jshub.org/project/wiki/hPage" title="hPage specification">hPage</a> 
+  microformat attribute property.</strong>. 
+</p>
+<p>
+  This page contains examples of attributes specified with the <a href="http://microformats.org/wiki/value-class-pattern" 
+  title="Microformats.org wiki">value class pattern</a>. 
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Capture the data from a hPage-found event
+   */
+  suite.parse = function(selector, hPageCount) {
+    var data = null, count = 0;
+    if (typeof hPageCount != 'number') {
+      hPageCount = 1;
+    }
+    jsHub.bind("hpage-found", "unittest", function(evt) {
+	  count ++;
+      data = evt.data.hpage;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
+	return data;
+  };
+</script>
+
+<!-- 
+     Standard, well formed, hPage
+  -->
+<div id="example1">
+  <h2>Example 1: single attribute</h2>
+  <div class="hpage">
+    The hPage contains a single attribute:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute"><span class="type">discount</span><span class="value">10%</span></li>
+    </ul>
+  </div>
+</div>
+<div id="example2">
+  <h2>Example 2: single attribute embedded in html</h2>
+  <div class="hpage">
+    The hPage contains a single attribute, with html surrounding and between the value elements.
+	The values extracted should be identical to the previous example:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <strong><span class="type">discount</span> of 
+	    <span class="value">10%</span></strong> has been applied.</li>
+    </ul>
+  </div>
+</div>
+<div id="example3">
+  <h2>Example 3: reverse order of subnodes</h2>
+  <div class="hpage">
+    The hPage contains a single attribute, with html surrounding and between the value elements.
+	The value appears before the type.
+	The values extracted should be identical to the previous example:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <span class="value">10%</span> <span class="type">discount</span> 
+	    has been applied.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Simple value class extraction",
+    
+    "test value class extraction": function() {
+      var data = suite.parse("#example1");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+    },
+	
+    "test value class extraction from html": function() {
+      var data = suite.parse("#example2");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+    },
+	
+    "test value class extracting is order independent": function() {
+      var data = suite.parse("#example1");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+    }
+  }));
+</script>  
+
+<!-- 
+      Multiple values are concatenated together, without additional whitespace.
+  -->
+<div id="example4">
+  <h2>Example 4: multiple values for one attribute</h2>
+  <div class="hpage">
+    The hPage contains a single attribute, with three values for the attribute:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <span class="type">colours</span> are 
+	    <span class="value">red</span>, <span class="value">white</span>
+		and <span class="value">blue</span>.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Multiple values",
+    
+    "test multiple value extraction": function() {
+      var data = suite.parse("#example4");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('colours', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('redwhiteblue', data.attributes[0].value, "Attribute value");
+    }
+  }));
+</script>  
+
+
+<!-- 
+      Do not look inside .value nodes, the parser should treat grandchild .value nodes
+	  as opaque html
+  -->
+<div id="example5">
+  <h2>Example 5: .value node nested inside value</h2>
+  <div class="hpage">
+    The hPage contains a single attribute, with a single value. There is a node with class value
+	inside the value node, but this should be treated as html not as a value instance:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <strong><span class="type">discount</span> of 
+	    <span class="value">10 <span class="value">%</span></span></strong> has been applied.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+/* <![CDATA[  // this script contains html, so escape it for Rhino parser */
+  suite.add(new Y.Test.Case({
+    name: "Nested value classes",
+    
+    "test nested value classes are ignored": function() {
+      var data = suite.parse("#example5");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
+	  Y.Assert.isTrue(/10 <span( id=""\s*)? class="value"\s*>%<\/span>/.test(data.attributes[0].value), "Attribute value "+data.attributes[0].value);
+    }
+  }));
+// ]]>
+</script> 
+
+<!-- 
+      Implicit values
+  -->
+<div id="example6">
+  <h2>Example 6: No type node</h2>
+  <div class="hpage">
+    When the attribute does not contain a type, the whole content is considered to be the type
+	and the value is the default of 'true':
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">discount</li>
+    </ul>
+  </div>
+</div>
+<div id="example7">
+  <h2>Example 7: Type node but no value</h2>
+  <div class="hpage">
+    The attribute contains a type, but the value is not specified, so it takes the default of 'true':
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <span class="type">discount</span> has been applied.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Implicit default value",
+    
+    "test unspecified type": function() {
+      var data = suite.parse("#example6");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('true', data.attributes[0].value, "Attribute value");
+    },
+	
+    "test unspecified value": function() {
+      var data = suite.parse("#example7");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
+      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      Y.Assert.areEqual('true', data.attributes[0].value, "Attribute value");
+    }
+  }));
+</script>
+
+<!-- 
+      Multiple values
+  -->
+<div id="example8">
+  <h2>Example 8: Multiple values for an attribute</h2>
+  <div class="hpage">
+    An attribute can have multiple values for the same type.
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">football</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">tennis</span>.</li>
+    </ul>
+  </div>
+</div>
+<div id="example9">
+  <h2>Example 9: Duplicate values</h2>
+  <div class="hpage">
+    <p>If an attribute has duplicate declarations where the name and value are both identical,
+      then the duplicates should be removed to leave the unique set.</p> 
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">football</span>.</li>
+      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+/* <![CDATA[  // this script contains ampersands, so escape it for Rhino parser */
+  suite.add(new Y.Test.Case({
+    name: "Multiple attribute values",
+    
+    "test multiple distinct values": function() {
+      var data = suite.parse("#example8");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(3, data.attributes.length, "Three atributes should be found");
+	  var expectedAttributes = [ {type: "sport", value: "rugby"}, 
+	    {type: "sport", value: "football"}, {type: "sport", value: "tennis"} ];
+      Y.ArrayAssert.itemsAreEquivalent(expectedAttributes, data.attributes, function (a, b) {
+	  	return (a.type == b.type && a.value == b.value);
+	  });
+    },
+	
+    "test unspecified value": function() {
+      var data = suite.parse("#example9");
+	  Y.Assert.isArray(data.attributes, "No attributes found");
+      Y.Assert.areEqual(2, data.attributes.length, "Only 2 atributes should be found");
+	  var expectedAttributes = [ {type: "sport", value: "rugby"}, 
+	    {type: "sport", value: "football"} ];
+      Y.ArrayAssert.itemsAreEquivalent(expectedAttributes, data.attributes, function (a, b) {
+	  	return (a.type == b.type && a.value == b.value);
+	  });
+    }
+  }));
+// ]]>
+</script>
+
+<!-- 
+      Invalid attributes
+  -->
+<div id="example10">
+  <h2>Example 10: Multiple type nodes</h2>
+  <div class="hpage">
+    When the attribute contains more than one type, the attribute is not valid as the value cannot
+	be assigned to a single type:
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <span class="type">discount</span> and 
+	    <span class="type">staff reduction</span> of <span class="value">10%</span>
+		have been applied.</li>
+    </ul>
+  </div>
+</div>
+<div id="example11">
+  <h2>Example 11: Empty attribute</h2>
+  <div class="hpage">
+    If the entire attribute node is empty, the attribute is invalid because a type cannot be
+	inferred from the whole node contents.
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute"></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Invalid attributes",
+    
+    "test multiple type instances": function() {
+      var data = suite.parse("#example10");
+	  Y.Assert.isUndefined(data.attributes, "No attributes should be found");
+    },
+	
+    "test empty attribute node": function() {
+      var data = suite.parse("#example11");
+	  Y.Assert.isUndefined(data.attributes, "No attributes should be found");
+    }
+  }));
+</script>
+
+<pre>
+Attribute value
+Expected: 10 &lt;span class=&quot;value&quot;&gt;%&lt;/span&gt; (string)
+Actual:10 &lt;span class='value' &gt;%&lt;/span&gt; (string)
+</pre>

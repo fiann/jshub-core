@@ -1,0 +1,187 @@
+<% set_title "Multiple hPage instances < hPage value excerpting < Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">hPage test suite</a> tests <strong><a href="https://intra.causata.com/code/causata/wiki/JavascriptTag/Microformat/hPage" title="hPage specification">hPage</a>
+  microformat declarations and parser functionality</strong>.
+</p>
+<p>
+  This page contains examples of <strong>hPage composition</strong>, where an hPage is assembled from
+  the data in more than one hPage node. Values from each node type are composed according to precedence
+  rules.
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Capture the data from a hPage-found event
+   */
+  suite.parse = function(selector, hPageCount) {
+    var data = null, count = 0;
+    if (typeof hPageCount != 'number') {
+      hPageCount = 1;
+    }
+    jsHub.bind("hpage-found", "unittest", function(evt) {
+	  count ++;
+      data = evt.data.hpage;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
+	return data;
+  };
+</script>
+
+
+<!-- 
+     Composition rule
+  -->
+<div id="example1">
+  <h2>Example 1: Composition of non-conflicting fields</h2>
+  <p>An hPage can be declared in more than one node. If the nodes in each field do not overlap,
+    the result that is found will contain all the declared fields.</p>
+  <div id="example1_1" class="hpage">
+    <p>1. A very simple hPage declaration at the top of a page (1st data island):</p>
+    <ul>
+      <li>Page name: <span class="name">Above the fold</span></li>
+    </ul>
+  </div>
+  <div id="example1_2" class="hpage">
+    <p>2. Additional hPage data (2nd data island). Note that this hPage node does not
+      represent a valid hPage on its own.</p>
+    <ul>
+      <li>
+        Page title: <span class="title">Page title</span>
+      </li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Composition rule",
+    
+    "test value is the composite of multiple non-conflicting nodes": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual('Above the fold', data.name);
+      Y.Assert.areEqual('Page title', data.title);
+    }
+  }));
+</script>
+
+<!-- 
+     Overriding rule
+  -->
+<div id="example2">
+  <h2>Example 2: Overriding of singular fields</h2>
+  <p>If a field that takes a singular value is declared more than once, the later values
+    override the earlier values, so the <strong>last</strong> value found is used.</p>
+  <div id="example2_1" class="hpage">
+    <p>1. A very simple hPage declaration at the top of a page (1st data island):</p>
+    <ul>
+      <li>Page name: <span class="name">Above the fold</span></li>
+    </ul>
+  </div>
+  <div id="example2_2" class="hpage">
+    <p>2. Additional hPage data (2nd data island), with a repeat declaration of page name.</p>
+    <ul>
+      <li>Page name: <span class="name">Below the fold</span></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Overriding rule",
+    
+    "test value is the instance found for singular nodes": function() {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual('Below the fold', data.name);
+    }
+  }));
+</script>
+
+<!-- 
+     Additivity rule
+  -->
+<div id="example3">
+  <h2>Example 3: Additivity of multiple fields</h2>
+  <p>If a field that takes a multiple value is declared more than once, the later values
+    are used in addition to the earlier values, so the value is the <strong>union</strong>
+    of the declared values.</p>
+  <div id="example3_1" class="hpage">
+    <p>1. A very simple hPage declaration at the top of a page (1st data island):</p>
+    <ul>
+      <li>Page name: <span class="name">Above the fold</span></li>
+      <li>Categories: <span class="category">microformat hpage</span></li>
+    </ul>
+  </div>
+  <div id="example3_2" class="hpage">
+    <p>2. Additional hPage data (2nd data island).</p>
+    <ul>
+      <li>Page name: <span class="name">Below the fold</span></li>
+      <li>Categories: <span class="category">additivity rule</span></li>
+    </ul>
+  </div>
+</div>
+<div id="example4">
+  <h2>Example 4: Duplicates in multiple fields</h2>
+  <p>If a field has multiple overlapping values, we take the <strong>union of unique 
+    values</strong>.</p>
+  <div id="example4_1" class="hpage">
+    <p>1. A very simple hPage declaration at the top of a page (1st data island):</p>
+    <ul>
+      <li>Page name: <span class="name">Above the fold</span></li>
+      <li>Categories: <span class="category">microformat microformat hpage</span></li>
+    </ul>
+  </div>
+  <div id="example4_2" class="hpage">
+    <p>2. Additional hPage data (2nd data island).</p>
+    <ul>
+      <li>Page name: <span class="name">Below the fold</span></li>
+      <li>Categories: <span class="category">hpage additivity rule</span></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Additivity rule",
+    
+    "test value is the union of values for multiple nodes": function() {
+      var data = suite.parse("#example3");
+      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data.category);
+    },
+
+    "test value duplicate values are removed": function() {
+      var data = suite.parse("#example4");
+      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data.category);
+    }
+  }));
+</script>
+
+

@@ -1,0 +1,48 @@
+<h2>Test Results</h2>
+<p>
+	Lists the results received by the server</strong>.
+</p>
+
+<p>
+  Most recent first 
+  ( <%= link_to image_tag("minus.png"), { :action => 'destroy_all' }, :method => :post %>
+  <%= link_to "Delete all", { :action => 'destroy_all' }, :method => :post %>)
+</p>
+
+<table class="logtable">
+  <thead>
+    <tr>
+      <th>Run #</th>
+      <th>Time</th>
+      <th>Results</th>
+      <th>Result YUI XML</th>
+      <th>Browser</th>
+      <th>Page URL</th>
+    </tr>
+  </thead>
+  <tbody class="loglines">
+    <% @results.each do |result| %>
+    <tr class="<%= result.failed > 0 ? 'failed' : 'passed' %>">
+      <td>
+        <%= link_to("##{result.litmus_test_page.litmus_test_run.id}", result.litmus_test_page.litmus_test_run) if result.litmus_test_page %>
+      </td>
+      <td>
+        <%= time_ago_in_words(result.created_at) %> ago
+      </td>
+      <td>
+        <%= result.passed %> passed, <%= result.failed %> failed, <%= result.ignored %> ignored
+      </td>
+      <td>
+        <%= link_to("##{result.id}", formatted_javascript_test_result_url(result, :format => 'xml')) %>
+      </td>
+      <td>
+        <%= result.user_agent.short_name %>
+      </td>
+      <td>
+        <%= link_to("#{result.litmus_test_page.url}", result.litmus_test_page.url) if result.litmus_test_page %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+

@@ -1,0 +1,90 @@
+<% set_title "Default values < Browser technographics" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/technographic-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">technographics test suite</a> tests <strong>functionality for extracting
+  environment data from the user's browser</strong>.
+</p>
+<p>
+  This page tests the the default values of undeclared properties.
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Capture the data from a hPage-found event
+   */
+  suite.parse = function(selector, hPageCount) {
+    var data = null, count = 0;
+    if (typeof hPageCount != 'number') {
+      hPageCount = 1;
+    }
+    jsHub.bind("page-view", "unittest", function(evt) {
+	  count ++;
+      data = evt.data;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
+	return data;
+  };
+</script>
+
+<!-- 
+     Simple hPage with missing values
+  -->
+<div id="example1">
+  <h2>Example 1: Default values for text fields</h2>
+  <div class="hpage">
+    <p>Only the name is specified. The title and referrer should be inferred from default 
+	  values.</p>
+    <ul>
+      <li>name: <span class="name">implicit page name value</span>.</li>
+	  <li>title: not specified, should be inferred from <code>document.title</code></li>
+	  <li>referrer: not specified, should be inferred from <code>document.referrer</code></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({
+    name: "Default text field values",
+    
+    "test title field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual(document.title, data.title);
+    },
+	
+    "test referrer field": function() {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual(document.referrer, data.referrer);
+    }
+  }));
+</script>  
+
