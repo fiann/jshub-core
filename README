@@ -1,3 +1,11 @@
-== Rails application
+= jsHub
+
+== Getting the Code
+
+Git repositories:
+http://git.jshub.org/jshub-core.git (Read-only)
+git@jshub.org:jshub-core.git (Read-write) 
+
+== jsHub Rails application
 
 Documentation for this application is in <tt>doc/README_FOR_APP</tt> and can be read in a browser at link:doc/app/index.html
