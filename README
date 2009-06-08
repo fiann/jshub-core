@@ -3,13 +3,21 @@
 == Getting the Code
 
 Git repositories:
-http://git.jshub.org/jshub-core.git (Read-only)
-git@jshub.org:jshub-core.git (Read-write) 
+git clone http://git.jshub.org/jshub-core.git (Read-only)
+git clone git@jshub.org:jshub-core.git (Read-write) 
 
 == Getting Started
 
-1. Start the web server: <tt>script/server</tt> (run with --help for options)
-2. Go to http://localhost:3000/ and get the "jsHub -- Welcome to the jsHub project" page
+1. Load the database schema: <tt>rake db:migrate</tt>
+2. Start the web server: <tt>script/server</tt> (run with --help for options)
+3. Go to http://localhost:3000/ and get the "jsHub -- Welcome to the jsHub project" page
+
+== Run the tests
+
+1. Test database schema: <tt>rake db:test:prepare</tt>
+2. Run the tests: <tt>rake test:javascripts</tt>
+
+JUnit format test reports are in /test/reports.
 
 == Description of additional Contents
 
