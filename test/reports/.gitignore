@@ -1,0 +1,4 @@
+# rake test:javascripts creates JUnit format .xml files in this folder
+# there's one for each unit test .html.erb file
+# we don't want to version the results of the unit tests
+*.xml
