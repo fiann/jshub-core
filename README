@@ -6,6 +6,32 @@ Git repositories:
 http://git.jshub.org/jshub-core.git (Read-only)
 git@jshub.org:jshub-core.git (Read-write) 
 
-== jsHub Rails application
+== Getting Started
 
-Documentation for this application is in <tt>doc/README_FOR_APP</tt> and can be read in a browser at link:doc/app/index.html
+1. Start the web server: <tt>script/server</tt> (run with --help for options)
+2. Go to http://localhost:3000/ and get the "jsHub -- Welcome to the jsHub project" page
+
+== Description of additional Contents
+
+Below are descriptions for the additional directories and resources used by this application.
+
+app/javascript
+  Javascript src files.
+
+test/unit/javascript
+  Holds the html files containing javascript unit test cases to run in a browser (using YUI Test).
+
+dist
+  Contains the rake generated js files for testing. These are regenerated anytime files in the <tt>src</tt> directory are edited.
+
+doc
+  This directory is where your application documentation will be stored when generated
+  using <tt>rake doc:app</tt>
+
+lib/js.jar
+  Java Rhino Javascript runtime for use by JSLint.
+
+lib/jslint
+  Files for running and configuring JSLint.
+
+
