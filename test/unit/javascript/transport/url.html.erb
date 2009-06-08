@@ -1,0 +1,132 @@
+<% set_title "HTTP GET Transport < Data Transport" %>
+
+<% content_for :javascripts do %>  
+  <!-- none required -->
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">transport test suite</a> tests <strong>data output from the tag
+  to servers</strong>.
+</p>
+<p>
+  This page tests the core functionality provided by the hub for sending data to a
+  server.
+</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  /*
+   * Helper to get the source of an image before it has been normalized by the browser and
+   * relative links resolved.
+   */
+  var src = function(image) {
+  	return image.attributes['src'].nodeValue;
+  }
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+    }
+  }));
+  
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "Image transport",
+    
+    "test URL is created from base url plus data object": function() {
+		var url = '/image-test', data = { field1 : "value1", field2 : "value2" };
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url, data);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test?field1=value1&field2=value2", src(img), "Image URL is not correct");
+    },
+	
+    "test base url only": function() {
+		var url = '/image-test';
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test", src(img), "Image URL is not correct");
+    },
+	
+    "test null data object": function() {
+		var url = '/image-test';
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url, null);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test", src(img), "Image URL is not correct");
+    },
+	
+    "test data fields are correctly escaped": function() {
+		var url = '/image-test', data = { field1 : "value one", "field 2?" : "value2" };
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url, data);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test?field1=value%20one&field%202%3F=value2", src(img), 
+		  "Image URL is not correct");
+    },
+	
+    "test query string in base url is preserved": function() {
+		var url = '/image-test?inline-data=y', data = { field1 : "value1", field2 : "value2" };
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url, data);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test?inline-data=y&field1=value1&field2=value2", src(img), 
+		  "Image URL is not correct");
+    },
+	
+    "test multiple values for same key": function() {
+		var url = '/image-test', data = { field1 : ["value1", "value2", 345] };
+        Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+		var img = jsHub.dispatchViaImage(url, data);
+		Y.Assert.isNotNull(img, "image object is null");
+		Y.Assert.areEqual("/image-test?field1=value1&field1=value2&field1=345", src(img), 
+		  "Image URL is not correct");
+    },
+	
+	/* SOME ERROR CONDITIONS */
+	
+    "test no data sent if base url is not defined": function() {
+      var data = {
+        field1: "value1",
+        field2: "value2"
+      };
+      Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+      var img = jsHub.dispatchViaImage(null, data);
+      Y.Assert.isNull(img, "image object should be null");
+    },
+	
+    "test object data is not sent": function() {
+	  var funct = function () { doStuff() };
+      var url = '/image-test', data = {
+        field1: "value1",
+		funct: funct,
+        field2: "value2"
+      };
+      Y.Assert.isFunction(jsHub.dispatchViaImage, "jsHub.dispatchViaImage() is not a Function");
+      var img = jsHub.dispatchViaImage(url, data);
+      Y.Assert.isNotNull(img, "image object is null");
+      Y.Assert.areEqual("/image-test?field1=value1&field2=value2", src(img), 
+	    "Image URL is not correct");
+    }	
+  }));
+})();
+
+  
+</script> 
