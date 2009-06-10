@@ -1,0 +1,12 @@
+# Ignore standard Rails directories
+# ref: http://toolmantim.com/articles/setting_up_a_new_rails_app_with_git
+log/*.log
+tmp/**/*
+doc/api
+doc/app
+
+# Ignore the SQLite databases
+db/*.sqlite3
+
+# Ignore CI test reports
+test/reports/**/*
