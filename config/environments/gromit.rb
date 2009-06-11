@@ -18,4 +18,4 @@ config.action_mailer.raise_delivery_errors = false
 
 # #315 - New in 2.2 use a prefix (matches Passenger RailsBaseURI)
 # ref: http://code.google.com/p/phusion-passenger/issues/detail?id=169
-config.action_controller.relative_url_root = "/retail"
+config.action_controller.relative_url_root = "/akita-on-rails"

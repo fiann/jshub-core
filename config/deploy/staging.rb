@@ -9,7 +9,6 @@ set :rails_env,   "gromit"
 
 # construct the path to the repository
 set :repository,   "git@#{scm_domain}:jshub-core.git"
-set :deploy_via,   :checkout
 
 #If you log into your server with a different user name than you are logged 
 #into your local machine with, youll need to tell Capistrano about that user 
