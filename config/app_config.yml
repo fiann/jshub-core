@@ -20,3 +20,6 @@ passenger:
   
 gromit:
   <<: *non_production_settings
+  
+jshub:
+  <<: *non_production_settings
