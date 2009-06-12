@@ -229,8 +229,8 @@ class LitmusTestRunController < ApplicationController
 protected
   # TDOD add path arg
   def list_test_pages
-    # List the availbale Test Pages from the file system
-    test_pages = Dir.entries "#{RAILS_ROOT}/test/unit/javascript/"
+    # List the available Test Pages from the file system
+    test_pages = Dir["#{RAILS_ROOT}/test/unit/javascript/**/*.*"]
     test_pages.delete_if {|page| page =~ /^\./ }
     test_pages.collect! {|page| page.gsub(/\.html\.erb$/, '') }    
   end

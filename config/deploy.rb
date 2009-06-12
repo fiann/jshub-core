@@ -44,7 +44,7 @@ namespace :custom do
   
   desc 'Symlink the public directory into the web root. This is for use by Passenger via RailsBaseURI
         ref: http://www.modrails.com/documentation/Users%20guide.html#deploying_rails_to_sub_uri'
-  task :symlink do
+  task :link_webroot do
     run "ln -nfs #{current_path}/public #{webroot}"
   end
   
@@ -53,9 +53,13 @@ namespace :custom do
     run "echo \"r#{real_revision}\" > #{release_path}/app/views/shared/_version.html.erb"
   end  
 
+  desc "Make symlink for server specific app_config yaml" 
+  task :link_app_config do
+    run "ln -nfs #{shared_path}/config/app_config.yml #{release_path}/config/app_config.yml" 
+  end
 end
 # use our custom tasks at the appropriate time
 # e.g. before :deploy, :my_custom_task
 #      after  "deploy:symlink", :do_this, :and_do_that
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
-after "deploy:symlink",   "custom:symlink"
+after "deploy:symlink",   "custom:link_webroot", "custom:link_app_config"
