@@ -88,7 +88,7 @@
 	}
 	updateStatus(status);
     // ... and send the results to the data collection server
-    var reporter = new Y.Test.Reporter("../results");
+    var reporter = new Y.Test.Reporter("../../results");
     reporter.report(evt.results);
   }
   
