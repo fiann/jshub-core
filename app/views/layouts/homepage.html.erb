@@ -10,6 +10,10 @@
   <body class="jshub">
     <%= render :partial => '/jshub_title' %>
 
-    <%= yield :layout %>
+    <div id="main">
+      <div id="content">
+        <%= yield :layout %>
+      </div>
+    </div>
   </body>
 </html>

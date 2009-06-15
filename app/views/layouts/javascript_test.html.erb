@@ -44,7 +44,11 @@
 </head>
 <body class="jshub">
   <%= render :partial => '/jshub_title' %>
-  <h2 id="navigation"><%= h title %></h2>
+
+    <div id="main">
+      <div id="content">
+
+  <h2><%= h title %></h2>
 
   <% # This is an html description of the purpose of the code, which will appear
      # above the test results output. %>
@@ -60,6 +64,9 @@
   <!-- Execute the tests -->
   <%= stylesheet_link_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>
   <%= javascript_include_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>
+
+      </div>
+    </div>
 
 </body>
 </html>

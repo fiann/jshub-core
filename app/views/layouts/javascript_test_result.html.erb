@@ -15,13 +15,14 @@
   <%= render :partial => '/jshub_title' %>
   <%= render :partial => '/test_run_nav' %>
 
-  <div class="content">
-
-    <p style="color: green"><%= flash[:notice] %></p>
-    <p style="color: red"><%= flash[:error] %></p>
-
-    <%= yield  %>
-  </div>
+    <div id="main">
+      <div id="content">
+        <p style="color: green"><%= flash[:notice] %></p>
+        <p style="color: red"><%= flash[:error] %></p>
+    
+        <%= yield  %>
+      </div>
+    </div>
 
 </body>
 </html>
