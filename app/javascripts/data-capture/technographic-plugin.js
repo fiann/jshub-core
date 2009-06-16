@@ -20,7 +20,8 @@
     version: 0.1,
     author: 'Liam Clancy',
     email: 'liamc@jshub.org',
-    vendor: 'jsHub.org'
+    vendor: 'jsHub.org',
+    type: 'data-capture'
   };
   
   /*
