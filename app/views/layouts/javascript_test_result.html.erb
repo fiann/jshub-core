@@ -7,6 +7,7 @@
   <title>Test Result: <%= controller.action_name %></title>
 
   <%= stylesheet_link_tag 'jshub' %>
+  <%= stylesheet_link_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>
 
 </head>
 <body class="jshub">
@@ -14,13 +15,16 @@
   <%= render :partial => '/jshub_title' %>
   <%= render :partial => '/test_run_nav' %>
 
-  <div class="content">
-
-    <p style="color: green"><%= flash[:notice] %></p>
-    <p style="color: red"><%= flash[:error] %></p>
-
-    <%= yield  %>
-  </div>
-
+    <div id="main">
+      <div id="content">
+        <p style="color: green"><%= flash[:notice] %></p>
+        <p style="color: red"><%= flash[:error] %></p>
+    
+        <%= yield  %>
+      </div>
+    </div>
+    <div id="footer">
+      <p>(<%= render :partial => 'shared/version' %>)</p>
+    </div>
 </body>
 </html>

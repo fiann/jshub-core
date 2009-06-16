@@ -6,19 +6,24 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Litmus: <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'jshub' %>
+  <%= stylesheet_link_tag :javascript_unit_test, :cache => "cache/javascript_unit_test" %>  
 </head>
 <body class="jshub">
 
   <%= render :partial => '/jshub_title' %>
   <%= render :partial => '/test_run_nav' %>
 
-  <div class="content">
+  <div id="main">
+    <div id="content" class="content">
   
-    <p style="color: green"><%= flash[:notice] %></p>
-    <p style="color: red"><%= flash[:error] %></p>
-  
-    <%= yield  %>
+      <p style="color: green"><%= flash[:notice] %></p>
+      <p style="color: red"><%= flash[:error] %></p>
+    
+      <%= yield  %>
+    </div>
   </div>
-
+  <div id="footer">
+    <p>(<%= render :partial => 'shared/version' %>)</p>
+  </div>
 </body>
 </html>

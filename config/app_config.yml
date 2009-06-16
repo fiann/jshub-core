@@ -6,8 +6,8 @@ development: &non_production_settings
     :vendor:
       :name: Litmus
       :site: http://jshub.litmusapp.com/
-      :user: (secret)
-      :password: (secret)
+      :user: browser_tester
+      :password: J4r-J4r
 
 test:
   <<: *non_production_settings
@@ -19,4 +19,7 @@ passenger:
   <<: *non_production_settings
   
 gromit:
+  <<: *non_production_settings
+  
+jshub:
   <<: *non_production_settings
