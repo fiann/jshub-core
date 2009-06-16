@@ -45,7 +45,7 @@
      * URL to dispatch to the server
      * TODO where should we configure this?
      */
-    var url = "http://10.0.1.9/";
+    var url = "http://localhost/core/blackhole/";
     
     var data = {
       sender: metadata.name + " v" + metadata.version,
