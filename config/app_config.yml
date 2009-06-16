@@ -6,8 +6,8 @@ development: &non_production_settings
     :vendor:
       :name: Litmus
       :site: http://jshub.litmusapp.com/
-      :user: browser_tester
-      :password: J4r-J4r
+      :user: (set me in config/app_config.yml)
+      :password: (set me in config/app_config.yml)
 
 test:
   <<: *non_production_settings
