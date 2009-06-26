@@ -6,8 +6,8 @@ development: &non_production_settings
     :vendor:
       :name: Litmus
       :site: http://jshub.litmusapp.com/
-      :user: (set me in config/app_config.yml)
-      :password: (set me in config/app_config.yml)
+      :user: secret
+      :password: secret
 
 test:
   <<: *non_production_settings
