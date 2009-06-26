@@ -25,7 +25,7 @@
 
 <% content_for :intro do %>
 <p>
-  This file tests <strong><a href="https://intra.causata.com/code/causata/wiki/JavascriptTag/DataCapture/GoogleAnalyticsMarkup" title="Google Analytics">Google Analytics markup plugin</a> functionality</strong>.
+  This file tests <strong><a href="http://jshub.org/project/wiki/DataCapture/GoogleAnalyticsMarkup" title="Google Analytics">Google Analytics markup plugin</a> functionality</strong>.
 </p>
 <p>
   This page tests the logic for extracting values from the html of the page.
@@ -191,7 +191,7 @@
       
       $('#example4 a').click();
 	  
-      // see https://intra.causata.com/code/causata/ticket/411
+      // see Ticket #411
 	  // can't run this test in Rhino as $(document).ready() has not fired
 	  if (window.domReadyFired) {
         Y.Assert.isTrue(window.clickHandlersTriggered, "The onClick handler was not triggered");
