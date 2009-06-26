@@ -5,8 +5,8 @@
  * You can use this as a starting point to customize the data to generate a
  * URL in the format expected by your server.
  *
- * @module data-output
- * @class sample-output-plugin
+ * @module data-transport
+ * @class sample-get-plugin
  */
 /*--------------------------------------------------------------------------*/
 
@@ -18,8 +18,8 @@
    * Metadata about this plug-in for use by UI tools and the Hub
    */
   var metadata = {
-  	id: 'sample-output-plugin',
-    name: 'Sample Output Plugin',
+  	id: 'sample-get-plugin',
+    name: 'Sample HTTP GET transport plugin',
     version: 0.1,
     author: "Fiann O'Hagan",
     email: 'fiann.ohagan@jshub.org',
@@ -39,14 +39,22 @@
    */
   send = function(event) {
   
-    jsHub.logger.group("Sample output: sending '%s' event", event.type);
+    jsHub.logger.group("Sample get transport: sending '%s' event", event.type);
     
     /**
      * URL to dispatch to the server
-     * TODO where should we configure this?
+     * Note that the field <code>server_url</code> in the string is replaced
+     * when the tag is generated.
      */
-    var url = "http://localhost/core/blackhole/";
+    var url = "<%= server_url %>/path";
     
+	/**
+	 * Each field in this object is serialized as a name=value pair in the query
+	 * string of the URL that is created for the image request.
+	 * You can put any data in this object. If the value of a field is an array,
+	 * then it will be used to generate multiple name=value pairs in the resulting
+	 * query string.
+	 */
     var data = {
       sender: metadata.name + " v" + metadata.version,
       pagename: event.data.name
@@ -60,7 +68,7 @@
   /*
    * Bind the plugin to the Hub so as to run when events we are interested in occur
    */
-  jsHub.bind("page-view", metadata.id, transport);
+  jsHub.bind("page-view", metadata.id, send);
   
   // lifecycle notification
   jsHub.trigger("plugin-initialization-complete", metadata);
