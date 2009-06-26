@@ -40,7 +40,7 @@ class JavascriptTest < ActionController::IntegrationTest
     reports_folder = "#{RAILS_ROOT}/test/reports"
     FileUtils.mkpath reports_folder
     temp_folder = "#{RAILS_ROOT}/tmp/test/javascript"
-    FileUtils.mkpath(File.dirname "#{temp_folder}/#{test_case}")
+    FileUtils.mkpath(File.dirname("#{temp_folder}/#{test_case}"))
     File.open "#{temp_folder}/#{test_case}.html", "w" do |file|
       file.puts "#{@response.body}"
     end 
