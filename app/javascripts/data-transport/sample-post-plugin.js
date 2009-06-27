@@ -46,11 +46,18 @@
     jsHub.logger.group("Sample POST output: sending '%s' event", event.type);
     
     /**
+     * Account ID for the client
+     * Note that the field <code>account_id</code> in the string is replaced
+     * when the tag is generated.
+     */
+    var account = "<%= account_id %>";
+    
+    /**
      * URL to dispatch to the server
      * Note that the field <code>server_url</code> in the string is replaced
      * when the tag is generated.
      */
-    var url = "<%= server_url %>/path";
+    var url = "<%= server_url %>/account/" + account;
     
 	/**
 	 * Each field in this object is serialized as a name=value pair in the query
