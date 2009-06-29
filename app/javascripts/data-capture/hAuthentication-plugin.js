@@ -21,7 +21,7 @@
     author: 'Liam Clancy',
     email: 'liamc@jshub.org',
     vendor: 'jsHub.org',
-    type: 'data-capture'
+    type: 'microformat'
   };
   
   /*
