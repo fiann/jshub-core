@@ -67,7 +67,7 @@
     }
 	var row = Y.Node.create('<tr class="' + className + '">'+
       '<td>' + result.testCase.name + ': ' + result.testName + '</td>'+
-      '<td>' + result.type + 'ed</td>' +
+      '<td>' + result.type.replace('ignore', 'ignor') + 'ed</td>' +
       '<td>' + message + '</td></tr>')
     resultsTable.appendChild(row);
   };
