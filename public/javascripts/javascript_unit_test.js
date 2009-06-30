@@ -2,7 +2,7 @@
  * Visual logger for the YUI3 tests used to implement the unit tests.
  * Provides a better visual representation than the YUI Console.
  *
- * @author <a href="mailto:fiann@jshub.org">Fiann O'Hagan</a>
+ * @author <a href="mailto:fiann.ohagan@jshub.org">Fiann O'Hagan</a>
  */
 // Y is a YUI instance declared in the layout for the tests
 // suite contains the suite of tests for the page
