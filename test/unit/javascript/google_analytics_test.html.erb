@@ -181,8 +181,6 @@
     
     "test instrumented links": function() {
       window.clickHandlersTriggered = false;
-	  console.log("page tracker is "+pageTracker.toSource());
-	  console.log("_gat is "+_gat.toSource());
 	  var data, events = 0;
       jsHub.bind("page-view", "unittest", function(evt) {
         data = evt.data;
