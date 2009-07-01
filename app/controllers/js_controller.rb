@@ -17,8 +17,7 @@ class JsController < ApplicationController
         @title = "Files: src/#{params[:path].join('/')}"
         render :template => 'js/show_dir'
       else
-        @code = render_to_string :file => @path
-        @code = @code.gsub(/\t/, '  ')
+        @code = File.read(@path).gsub(/\t/, '  ')
         @title = "Source: #{params[:path].last()}"
         render :template => 'js/show_file'
       end
