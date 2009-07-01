@@ -11,8 +11,8 @@
 (function() {
 
   // TODO wrap window.console properly to stop x-browser errors
-  if (window.console && window.console.info) {
-    window.console.info("Running tests", suite);
+  if (window.jsHub) {
+    jsHub.logger.log("Running tests", suite);
   }
   
   if (typeof Y === 'undefined') {
@@ -47,7 +47,7 @@
    */
   var reportResult = function(result) {
     var className, message;
-    updateStatus("Test '" + result.testName + "' " + result.type + "ed.");
+    updateStatus("Test '" + result.testName + "' " + result.type.replace('ignore', 'ignor') + "ed.");
     switch (result.type) {
       case 'pass':
         className = 'passed';
@@ -74,7 +74,9 @@
   
   var reportCompletionStatus = function(evt) {
     var status, timeTaken = (+new Date()) - startTime;
-	console.log('results', evt.results);
+    if (window.jsHub) {
+      jsHub.logger.debug('Test results', evt.results);
+    }
 	if (evt.results.failed == 0) {
 	  status = evt.results.passed + " test" + 
 	    (evt.results.passed !== 1 ? "s" : "") +
@@ -89,7 +91,6 @@
 	updateStatus(status);
     // ... and send the results to the data collection server
     var reporter = new Y.Test.Reporter("../../results");
-    console.log(reporter)
     reporter.report(evt.results);
   }
   
