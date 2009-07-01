@@ -54,12 +54,12 @@
           console.group.apply(console, arguments);
         } else {
           this.log.apply(this, arguments);
-		}
+        }
       };
       this.groupEnd = function groupEnd() {
         if (logging_active && console.groupEnd) {
           console.groupEnd.apply(console, arguments);
-		}
+        }
       };
     },
 
