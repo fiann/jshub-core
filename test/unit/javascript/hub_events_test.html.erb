@@ -45,12 +45,11 @@
     name: "jsHub event dispatcher",
     
     setUp: function() {
-      window.listener1 = new MockListener("jshub");
-      window.listener2 = new MockListener("adserver");
-      window.listener3 = new MockListener("trustedService");
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
-      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
-      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
+	  // use a different listener for each test to prevent collisions
+      window.listener1 = new MockListener("listener1");
+      window.listener2 = new MockListener("listener2");
+      window.listener3 = new MockListener("listener3");
+      window.listener4 = new MockListener("listener4");
     },
     
     "test event triggered with no listeners": function() {
@@ -58,7 +57,7 @@
       Y.Assert.isTrue(true, "No errors were thrown");
     },
     
-    "test registering listener multiple times": function() {
+    "test registering listener explicitly multiple times": function() {
       jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
       jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
       var eventData = {
@@ -67,6 +66,54 @@
       };
       jsHub.trigger("page-view", eventData);
       Y.Assert.areEqual(1, listener1.events.length, "Event should be recorded once");
+    },
+    
+    "test registering listener globally with multiple events": function() {
+      jsHub.bind("*", listener2.authToken, listener2.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      jsHub.trigger("page-view", eventData);
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(3, listener2.events.length, "Three events should be recorded");
+    },
+    
+    "test registering listener globally multiple times": function() {
+      jsHub.bind("*", listener3.authToken, listener3.eventFired);
+      jsHub.bind("*", listener3.authToken, listener3.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener3.events.length, "Event should be recorded once");
+    },
+    
+    "test registering listener explicitly and globally": function() {
+      jsHub.bind("page-view", listener4.authToken, listener4.eventFired);
+      jsHub.bind("*", listener4.authToken, listener4.eventFired);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.Assert.areEqual(1, listener4.events.length, "Event should be recorded once");
+    }
+  }));
+    
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "Event level security",
+    
+    setUp: function() {
+      window.listener1 = new MockListener("jshub");
+      window.listener2 = new MockListener("adserver");
+      window.listener3 = new MockListener("trustedService");
+      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
+      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
     },
     
     "test custom event type, with implicit global visibility": function() {

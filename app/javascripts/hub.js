@@ -239,7 +239,20 @@
         // empty object if not defined
         data = data || {};
         // find all registered listeners for the specific event, and for "*"
-        var registered = $.merge(listeners[eventName] || [], listeners["*"] || []);
+        var registered = (listeners[eventName] || []);
+        var found, listener, listeners_all = (listeners["*"] || []), i, j;
+        for (i = 0; i < listeners_all.length; i++) {
+          listener = listeners_all[i];
+          found = false;
+          for (j = 0; j < registered.length; j++) {
+            if (registered[j].token === listener.token) {
+              found = true;
+            }
+          }
+          if (!found) {
+            registered.push(listener);
+          }
+        }
         for (var i = 0; i < registered.length; i++) {
           firewall.dispatch(eventName, registered[i], data);
         }
