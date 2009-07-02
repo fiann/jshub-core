@@ -32,6 +32,8 @@
     '<thead><tr><th>Test</th><th>Result</th><th>Message</th></tr></thead>' +
     '</table>');
   resultsDiv.appendChild(resultsTable);
+  resultsBody = Y.Node.create('<tbody></tbody>');
+  resultsTable.appendChild(resultsBody);
   
   /**
    * Show a message in the status bar above the test results
@@ -55,7 +57,7 @@
         break;
       case 'fail':
         className = 'failed';
-        message = '<pre>' + result.error + '</pre>';
+        message = '<pre>' + result.error.getMessage() + '</pre>';
         break;
       case 'ignore':
         className = 'ignored';
@@ -68,8 +70,8 @@
 	var row = Y.Node.create('<tr class="' + className + '">'+
       '<td>' + result.testCase.name + ': ' + result.testName + '</td>'+
       '<td>' + result.type.replace('ignore', 'ignor') + 'ed</td>' +
-      '<td>' + message + '</td></tr>')
-    resultsTable.appendChild(row);
+      '<td>' + message + '</td></tr>');
+    resultsBody.appendChild(row);
   };
   
   var reportCompletionStatus = function(evt) {
@@ -90,7 +92,7 @@
 	}
 	updateStatus(status);
     // ... and send the results to the data collection server
-    var reporter = new Y.Test.Reporter("../../results");
+    var reporter = new Y.Test.Reporter(window.location.pathname.replace(/test\/unit\/.*/, "test/results"));
     reporter.report(evt.results);
   }
   
