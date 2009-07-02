@@ -57,7 +57,9 @@
      * Note that the field <code>server_url</code> in the string is replaced
      * when the tag is generated.
      */
-    var url = "<%= server_url %>/account/" + account;
+    var url = "<%= server_url %>";
+	url = url.substring(url.length-1, url.length) == "/" ? "" : "/";
+	url += "account/" + account;
     
 	/**
 	 * Each field in this object is serialized as a name=value pair in the query
