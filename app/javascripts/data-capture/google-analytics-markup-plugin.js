@@ -65,10 +65,9 @@ if (window.jQuery && window.jsHub) {
       
       // note that jsHub is a valid global variable in the plugin
       jsHub.trigger("google-analytics-parse-start");
-      
       // if there is a GA script node, then look for the page name being sent from it
       $('script', context).each(function() {
-        var source = $(this).text(), matches, pagename;
+        var source = this.innerHTML, matches, pagename;
         if (typeof source === 'string') {
           matches = source.match(/pageTracker\._trackPageview\((.*)\);/);
           if (matches) {
