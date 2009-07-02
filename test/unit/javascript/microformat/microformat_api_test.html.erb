@@ -151,23 +151,24 @@
 /* <![CDATA[  // this script contains html, so escape it for Rhino parser */
 
   // the ugly regex's are required because of the way Rhino reserializes the innerHTML
+  // Allowing for UpperCase HTML tag names and optional '"'s is required as this is how IE represents the DOM
 
   suite.add(new Y.Test.Case({
     name: "Embedded HTML",
     
     "test inline HTML is preserved": function() {
       var value = $("#example5 .name").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/name with an <a( id="")? href="#"\s*>embedded link<\/a>/.test(value), "Excerpted: " + value);
+      Y.Assert.isTrue(/name with an <[Aa]( id="")? href="#"\s*>embedded link<\/[Aa]>/.test(value), "Excerpted: " + value);
     },
     
     "test whitespace in inline HTML is normalized": function() {
       var value = $("#example5 .title").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/title with whitespace and an <a( id="")? href="#"\s*>embedded link<\/a>/.test(value), "Excerpted: " + value);
+      Y.Assert.isTrue(/title with whitespace and an <[Aa]( id="")? href="#"\s*>embedded link<\/[Aa]>/.test(value), "Excerpted: " + value);
     },
     
     "test HTML is preserved within value class": function() {
       var value = $("#example5 .referrer").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/value class nesting more <a( id="")? href="#"\s*>html<\/a>/.test(value), "Excerpted: " + value);
+      Y.Assert.isTrue(/value class nesting more <[Aa]( id="")? href="#"\s*>html<\/[Aa]>/.test(value), "Excerpted: " + value);
     }
   }));
 // ]]>
@@ -200,17 +201,18 @@
 /* <![CDATA[  // this script contains html, so escape it for Rhino parser */
 
   // the ugly regex's are required because of the way Rhino reserializes the innerHTML
+  // Allowing for UpperCase HTML tag names and optional '"'s is required as this is how IE represents the DOM
 
   suite.add(new Y.Test.Case({
     name: "Nested value classes",
     
     "test nested value classes are treated as html": function() {
       var value = $("#example6 .name").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/name with a <span( id="")? class="value"\s*>nested value<\/span>/.test(value), "Excerpted page name: " + value);
+      Y.Assert.isTrue(/name with a <(SPAN|span)( id="")? class=(")?value(")?\s*>nested value<\/(SPAN|span)>/.test(value), "Excerpted page name: " + value);
       value = $("#example6 .title").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/title with a <span( id="" )?>nested span<\/span> and <span( id="")? class="value"\s*>nested value<\/span> inside/.test(value), "Excerpted title: " + value);
+      Y.Assert.isTrue(/title with a <(SPAN|span)( id="" )?>nested span<\/(SPAN|span)> and <(SPAN|span)( id="")? class=(")?value(")?\s*>nested value<\/(SPAN|span)> inside/.test(value), "Excerpted title: " + value);
       value = $("#example6 .referrer").getMicroformatPropertyValue();
-      Y.Assert.isTrue(/referrer with a <span( id="" )?>nested span and <span( id="")? class="value"\s*>nested value<\/span> inside that<\/span>/.test(value), "Excerpted referrer: " + value);
+      Y.Assert.isTrue(/referrer with a <(SPAN|span)( id="" )?>nested span and <(SPAN|span)( id="")? class=(")?value(")?\s*>nested value<\/(SPAN|span)> inside that<\/(SPAN|span)>/.test(value), "Excerpted referrer: " + value);
     }	
   }));
 // ]]>

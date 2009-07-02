@@ -10,6 +10,7 @@
 "use strict";
  
 (function () {
+ 
   var PluginAPI = {
 
     /** 
@@ -126,6 +127,21 @@
 /*--------------------------------------------------------------------------*/
 
 (function () {
+
+  /*
+   * trim whitespace at beginning and end of value and
+   * remove multiple spaces
+   */
+  function trim(value){
+    var value = value;
+    if (value !== null) {
+      value = jQuery.trim(value);
+      value = value.replace(/\s+/g, ' ');
+    }
+    return value;
+  };
+
+
   var MicroformatAPI = {
   	
     /**
@@ -199,10 +215,7 @@
       /*
        * trim whitespace at beginning and end of value
        */
-      if (value !== null) {
-        value = jQuery.trim(value);
-        value = value.replace(/\s+/g, ' ');
-      }
+      value = trim(value);
       
       return value;
     },
@@ -274,6 +287,12 @@
         if (type === "") {
           return null;
         }
+
+        /*
+         * trim whitespace at beginning and end of the type
+         */
+        type = trim(type);
+
         return {
           type: type,
           value: defaultValue
@@ -296,6 +315,7 @@
             value += jQuery(this).html();
           });
         }
+
         return {
           type: type,
           value: value
