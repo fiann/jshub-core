@@ -86,7 +86,7 @@ class LitmusTestRunController < ApplicationController
       @test_run.litmus_test_pages.each do |page|
         begin
           # Use the TestPage Id in the URL for when results are submited
-          page.url = "http://test.cross-domain-com.com:81/akita-on-rails/test/external/#{page.id}/unit/#{page.url}"
+          page.url = "http://test.cross-domain-com.com:81/core/test/external/#{page.id}/unit/#{page.url}"
 
           # create the test on via the Litmus API
           @test = LitmusResource::Page.new(:url => page[:url], :use_defaults => @test_run.use_defaults.to_s)

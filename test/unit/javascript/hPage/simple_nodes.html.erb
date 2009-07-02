@@ -231,15 +231,17 @@
 </div>
 <script type="text/javascript">
 /* <![CDATA[  // this script contains html, so escape it for Rhino parser */
+/* Allowing for UpperCase HTML tag names and optional '"'s is required as this is how IE represents the DOM */
+
   suite.add(new Y.Test.Case({
     name: "Embedded HTML",
     
     "test inline HTML is preserved": function() {
       var data = suite.parse("#example5");	
 	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
-      Y.Assert.isTrue(/name with an <a( id=""\s*)? href="#"\s*>embedded link<\/a>/.test(data.name), "Excerpted page name: " + data.name);
-      Y.Assert.isTrue(/title with whitespace and an <a( id=""\s*)? href="#"\s*>embedded link<\/a>/.test(data.title), "Excerpted title: " + data.title);
-      Y.Assert.isTrue(/referrer with a <span( id=""\s*)?>span nesting more <a( id=""\s*)? href="#"\s*>html<\/a><\/span>/.test(data.referrer), "Excerpted referrer: " + data.referrer);
+      Y.Assert.isTrue(/name with an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data.name), "Excerpted page name: " + data.name);
+      Y.Assert.isTrue(/title with whitespace and an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data.title), "Excerpted title: " + data.title);
+      Y.Assert.isTrue(/referrer with a <(SPAN|span)( id=""\s*)?>span nesting more <[Aa]( id=""\s*)? href=(")?#(")?\s*>html<\/[Aa]><\/(SPAN|span)>/.test(data.referrer), "Excerpted referrer: " + data.referrer);
     }
   }));
 // ]]>

@@ -42,7 +42,7 @@
       Y.Assert.areEqual(1, plugins.length, "hPage plugin registered at start of test");
 	  var metadata = plugins[0];
 	  Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name);
-	  Y.Assert.areEqual('data-capture', metadata.type);
+	  Y.Assert.areEqual('microformat', metadata.type);
     },
 	
     "test plugin metadata cannot be modified": function() {
