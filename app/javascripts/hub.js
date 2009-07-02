@@ -253,8 +253,8 @@
             registered.push(listener);
           }
         }
-        for (var i = 0; i < registered.length; i++) {
-          firewall.dispatch(eventName, registered[i], data);
+        for (var k = 0; k < registered.length; k++) {
+          firewall.dispatch(eventName, registered[k], data);
         }
         jsHub.logger.groupEnd();
 		// additional special behavior for particular event types

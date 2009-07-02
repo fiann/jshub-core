@@ -132,14 +132,13 @@
    * trim whitespace at beginning and end of value and
    * remove multiple spaces
    */
-  function trim(value){
-    var value = value;
+  function trim (value){
     if (value !== null) {
       value = jQuery.trim(value);
       value = value.replace(/\s+/g, ' ');
     }
     return value;
-  };
+  }
 
 
   var MicroformatAPI = {
