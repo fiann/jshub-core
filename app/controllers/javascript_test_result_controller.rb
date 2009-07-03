@@ -25,7 +25,7 @@ class JavascriptTestResultController < ApplicationController
   
   # GET /test/results
   def index
-    @results = JavascriptTestResult.find(:all, :order => 'created_at DESC', :limit => 20)
+    @results = JavascriptTestResult.find(:all, :order => 'created_at DESC', :limit => 500)
   end
 
   # GET /test/results/1
