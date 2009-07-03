@@ -92,7 +92,8 @@
 	}
 	updateStatus(status);
     // ... and send the results to the data collection server
-    var reporter = new Y.Test.Reporter(window.location.pathname.replace(/test\/unit\/.*/, "test/results"));
+	var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
+    var reporter = new Y.Test.Reporter(resultsUrl);
     reporter.report(evt.results);
   }
   
