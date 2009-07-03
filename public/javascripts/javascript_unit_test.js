@@ -97,7 +97,7 @@
 	  var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
 	  
 	  // or if its a Litmus test, e.g. http://some.domain/core/test/external/7:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
- 	  resultsUrl = window.location.pathname.replace(/test\/external\/(\d)\/.*/, "test/external/$1/results");
+ 	  resultsUrl = window.location.pathname.replace(/test\/external\/(\d+)\/.*/, "test/external/$1/results");
     
     var reporter = new Y.Test.Reporter(resultsUrl);
     reporter.report(evt.results);
