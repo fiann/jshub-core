@@ -19,7 +19,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # Serve the Javascript unit test files
   map.connect '/test/data-capture', :controller => 'javascript_test', :action => 'data_capture'
-  map.connect '/test/unit/*path', :controller => 'javascript_test'
+  map.javascript_test '/test/unit/*path', :controller => 'javascript_test'
   
   # Collect data from the YUI test javascript
   map.resources :javascript_test_result, :as => 'test/results', :collection => { :destroy_all => :delete } 
