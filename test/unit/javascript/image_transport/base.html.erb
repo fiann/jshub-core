@@ -18,7 +18,13 @@
 <script language="javascript" type="text/javascript">
 (function() {
 	
-  var baseUrl = window.location.protocol + "//" + window.location.host;
+  var baseUrl = (function() {
+    if (window.location.protocol === "file:") {
+      return "";
+    } else {
+      return window.location.protocol + "//" + window.location.host;
+    }
+  })();
 
   /* 
    * Check the browser environment for required JS libraries and other 
