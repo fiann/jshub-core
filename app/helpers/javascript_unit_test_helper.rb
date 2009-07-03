@@ -8,15 +8,8 @@ module JavascriptUnitTestHelper
     "#{@title} < Unit Tests"
   end
     
-  def render_test_listing
-    listing = ''
-    @files.each do |f|
-      unless (f =~ /^\.+/ || f == 'index.html.erb') 
-        f.sub!(/\.html\.erb$/, "")
-        listing += "<li>#{link_to f, :path => params[:path] + [f]}</li>" 
-      end
-    end
-    return listing
+  def internet_explorer?
+    request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/(MSIE)/]
   end
   
 end

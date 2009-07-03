@@ -1,3 +1,4 @@
+require "pathname"
 # Serve the JS test files as static html
 # Inspired by http://snafu.diarrhea.ch/blog/article/4-serving-static-content-with-rails
 
@@ -30,10 +31,12 @@ class JavascriptTestController < ApplicationController
   #
   # TODO make this read from functional as well as unit folders
   def index
-    path = "#{RAILS_ROOT}/test/unit/javascript/#{params[:path].join('/')}"
+    path = Pathname.new("#{RAILS_ROOT}/test/unit/javascript/#{params[:path].join('/')}")
     
-    if File.directory? path
-      @files = Dir.entries path
+    if path.directory?
+      children = path.children.reject{|f| f.basename.to_s =~ /^\.+/ }
+      @folders = children.reject{|f| f.file?}
+      @files = children.reject{|f| f.directory?}
       render :template => 'javascript_unit_test/index', :layout => 'js'
     
     elsif template_exists? path = "#{path}.html.erb"
