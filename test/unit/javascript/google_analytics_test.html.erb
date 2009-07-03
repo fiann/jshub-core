@@ -33,60 +33,6 @@
 <% end %>
 
 
-<!-- Any HTML you may require for your tests to work properly -->
-<div id="example1">
-  <h3>Example 1: no	explicit page name</h3>
-  <p>The google tag will record the page URL</p>
-  <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
-    pageTracker._trackPageview();
-  </script>
-</div>
-
-<div id="example2">
-  <h3>Example 2: explicit page name</h3>
-  <p>The google tag will record the name "Test page"</p>
-  <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
-    pageTracker._trackPageview("Test page");
-  </script>
-</div>
-
-<div id="example3">
-  <h3>Example 3: error with duplicate page name</h3>
-  <p class="hpage">
-  	The microformat contains the page name "<span class="name">new name</span>".
-  </p>
-  <p>
-  	The google tag will record the name "Test page".
-    This should throw a warning event that the inspector can detect.
-  </p>
-  <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
-    pageTracker._trackPageview("Test page");
-  </script>
-</div>
-
-<div id="example4">
-  <h3>Example 4: javascript mediated event</h3>
-  <p>
-  	The text contains a <a href="#" onclick="clickHandlersTriggered=true; pageTracker._trackPageview('Link click');">link
-	with tracking</a>, when it is clicked it should be recorded by GA.
-  </p>
-</div>
-
 <script language="javascript" type="text/javascript">
   /* 
    * Check the browser environment for required JS libraries and other
@@ -123,8 +69,23 @@
     Y.Assert.areEqual(1, count, 'wrong number of page view events have been generated');
 	return data;
   };
-  
+</script>  
 
+
+<!-- Any HTML you may require for your tests to work properly -->
+<div id="example1">
+  <h3>Example 1: no	explicit page name</h3>
+  <p>The google tag will record the page URL</p>
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-8152756-1");
+    pageTracker._trackPageview();
+  </script>
+</div>
+<script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Capture default (non-specified) page name",
     
@@ -140,7 +101,21 @@
       Y.Assert.areEqual('location.pathname', data['name-source'], 'name-source is not correct');
     }
   }));
-  
+</script>  
+
+<div id="example2">
+  <h3>Example 2: explicit page name</h3>
+  <p>The google tag will record the name "Test page"</p>
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-8152756-1");
+    pageTracker._trackPageview("Test page");
+  </script>
+</div>
+<script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Capture explicit values",
     
@@ -155,7 +130,27 @@
       Y.Assert.areEqual(pluginId, data['name-source'], 'name-source is not correct');
     }
   }));
-  
+</script>  
+
+<div id="example3">
+  <h3>Example 3: error with duplicate page name</h3>
+  <p class="hpage">
+  	The microformat contains the page name "<span class="name">new name</span>".
+  </p>
+  <p>
+  	The google tag will record the name "Test page".
+    This should throw a warning event that the inspector can detect.
+  </p>
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-8152756-1");
+    pageTracker._trackPageview("Test page");
+  </script>
+</div>
+<script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Check error messages",
     
@@ -175,7 +170,16 @@
 	  Y.Assert.areEqual("Test page", data.name, 'Page name should contain the last defined value');
     }
   }));
-  
+</script> 
+
+<div id="example4">
+  <h3>Example 4: javascript mediated event</h3>
+  <p>
+  	The text contains a <a href="#" onclick="clickHandlersTriggered=true; pageTracker._trackPageview('Link click');">link
+	with tracking</a>, when it is clicked it should be recorded by GA.
+  </p>
+</div>
+<script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Check post-load events",
     
