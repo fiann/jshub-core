@@ -91,8 +91,12 @@
 	  statusBar.addClass("failed");
 	}
 	updateStatus(status);
-    // ... and send the results to the data collection server
-	var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
+	  // sample URLs:
+	  // local test: 
+    // ... and send the results to the local data collection server
+	  var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
+	  // or if its a Litmus test, e.g. http://some.domain/core/test/external/72/unit/hub_configuration_test
+ 	  resultsUrl = window.location.pathname.replace(/test\/external\/.*/, "test/results");
     var reporter = new Y.Test.Reporter(resultsUrl);
     reporter.report(evt.results);
   }
