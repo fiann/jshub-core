@@ -78,7 +78,7 @@ if (window.jQuery && window.jsHub) {
             } else {
               // otherwise it has been explicitly specified
 			  pagename = matches[1].replace(/^\s+/, '').replace(/\s+$/, '');
-	          pagename = pagename.match(/^(['"]?)(.+)(\1)$/)[2];
+	          pagename = pagename.match(/^(['"]|&quot;?)(.+)(\1)$/)[2];
               data['name-source'] = metadata.id;
             }
             pagenames.push(pagename);
