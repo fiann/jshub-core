@@ -8,9 +8,3 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
-
-# convert test output to XML for Hudson
-# ref: http://blog.huikau.com/2008/01/09/jruby-ruby-continuous-integration-with-hudson/
-require 'rubygems'
-gem 'ci_reporter'
-require 'ci/reporter/rake/test_unit'
