@@ -25,21 +25,22 @@ Rails::Initializer.run do |config|
   # Detect and load gems needed
   # ref: http://www.fngtps.com/2008/12/adding-development-gem-dependencies-to-a-rails-application
   
-  # for JUnit XML reports
-  config.gem "ci_reporter", :lib => "ci/reporter/core" unless RAILS_ENV == 'production'
-  # for diagrams
-  config.gem "railroad", :lib => "railroad/diagram_graph"
   # the database we use
-  config.gem "sqlite3-ruby", :lib => "sqlite3"
-  # for deployment
-  config.gem "capistrano"
-  # along with Apache
-  config.gem "passenger" if RAILS_ENV == 'production' || RAILS_ENV == 'passenger'
-  # for YUI results capture
-#  config.gem "json"
+  config.gem "sqlite3-ruby", :version => '>= 1.2.1', :lib => "sqlite3"
+  config.gem "haml", :version => '>= 2.2.1'
+  # for generating diagrams see http://railroad.rubyforge.org/
+  config.gem "railroad", :version => '>= 0.5.0', :lib => "railroad/diagram_graph"
   # for writing XPI file
-#  config.gem "rubyzip"
-  config.gem "haml", :version => '2.0.9'
+  config.gem "rubyzip", :version => '>= 0.9.1', :lib => "zip/zip"
+
+  # for deployment
+  config.gem "capistrano", :version => '>= 2.5.8'
+  # along with Apache integration
+  config.gem "passenger" if RAILS_ENV == 'jshub' || RAILS_ENV == 'passenger'
+  
+  # convert test output to XML for CI Servers like Hudson and CruiseControl
+  # ref: http://blog.huikau.com/2008/01/09/jruby-ruby-continuous-integration-with-hudson/
+  config.gem "ci_reporter", :lib => "ci/reporter/core" if RAILS_ENV == 'gromit'
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
