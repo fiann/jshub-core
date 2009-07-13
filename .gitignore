@@ -11,3 +11,6 @@ db/*.sqlite3
 # Ignore CI test reports
 test/reports/*
 test/reports/**/*
+
+# Ignore generated zip archives
+public/download/*.zip

@@ -57,9 +57,16 @@ namespace :custom do
   task :link_app_config do
     run "ln -nfs #{shared_path}/config/app_config.yml #{release_path}/config/app_config.yml" 
   end
+  
+  desc "Create an archive of this application and put it in the downloads folder"
+  task :archive do
+    puts "Creating archive"
+    run "git archive --format=zip HEAD > public/download/jshub-core.zip"  
+  end
 end
 # use our custom tasks at the appropriate time
 # e.g. before :deploy, :my_custom_task
 #      after  "deploy:symlink", :do_this, :and_do_that
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
 after "deploy:symlink",   "custom:link_webroot", "custom:link_app_config"
+after "deploy:restart", "custom:archive"
