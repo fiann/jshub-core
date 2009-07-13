@@ -75,7 +75,6 @@
      */
     sources = $('.hauthentication', context);
 	sources = sources.not(sources.find('.hauthentication'));
-	console.debug("Found %s .hauthentication islands in context %s", sources.length, context);
     
     /*
      * The parser will populate an object to represent the data according
