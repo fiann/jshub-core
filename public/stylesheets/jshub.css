@@ -1,12 +1,11 @@
 /* Stylesheet for the jsHub pages */
 body {
   margin: 0 10px 10px 10px;
-  font-family: Optima, Georgia, serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 1em;
   font-style: normal;
-  font-weight: lighter;
   color: #000;
-  background: #e2e4e9 url("../images/jshub/bg_body.png") repeat-x;
+  background: #fff url("../images/jshub/bg_body.png") repeat-x;
 }
 
 li {
@@ -43,12 +42,17 @@ hr { border: none;  border-top: 1px solid #ccb; margin: 2em 0 }
 
 #content {
   position: relative;
-  background-color: #fff;
-  margin-left: 48px;
-  margin-right: 48px;
-  padding-left: 64px;
-  padding-right: 64px;
-  padding-bottom: 2em;
+  background-color: #efefef;
+  margin: 48px;
+  padding: 15px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 1px solid #a1a1a1;
+  border-bottom: 1px solid #a1a1a1;
+  border-radius: 1.0em;
+  -moz-border-radius: 1.0em;
+  border-radius-topright: 0;
+  -moz-border-radius-topright: 0;
 }
 
 /* Navigation */
