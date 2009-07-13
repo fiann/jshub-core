@@ -9,4 +9,5 @@ doc/app
 db/*.sqlite3
 
 # Ignore CI test reports
+test/reports/*
 test/reports/**/*

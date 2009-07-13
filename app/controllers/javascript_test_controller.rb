@@ -67,6 +67,17 @@ class JavascriptTestController < ApplicationController
 
   
 private
+
+# Define template_exists? as it is deprecated in Rails 2.3
+# ref. comments in original article and http://railsforum.com/viewtopic.php?id=28135
+unless ActionController::Base.private_instance_methods.include? 'template_exists?' 
+  def template_exists?(path)
+    self.view_paths.find_template(path, response.template.template_format) 
+  rescue ActionView::MissingTemplate 
+    false 
+  end
+end
+
   def render_cached(path, layout=true)
     if NO_CACHE.include? path
       render :template => path

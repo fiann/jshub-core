@@ -58,9 +58,15 @@
      * when the tag is generated.
      */
     var url = "<%= server_url %>";
-	url = url.substring(url.length-1, url.length) == "/" ? "" : "/";
-	url += "account/" + account;
-    
+
+    /**
+     * Append account ID if supplied
+     */
+    if(account !== ""){
+      url += url.substring(url.length-1, url.length) == "/" ? "" : "/";
+      url += "account/" + account;
+    }    
+
 	/**
 	 * Each field in this object is serialized as a name=value pair in the query
 	 * string of the URL that is created for the image request.
