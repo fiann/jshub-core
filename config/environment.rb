@@ -36,7 +36,7 @@ Rails::Initializer.run do |config|
   # for deployment
   config.gem "capistrano", :version => '>= 2.5.8'
   # along with Apache integration
-  config.gem "passenger" if RAILS_ENV == 'jshub' || RAILS_ENV == 'passenger'
+  config.gem "passenger", :lib => false if RAILS_ENV == 'jshub' || RAILS_ENV == 'gromit' || RAILS_ENV == 'passenger'
   
   # convert test output to XML for CI Servers like Hudson and CruiseControl
   # ref: http://blog.huikau.com/2008/01/09/jruby-ruby-continuous-integration-with-hudson/
