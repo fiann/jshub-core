@@ -61,7 +61,7 @@ namespace :custom do
   desc "Create an archive of this application and put it in the downloads folder"
   task :archive do
     puts "Creating archive"
-    run "git archive --format=zip HEAD > public/download/jshub-core.zip"  
+    run "cd #{current_path} && git archive --format=zip HEAD > #{current_path}/public/download/jshub-core.zip"  
   end
 end
 # use our custom tasks at the appropriate time
