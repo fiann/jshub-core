@@ -21,9 +21,9 @@ class JavascriptTest < ActionController::IntegrationTest
     # Define a test method for each test
     test_cases.each do |test_case|
       if test_case =~ /(test\/unit\/javascript\/)?(.+)\.html\.erb$/
-        test_case = Regexp.last_match[2]
-        define_method "test_htmlfile_#{test_case}" do
-          execute_test(test_case)
+        filename = Regexp.last_match[2]
+        define_method "#{test_case}" do
+          execute_test(filename)
         end
       end
     end
@@ -49,6 +49,6 @@ class JavascriptTest < ActionController::IntegrationTest
     test_runner = "#{RAILS_ROOT}/lib/testing/javascript_test_runner.js"
     test_file = "#{temp_folder}/#{test_case}.html"
     debug = ENV['DEBUG'] ? 'debug' : ''
-    rhinojs.run(test_runner, [test_file, debug])
+    assert rhinojs.run(test_runner, [test_file, debug]), "At least one failure"
   end
 end
