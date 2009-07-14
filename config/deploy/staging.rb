@@ -3,6 +3,9 @@
 
 puts "Deploying to STAGING"
 
+# The gateway server is accessed before anything else and all ssh commands sent via it so that other servers do not have to be exposed through the firewall
+set :gateway,     "intra.causata.com"
+
 set :scm_domain,  "jshub.org"
 set :domain,      "gromit"
 set :rails_env,   "gromit"
