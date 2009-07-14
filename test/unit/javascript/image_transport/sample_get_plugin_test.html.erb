@@ -1,0 +1,116 @@
+<% set_title "Image Transport < Data Transport" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-transport/sample-get-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">image transport test suite</a> tests <strong>data output from the tag
+  to servers</strong> using the HTTP GET method.
+</p>
+<p>
+  This page tests the sample GET plugin provided as a starting point for vendor developers.
+</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  var baseUrl = (function() {
+    if (window.location.protocol === "file:") {
+      return "";
+    } else {
+      return window.location.protocol + "//" + window.location.host;
+    }
+  })();
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+    }
+  }));
+  
+  /* 
+   * Create a mock for the API function
+   */
+  var MockAPI = function() {
+    var self = this;
+    self.dispatchViaImage = function(url, data) {
+      self.dispatchViaImage.count++;
+      self.dispatchViaImage.url = url;
+      self.dispatchViaImage.data = data;
+    };
+    self.dispatchViaImage.count = 0;
+    
+    jsHub.dispatchViaImage = self.dispatchViaImage;
+  };
+  
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "Event binding",
+    
+    "test page views are dispatched": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {});
+      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+    },
+    
+    "test page name is captured": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {
+        name: "Homepage"
+      });
+      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      var expectedData = {
+        sender: "Sample HTTP GET transport plugin v0.1",
+        pagename: "Homepage"
+      };
+      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+    },
+    
+    "test page name fails over to url": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {
+	  	// 'name' not specified 
+        url: "http://www.example.com/index.html"
+      });
+      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      var expectedData = {
+        sender: "Sample HTTP GET transport plugin v0.1",
+        pagename: "http://www.example.com/index.html"
+      };
+      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+    },
+    
+    "test page name fails over to nothing": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {
+	  	// 'name' and 'url' not specified 
+      });
+      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      var expectedData = {
+        sender: "Sample HTTP GET transport plugin v0.1",
+        pagename: "not defined"
+      };
+      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+    }
+		
+  }));
+})();
+
+  
+</script> 

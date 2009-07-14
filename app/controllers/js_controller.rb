@@ -4,7 +4,8 @@ class JsController < ApplicationController
   
   def src
     if File.exists? path = SRC_PATH + params[:path].join('/')
-      render :content_type => 'text/javascript', :file => path
+      code = File.read(path)
+      render :content_type => 'text/javascript', :text => code
     else
       render :status => :not_found, :text => "Not found: #{path}"
     end

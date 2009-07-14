@@ -72,7 +72,7 @@
 	 */
     var data = {
       sender: metadata.name + " v" + metadata.version,
-      pagename: event.data.name
+      pagename: event.data.name || event.data.url || "not defined"
     };
     
     // dispatch via API function
