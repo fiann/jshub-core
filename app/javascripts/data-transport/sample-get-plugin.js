@@ -72,9 +72,9 @@
 	 */
     var data = {
       sender: metadata.name + " v" + metadata.version,
-      pagename: (event.data.name || event.data.url || "not defined")
+      pagename: event.data.name || event.data.url || "not defined"
     };
-    
+
     // dispatch via API function
     jsHub.dispatchViaImage(url, data);
     jsHub.logger.groupEnd();

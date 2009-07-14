@@ -17,14 +17,6 @@
 <script language="javascript" type="text/javascript">
 (function() {
 	
-  var baseUrl = (function() {
-    if (window.location.protocol === "file:") {
-      return "";
-    } else {
-      return window.location.protocol + "//" + window.location.host;
-    }
-  })();
-
   /* 
    * Check the browser environment for required JS libraries and other 
    * supporting functionality to avoid false test failure results due to 
@@ -49,12 +41,12 @@
    */
   var MockAPI = function() {
     var self = this;
+    self.count = 0;
     self.dispatchViaImage = function(url, data) {
-      self.dispatchViaImage.count++;
-      self.dispatchViaImage.url = url;
-      self.dispatchViaImage.data = data;
+      self.count++;
+      self.url = url;
+      self.data = data;
     };
-    self.dispatchViaImage.count = 0;
     
     jsHub.dispatchViaImage = self.dispatchViaImage;
   };
@@ -66,7 +58,7 @@
     "test page views are dispatched": function() {
       var mock = new MockAPI();
       jsHub.trigger("page-view", {});
-      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
     },
     
     "test page name is captured": function() {
@@ -74,12 +66,12 @@
       jsHub.trigger("page-view", {
         name: "Homepage"
       });
-      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
       var expectedData = {
         sender: "Sample HTTP GET transport plugin v0.1",
         pagename: "Homepage"
       };
-      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+      Y.ObjectAssert.areEqual(expectedData, mock.data, "data is not correct");
     },
     
     "test page name fails over to url": function() {
@@ -88,12 +80,12 @@
 	  	// 'name' not specified 
         url: "http://www.example.com/index.html"
       });
-      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
       var expectedData = {
         sender: "Sample HTTP GET transport plugin v0.1",
         pagename: "http://www.example.com/index.html"
       };
-      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+      Y.ObjectAssert.areEqual(expectedData, mock.data, "data is not correct");
     },
     
     "test page name fails over to nothing": function() {
@@ -101,12 +93,12 @@
       jsHub.trigger("page-view", {
 	  	// 'name' and 'url' not specified 
       });
-      Y.Assert.areEqual(1, mock.dispatchViaImage.count, "dispatchViaImage() should be called once");
+      Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
       var expectedData = {
         sender: "Sample HTTP GET transport plugin v0.1",
         pagename: "not defined"
       };
-      Y.ObjectAssert.areEqual(expectedData, mock.dispatchViaImage.data, "data is not correct");
+      Y.ObjectAssert.areEqual(expectedData, mock.data, "data is not correct");
     }
 		
   }));
