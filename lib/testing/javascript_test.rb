@@ -33,7 +33,7 @@ class JavascriptTest < ActionController::IntegrationTest
     puts "Executing #{test_case}"
     
     assert_routing "/test/unit/#{test_case}", { :controller => 'javascript_test', 
-      :action => 'index', :path => test_case.split('/') }
+      :action => 'unit', :path => test_case.split('/') }
     get "/test/unit/#{test_case}", {:view => 'min'}
     assert_response :success, "Test file #{test_case} not found"
     
