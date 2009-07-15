@@ -90,7 +90,7 @@
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
      */
     // TODO support currency design pattern
-    var properties = ["n", "price", "quantity"];
+    var properties = ["fn", "description", "brand", "price"];
     
     
     sources.each(function (idx, elm) {
@@ -132,7 +132,9 @@
     
     jsHub.trigger("hproduct-parse-complete", data);
     
-    return data;
+	// don't return data as the product view is not part of the page view event that triggered
+	// the parsing
+    return;
   };
   
   /*
