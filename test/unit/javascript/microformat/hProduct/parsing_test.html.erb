@@ -1,4 +1,4 @@
-<% set_title "hProduct value excerpting < Microformat Parser" %>
+<% set_title "hProduct parsing < Microformat Parser" %>
 
 <% content_for :javascripts do %>  
   <%= javascript_include_tag "/js/src/data-capture/hProduct-plugin.js" %>
@@ -6,7 +6,10 @@
 
 <% content_for :intro do %>
 <p>
-  This file tests the <strong><a href="http://jshub.org/project/wiki/hProduct/parser" title="hProduct parser specification">hProduct</a> microformat parser behaviour</strong>.
+  This file tests the <strong><a href="http://jshub.org/trac/wiki/hProduct/parser" 
+    title="hProduct parser specification">parser implementation</a> for the 
+	<a href="http://microformats.org/wiki/hproduct" title="hProduct microformat specification">hProduct 
+	microformat</a></strong>.
 </p>
 <p>
   This page tests the rules for determining the value of a property (value excerpting) and the default values of undeclared properties.
@@ -56,56 +59,61 @@
   -->
 <div id="example1">
   <div class="hproduct">
-    Example 1: No hProduct properties are set:
+    Example 1: Required hProduct properties are set:
     <ul>
-      <li>n: required field, not present</li>
+      <li>fn: required field, value is <span class="fn">Product name</span></li>
+      <li>price: optional field, not present</li>
+      <li>brand: optional field, not present</li>
+    </ul>
+  </div>
+</div>
+<div id="example2">
+  <div class="hproduct">
+    Example 2: Required and optional hProduct properties are set:
+    <ul>
+      <li>fn: required field, value is <span class="fn">A great product</span></li>
+      <li>price: optional field, value is £<span class="price">23.99</span></li>
+      <li>brand: optional field, value is <span class="brand">jsHub</span></li>
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({ 
+    name : "Core microformat parsing",
+
+    "test required values specified" : function () {
+      var data = suite.parse("#example1");
+      Y.Assert.areEqual("Product name", data['fn'], 'fn is not the same as the declaration');
+    },
+
+    "test optional values specified" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual("23.99", data['price'], 'price is not the same as the declaration');
+      Y.Assert.areEqual("jsHub", data['brand'], 'brand is not the same as the declaration');
+    }
+  }));
+</script> 
+
+<div id="example3">
+  <div class="hproduct">
+    Example 3: No hProduct properties are set:
+    <ul>
+      <li>fn: required field, not present</li>
       <li>price: optional field, not present</li>
       <li>quantity: required field, not present</li>
     </ul>
   </div>
 </div>
-
-<div id="example2">
-  <div class="hproduct">
-    Example 2: hProduct properties are set:
-    <ul>
-      <li>n: required field, value is <span class="n">Product name</span></li>
-      <li>price: optional field, not present</li>
-      <li>quantity: optional field, not present</li>
-    </ul>
-  </div>
-</div>
-
-<div id="example3">
-  <div class="hproduct">
-    Example 3: hProduct properties are set:
-    <ul>
-      <li>n: required field, value is <span class="n">A great product</span></li>
-      <li>price: optional field, value is £<span class="price">23.99</span></li>
-      <li>quantity: optional field, value is <span class="quantity">6</span></li>
-    </ul>
-  </div>
-</div>
 <script type="text/javascript">
   suite.add(new Y.Test.Case({ 
-    name : "Microformat parsing",
+    name : "Missing value parsing",
 
     // see #234, we still send the event even if it is not well-formed, and the server
 	// sends back an error message	
-    "test product view is generated without required fields" : function () {
-      var data = suite.parse("#example1");
-      Y.Assert.isUndefined(data['n'], 'n is not specified, it is required');
-    },
-
-    "test required values specified" : function () {
-      var data = suite.parse("#example2");
-      Y.Assert.areEqual("Product name", data['n'], 'n is not the same as the declaration');
-    },
-
-    "test optional values specified" : function () {
+    "test product view is generated when required fields are missing" : function () {
       var data = suite.parse("#example3");
-      Y.Assert.areEqual("23.99", data['price'], 'price is not the same as the declaration');
-      Y.Assert.areEqual("6", data['quantity'], 'quantity is not the same as the declaration');
+      Y.Assert.isUndefined(data['fn'], 'fn is not specified, it is required');
     }
   }));
-</script> 
+</script>
