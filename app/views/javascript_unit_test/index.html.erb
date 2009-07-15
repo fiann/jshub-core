@@ -3,7 +3,7 @@
 <h1>Unit test files</h1>
 
 <p>
-  <%= link_to 'unit tests', javascript_test_path %>
+  <%= link_to 'unit tests', javascript_test_path(:unit) %>
   <% params[:path].each_index do |i| %>
   / <%= link_to params[:path][i], :path => params[:path][0..i] %>
   <% end %>

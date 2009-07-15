@@ -11,19 +11,17 @@ ActionController::Routing::Routes.draw do |map|
 
   # External access to the Javascript unit test files including the Test Page Id in the path
   # TODO tidy up the data model this should really be a test run id
-  map.external_test '/test/external/:test_page_id/unit/*path', :controller => 'javascript_test'
   map.external_test_results '/test/external/:test_page_id/results', 
     :conditions => { :method => :post },
     :controller => 'javascript_test_result', 
     :action => 'create'
-  
-  # Serve the Javascript unit test files
-  map.connect '/test/data-capture', :controller => 'javascript_test', :action => 'data_capture'
-  map.javascript_test '/test/unit/*path', :controller => 'javascript_test'
-  
-  # Collect data from the YUI test javascript
-  map.resources :javascript_test_result, :as => 'test/results', :collection => { :destroy_all => :delete } 
-    
+  map.external_test '/test/external/:test_page_id/:action/*path', :controller => 'javascript_test'
+
+  # Collect data from the YUITest results POST
+  map.resources :javascript_test_result, :as => 'test/results', :collection => { :destroy_all => :delete }   
+  # Serve the Javascript test templates
+  map.javascript_test '/test/:action/*path', :controller => 'javascript_test'
+      
   # Tests run through the Litmus service
   map.resources :litmus_test_runs, :as => 'litmus/runs', :controller => 'litmus_test_run', 
     :collection => { :destroy_all => :delete } 
@@ -69,6 +67,6 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.
-  # map.connect ':controller/:action/:id'
-  # map.connect ':controller/:action/:id.:format'
+  #map.connect ':controller/:action/:id'
+  #map.connect ':controller/:action/:id.:format'
 end
