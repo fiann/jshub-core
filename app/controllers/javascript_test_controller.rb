@@ -4,9 +4,9 @@ class JavascriptTestController < ApplicationController
   # authenticity token 
   protect_from_forgery :except => :data_capture
   
-  # GET /test/unit/*
-  # GET /test/unit/*?view=min
-  # GET /test/external/:test_page_id/unit/*
+  # GET /test/:action/*path
+  # GET /test/:action/*path/*?view=min
+  # GET /test/external/:test_page_id/:action/*path
   # 
   # Render a test case page from the template. The actual test html is stored
   # under /test/unit/javascript. Templates for rendering folder views etc are 
@@ -20,25 +20,38 @@ class JavascriptTestController < ApplicationController
   # Note that you can place a YUItest test case in any other page or view in your
   # app, and as long as the results collector is correctly configured, it will 
   # work just as well.
-  #
-  # TODO make this read from functional as well as unit folders
+
+  # additional paths to look for templates, appended to allow for overrides in 'app/views'
+  # ref: http://rethink.unspace.ca/2009/5/21/cascading-view-paths-for-fun-and-profit
+  # ref: http://www.axehomeyg.com/2009/06/10/view-path-manipulation-for-rails-with-aop/
+  append_view_path "#{RAILS_ROOT}/test/unit/javascript"
+  append_view_path "#{RAILS_ROOT}/test/functional/javascript"
+
   def index
+    # forward to unit tests by default
+    redirect_to :action => 'unit'
+  end
+  
+  def unit
+    # Get full OS path to URL
     path = Pathname.new("#{RAILS_ROOT}/test/unit/javascript/#{params[:path].join('/')}")
-    
+    # if a directory we find the contents and generate a listing for navigation
     if path.directory?
       children = path.children.reject{|f| f.basename.to_s =~ /^\.+/ }
       @folders = children.reject{|f| f.file?}
       @files = children.reject{|f| f.directory?}
       render :template => 'javascript_unit_test/index', :layout => 'js'
-    
-    elsif FileTest.file? template = "#{path}.html.erb"
-      layout = (params[:view] == 'min') ? 'javascript_test_minimal' : true
-      render :template => template, :layout => layout
-
     else
-      raise ::ActionController::RoutingError,
-            "Recognition failed for #{path.relative_path_from(Pathname.new(RAILS_ROOT))}"
+      # use the *path part of the url set in the routes.rb to find the template
+      url = params[:path].join('/')
+      # chose the layout based on the 'min' parameter
+      layout = (params[:view] == 'min') ? 'javascript_test_minimal' : 'javascript_test'      
+      render :template => "#{url}", :layout => "#{layout}"
     end
+  end
+
+  def functional
+    # TODO make functional test templates
   end
   
   # POST /test/unit/data-capture
@@ -56,4 +69,4 @@ class JavascriptTestController < ApplicationController
       render :text => @data.to_json()
     end
   end
-end
+end  
