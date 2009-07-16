@@ -69,15 +69,20 @@
 </div>
 <div id="example2">
   <div class="hproduct">
-    Example 2: Required and optional hProduct properties are set:
+    Example 2: All hProduct properties are set, as per <%= link_to 'hProduct spec', 'http://microformats.org/wiki/hproduct#Schema' %>.
     <ul>
-      <li>fn: required field, value is <span class="fn">A great product</span></li>
-      <li>price: optional field, value is £<span class="price">23.99</span></li>
       <li>brand: optional field, value is <span class="brand">jsHub</span></li>
+      <li>category: optional field, value is <span class="category">parser</span></li>
+      <li>price: optional field, value is <span class="price">12.99</span></li>
+      <li>description: optional field, value is <span class="description">microformat parser for hProduct</span></li>
+      <li>fn: optional field, value is <span class="fn">hProduct parser</span></li>
+      <li>photo: optional field, value is <%= image_tag 'javascript_test/microformats.gif', :class => 'photo' %></li>
+      <li>url: optional field, value is <a class="url" rel="product" href="product.html">full product details</a></li>
+      <li>identifier: optional field, value is 
+	    <span class="identifier"><span class="type">SKU</span>: <span class="value">12345678</span></span></li>
     </ul>
   </div>
 </div>
-
 <script type="text/javascript">
   suite.add(new Y.Test.Case({ 
     name : "Core microformat parsing",
@@ -87,9 +92,33 @@
       Y.Assert.areEqual("Product name", data['fn'], 'fn is not the same as the declaration');
     },
 
-    "test optional values specified" : function () {
+    "test brand is captured" : function () {
       var data = suite.parse("#example2");
-      Y.Assert.areEqual("23.99", data['price'], 'price is not the same as the declaration');
+      Y.Assert.areEqual("jsHub", data['brand'], 'brand is not the same as the declaration');
+    },
+
+    "test category is captured" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual("parser", data['category'], 'category is not the same as the declaration');
+    },
+
+    "test description is captured" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual("microformat parser for hProduct", data['description'], 'description is not the same as the declaration');
+    },
+
+    "test product name is captured" : function () {
+      var data = suite.parse("#example2");
+      Y.Assert.areEqual("hProduct parser", data['fn'], 'fn (name) is not the same as the declaration');
+    },
+
+//    "test photo is captured" : function () {
+//      var data = suite.parse("#example2");
+//      Y.Assert.isTrue(/microformats.gif/.test(data['photo']), 'photo is not the same as the declaration');
+//    },
+
+    "test product url is captured" : function () {
+      var data = suite.parse("#example2");
       Y.Assert.areEqual("jsHub", data['brand'], 'brand is not the same as the declaration');
     }
   }));
@@ -101,7 +130,6 @@
     <ul>
       <li>fn: required field, not present</li>
       <li>price: optional field, not present</li>
-      <li>quantity: required field, not present</li>
     </ul>
   </div>
 </div>
@@ -109,11 +137,25 @@
   suite.add(new Y.Test.Case({ 
     name : "Missing value parsing",
 
-    // see #234, we still send the event even if it is not well-formed, and the server
+    // we still send the event even if it is not well-formed, and the server
 	// sends back an error message	
     "test product view is generated when required fields are missing" : function () {
       var data = suite.parse("#example3");
-      Y.Assert.isUndefined(data['fn'], 'fn is not specified, it is required');
+      Y.Assert.isUndefined(data['fn'], 'fn is not specified, it should not be present');
+    }
+  }));
+</script>
+
+
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({ 
+    name : " value parsing",
+
+    // we still send the event even if it is not well-formed, and the server
+	// sends back an error message	
+    "test product view is generated when required fields are missing" : function () {
+      var data = suite.parse("#example3");
+      Y.Assert.isUndefined(data['fn'], 'fn is not specified, it should not be present');
     }
   }));
 </script>

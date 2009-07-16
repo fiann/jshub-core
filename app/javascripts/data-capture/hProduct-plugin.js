@@ -90,7 +90,7 @@
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
      */
     // TODO support currency design pattern
-    var properties = ["fn", "description", "brand", "price"];
+    var properties = ["brand", "category", "price", "description", "fn", "url"];
     
     
     sources.each(function (idx, elm) {
