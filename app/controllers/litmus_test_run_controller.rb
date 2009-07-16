@@ -5,7 +5,7 @@
 # with many test pages, each of which can have multiple test 
 # results when it is run across multiple browsers.
 #
-# The test run will only pass if all the tests in all the pages
+# TODO The test run will only pass if all the tests in all the pages
 # have passed in all browsers.
 # 
 
@@ -84,9 +84,13 @@ class LitmusTestRunController < ApplicationController
       
       # make a test on Litmus for each page using the default browsers for the account and wait for the Id to be returned
       @test_run.litmus_test_pages.each do |page|
+        
+        # store any external server error messages for display later
+        messages = Array.new
+        
         begin
-          # Use the TestPage Id in the URL for when results are submited
-          page.url = "http://test.cross-domain-com.com:81/core/test/external/#{page.id}/unit/#{page.url}"
+          # Create a full URL and use the TestPage Id in the URL for when results are submited
+          page.url = APP_CONFIG[:test_run][:vendor][:url_pattern] % ["#{page.id}","#{page.url}"]
 
           # create the test on via the Litmus API
           @test = LitmusResource::Page.new(:url => page[:url], :use_defaults => @test_run.use_defaults.to_s)
@@ -96,34 +100,40 @@ class LitmusTestRunController < ApplicationController
           page.external_id = @test.id
           page.save!
           
-          # Handle errors from Litmus
-        rescue ActiveResource::TimeoutError, ActiveResource::ClientError, ActiveResource::ServerError, ActiveResource::ConnectionError => e
-                  
-          flash[:error] = "There was a problem creating the external test #{e.message}"          
+        # Handle errors from Litmus
+        rescue ActiveResource::TimeoutError, ActiveResource::ClientError, ActiveResource::ServerError, ActiveResource::ConnectionError => e                  
+          messages << "There was a problem creating the external test for #{page.url}: #{e.message}"          
           # get the Litmus response e.g. 404 because the URL is not accessible
           @LitmusError = e
 
           # No Litmus page was created so destroy our version to keep in sync
           page.destroy
 
-          respond_to do |format|            
-            format.html { render :action => "new" }
-            format.xml  { render :xml => e, :status => :unprocessable_entity }
-          end
+          # pass through error messages to UI
+          flash[:litmus] = messages
         end
+        
       end
-
+      
+    else
+      # create test pages assuming our local server is the host
+      @test_run.litmus_test_pages.each do |page|        
+        page.url = url_for root_url + "test/external/#{page.id}/unit/#{page.url}"     
+        page.save!      
+      end
     end
     
-    
-    respond_to do |format|            
-      if @test_run.save
+    respond_to do |format|
+      # everything worked if we can save and there were no errors reported by the external service
+      if @test_run.save and @test_run.litmus_test_pages.count > 0
         flash[:notice] = 'LitmusTestRun was successfully created.'
         format.html { redirect_to(@test_run) }
         format.xml  { render :xml => @test_run, :status => :created, :location => @test_run }
       else
-        flash[:error] = 'LitmusTestRun was not created.'      
-        format.html { render :action => "new" }
+        flash[:error] = 'LitmusTestRun was not created.'
+        # No point storing an empty or unseccessful test run
+        @test_run.destroy
+        format.html { redirect_to :action => "new" }
         format.xml  { render :xml => @test_run.errors, :status => :unprocessable_entity }
       end
     end

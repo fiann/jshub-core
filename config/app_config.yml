@@ -8,7 +8,8 @@ development: &non_production_settings
       :site: http://jshub.litmusapp.com/
       :user: secret
       :password: secret
-
+      :url_pattern: secret
+      
 test:
   <<: *non_production_settings
 
