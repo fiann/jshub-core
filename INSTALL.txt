@@ -1,6 +1,6 @@
 = Installation instructions =
 
-These instructions are intended to enable a developer to setup a development enviroment for the purposes of:
+These instructions are intended to enable a developer to set-up a development environment for the purposes of:
 
  * running the jsHub code on a local machine
  * running the jsHub Unit Tests in a local web browser
@@ -18,11 +18,11 @@ If you have Git installed you can clone from the following URLs, depending on wh
   git clone https://jshub.org/git/jshub-core.git (Read-only)
   git clone git@jshub.org:jshub-core.git (Read-write)
 
-== Development enviroment ==
+== Development environment ==
 
 The jsHub core app is a standard Ruby on Rails 2.3 application.
 
-To run automated Unit Tests and optionally use the results with a Continious Integration server, Java is also required.
+To run automated Unit Tests, and optionally use the results with a Continuous Integration server, Java is also required.
 
 === Supported operating systems ===
 
@@ -34,13 +34,15 @@ Development is regularly undertaken on the following:
  
 The following instructions are using Mac OS X 10.5 as the host operating system and should be applicable to other Linux or UNIX based distributions.
 
-Windows platforms are not explictly tested, however as Ruby on Rails and Java are available, installation should also be possible.
+Windows platforms are not explicitly tested, however as Ruby on Rails and Java are available, installation is also straight forward with specifics noted below.
 
 == Setting up the environment ==
 
 Mac OS X 10.5 comes pre-installed with many of the necessary languages and libraries for Ruby on Rails development, but at the time of this writing these a quite out-of-date when initially installed.
 
 It is recommended that the OS is updated to the latest available from Apple using the Software Update application.
+
+On Windows we recommend the Ruby One-Click Installer available from http://www.ruby-lang.org/ and select the 'Enable Rubygems' option in the installer.
 
 === Environment for javascript development ===
 
@@ -50,11 +52,14 @@ Currently development is undertaken on Mac OS X 10.5.7 with the following versio
                       Please note jsHub is not currently tested on Ruby v1.9
  * RubyGems version - 1.3.1
  * Rails version    - Rails 2.3.2
+ * SQLite version   - sqlite3 3.4.0
 
-The easiest way to get the latest versions of RubyGems and Rails is to run the following commands in the Terminal, (you will be prompted for your user password):
+The easiest way to get the latest versions of RubyGems and Rails is to run the following commands in the Terminal.app, (you will be prompted for your user password):
 
   $ sudo gem update --system
   $ sudo gem upgrade
+  
+On Windows the SQLite3 client (sqlite-3-xxx.zip) and .dll (sqlitedll-3-xx.zip) can be obtained from http://www.sqlite.org/download.html . Extract them to e.g. C:\sqlite3 and add this folder to your system PATH environment variable.
 
 === Environment for running automated tests ===
  
@@ -86,21 +91,23 @@ A list of these with their install status can be determined by running, from the
 
   $ rake gems
 
-To install mising gems run:
+To install missing gems run:
 
   $ rake gems:install
+  
+The gem list is configured in the environment.rb file should you wish more information on the specific gems and versions needed.
 
-== Running the application ==
-
-Setup the database:
+Set-up the database:
 
   $ rake db:migrate
 
 To run the application use:
 
-  $ ./script/server
+  $ ruby ./script/server
 
 you can now access the application on http://localhost:3000/ (by default)
+
+On Windows you may be prompted by the Windows Firewall or other security software to allow the application to run.
 
 === Running under Phusion Passenger ===
 
@@ -111,7 +118,7 @@ For installation instructions please see the Phusion Passenger website and secti
  * http://www.modrails.com/install.html
  * http://www.modrails.com/documentation/Users%20guide.html#deploying_rails_to_sub_uri
  
-The jsHub application comes preconfigured to run on the URL '/core/' and this can be changed in the 'environments/passenger.rb file.
+The jsHub application comes pre-configured to run on the URL '/core/' and this can be changed in the 'environments/passenger.rb file.
 
 Below is a sample Apache configuration:
 
@@ -128,7 +135,7 @@ The application comes with a set of comprehensive test pages that can be run in 
 
  * http://localhost:3000/test/unit
 
-Each page submits its results to a local database, also identifing the browser used, so that the Unit Test pages can be run from any other local machines with web browsers installed as part of a cross-browser test suite:
+Each page submits its results to a local database, also identifying the browser used, so that the Unit Test pages can be run from any other local machines with web browsers installed as part of a cross-browser test suite:
 
  * http://localhost:3000/test/results
 

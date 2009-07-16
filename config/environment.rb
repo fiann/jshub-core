@@ -25,8 +25,8 @@ Rails::Initializer.run do |config|
   # Detect and load gems needed
   # ref: http://www.fngtps.com/2008/12/adding-development-gem-dependencies-to-a-rails-application
   
-  # the database we use
-  config.gem "sqlite3-ruby", :version => '>= 1.2.1', :lib => "sqlite3"
+  # the database we use. Note: version fixed to latest available on Windows via 'gem install'
+  config.gem "sqlite3-ruby", :version => '1.2.3', :lib => "sqlite3"
   config.gem "haml", :version => '>= 2.2.1'
   # for generating diagrams see http://railroad.rubyforge.org/
   config.gem "railroad", :version => '>= 0.5.0', :lib => "railroad/diagram_graph"
