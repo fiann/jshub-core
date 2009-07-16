@@ -7,16 +7,16 @@
 	</p>
 
     <p>
-      Javascript unit test pages:
+      Test related links:
     </p>
     <ul>      
       <li>
-        <%= link_to 'Test Page list', :controller => 'javascript_test' %>
+        <%= link_to 'Test Pages', :javascript_test %> - HTML test pages to load in a web browser.
       </li>
       <li>
-        <%= link_to 'Test Page results', javascript_test_result_index_path %>
+        <%= link_to 'Test Results', :javascript_test_result_index %> - Javascript unit test results collected from test pages
       </li>
       <li>
-        <%= link_to 'Litmus server test runs', :controller => 'litmus_test_run' %>
+        <%= link_to 'Test Runs', :litmus_test_runs %> - Collections of test pages and their test results.
       </li>
     </ul>

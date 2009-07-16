@@ -1,19 +1,11 @@
-<h2>Litmus Tests</h2>
+<h2>External Tests</h2>
 
 <p>
-Litmus is an external service that loads URLs in multiple browser and operating system combinations, taking a screenshot once the page is loaded. <a href="http://litmusapp.com/">More information</a>.
+<a href="http://litmusapp.com/" title="Litmus testing">Litmus</a> is an external service that loads URLs in multiple browser and operating system combinations, taking a screenshot once the page is loaded.
 </p>
 <p>
-It is intended for use by graphic designers to check the visible rendering of the page, however since it executes all the code on the page in the browser we can run Javascript Unit Tests and submit the results back to our server.
+It is intended for use by graphic designers to check the visible rendering of the page, however since it executes all the code on the page in the browser we can run Javascript Unit Tests and submit the results back to a server via <a href="http://developer.yahoo.com/yui/yuitest/" title="YUI Test">YUI Test</a>.
 </p>
-
-<h2>Latest Test</h2>
-
-<p>
-For use by continuous integration servers, the link below returns just the Id of the last <em>complete</em> test.
-</p>
-
-<%= link_to 'Latest complete test id', litmus_external_latest_path  %>
 
 <h2>All Tests</h2>
 

@@ -1,4 +1,4 @@
-<h2>Test Runs</h2>
+<h1>Test Runs</h1>
 
 <p>
 A Test Run is a list of Test Pages (specifically their URLs) that have each been loaded 
@@ -17,8 +17,11 @@ for the whole test run.
 
 <h2>New test run</h2>
 
-<%= link_to 'Create a Test Run', :new_litmus_test_run %>
+If you have an account with an external testing vendor you can create test runs of multiple test pages:
 
+<p>
+  <%= link_to 'Create a Test Run', :new_litmus_test_run %>
+</p>
 
 <h2>Latest test run</h2>
 
@@ -31,7 +34,7 @@ For use by continuous integration servers, the link below returns the ID of the 
 <h2>Earlier tests runs</h2>
 
 <p>
-Below is the list of Tests Runs hosted on this server.
+Below is the list of tests runs hosted on this server.
 </p>
 
 <p>
@@ -62,3 +65,11 @@ Below is the list of Tests Runs hosted on this server.
   </tbody>
 <% end %>
 </table>
+
+<h2>External tests</h2>
+
+If the external test vendor supplies an API for querying tests you can get a list of them:
+
+<p>
+  <%= link_to 'All external tests', :litmus_external_index %>
+</p>
