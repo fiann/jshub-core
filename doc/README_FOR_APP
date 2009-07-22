@@ -1,0 +1,16 @@
+= About jsHub
+
+The jsHub project is designed to provide solutions to de-couple the data declaration and data collection of meta-data on websites for use in analytics and by other 3rd parties.
+
+This application is a Ruby on Rails application for development of the jsHub javascript library.
+
+Application features:
+
+* Modular source code
+* Plugins
+* Unit test pages
+* Automated test suite and runner
+* Continuous integration and cross-browser testing support
+* Developer help and guides
+
+For more information see our website at http://jshub.org

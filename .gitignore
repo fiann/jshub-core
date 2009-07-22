@@ -3,7 +3,10 @@
 log/*.log
 tmp/
 doc/api
+
+# Ignore the generated app files
 doc/app
+public/help
 
 # Ignore the SQLite databases
 db/*.sqlite3

@@ -1,0 +1,25 @@
+= Deployment
+
+== Running under Phusion Passenger
+
+Phusion Passenger integrates Rails applications with the Apache web server, and in particular allows for multiple Rails applications to be hosted easily under one domain name using URLs rather than virtual hosts.
+
+For installation instructions please see the Phusion Passenger website and section on Sub-URIs:
+
+* http://www.modrails.com/install.html
+* http://www.modrails.com/documentation/Users%20guide.html#deploying_rails_to_sub_uri
+ 
+The jsHub application comes pre-configured to run on the URL <tt>/core/</tt> and this can be changed in the <tt>environments/passenger.rb</tt> file.
+
+Below is a sample Apache configuration:
+
+  <VirtualHost *:80>
+    ServerName localhost
+    DocumentRoot /Library/WebServer/Documents/jshub-core
+    RailsEnv passenger
+    RailsBaseURI /core
+  </VirtualHost>
+
+== Deploying to servers
+
+Deployment is undertaken using Capistrano
