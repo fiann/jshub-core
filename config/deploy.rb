@@ -38,7 +38,7 @@ namespace :custom do
   desc 'Create the initial dist JS files. These files are linted and then merged via rake and an ERB template, if something goes wrong then the whole application is rolled back.'
   task :dist, :roles => [:app] do
     transaction do
-      run "cd #{current_path} && rake jshub:lint"
+      run "cd #{current_path} && rake jshub:javascripts:lint"
     end
   end
   
@@ -63,10 +63,17 @@ namespace :custom do
     puts "Creating archive"
     run "cd #{current_path} && git archive --format=zip HEAD > #{current_path}/public/download/jshub-core.zip"  
   end
+  
+  desc "Generate help and guides"
+  task :help do
+    puts "Generating help"
+    run "cd #{current_path} && rake jshub:doc:help"
+  end
+
 end
 # use our custom tasks at the appropriate time
 # e.g. before :deploy, :my_custom_task
 #      after  "deploy:symlink", :do_this, :and_do_that
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
 after "deploy:symlink",   "custom:link_webroot", "custom:link_app_config"
-after "deploy:restart", "custom:archive"
+after "deploy:restart", "custom:archive", "custom:help"
