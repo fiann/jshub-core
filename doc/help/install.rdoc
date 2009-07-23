@@ -96,6 +96,8 @@ To install missing gems run:
   
 The gem list is configured in the environment.rb file should you wish more information on the specific gems and versions needed.
 
+== Running the application
+
 Set-up the database:
 
     % rake db:migrate

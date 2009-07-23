@@ -1,6 +1,6 @@
 = About jsHub
 
-The jsHub project is designed to provide solutions to de-couple the data declaration and data collection of meta-data on websites for use in analytics and by other 3rd parties.
+jsHub.org is a non-profit that is sponsoring several projects to make the deployment of data capture for web analytics and other online optimization solutions more professional.
 
 This application is a Ruby on Rails application for development of the jsHub javascript library.
 
