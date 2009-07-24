@@ -5,19 +5,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title><%= h @title %></title>
-    <%= javascript_include_tag :yui3, :cache => "cache/yui3"  %>
-    <%= stylesheet_link_tag '/javascripts/yui-3.0.0pr2/assets/dpSyntaxHighlighter.css' %>
-    <%= javascript_include_tag 'yui-3.0.0pr2/assets/dpSyntaxHighlighter.js' %>
-    <script type="text/javascript">
-    (function() {
-      YUI().use('*', function(Y) {
-        Y.on("domready", function() {
-          dp.SyntaxHighlighter.HighlightAll('code');
-        });
-      });
-    })();
-    </script>
-	<%= stylesheet_link_tag 'jshub' %>
+    <%= stylesheet_link_tag 'jshub' %>
+    <%= stylesheet_link_tag :syntaxhighlighter %>
+    <%= javascript_include_tag :syntaxhighlighter %>
   </head>
   <body class="jshub">
     <%= render :partial => '/jshub_title' %>
@@ -26,12 +16,18 @@
     <div id="main">
       <div id="content">
 
-    <%= yield :layout %>
+      <%= yield :layout %>
 
       </div>
     </div>
     <div id="footer">
       <p>(<%= render :partial => 'shared/version' %>)</p>
     </div>    
+
+    <script type="text/javascript">
+      // highlight any code on the page
+      dp.SyntaxHighlighter.HighlightAll('code');
+    </script>
+
   </body>
 </html>

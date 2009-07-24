@@ -21,5 +21,20 @@ class JavascriptTestResult < ActiveRecord::Base
     result.ignored = doc.root.attributes["ignored"]
     return result
   end
+
+  # create from the JSON format supplied by the yuitest logger
+  # see http://developer.yahoo.com/yui/3/yuitest/ for reference and examples
+  def self.from_json(json) 
+    doc = ActiveSupport::JSON.decode(json)
+    raise "JSON parsing error" unless doc
+    result = JavascriptTestResult.new
+    result.results_json = json
+    result.suite = doc["name"]
+    result.passed = doc["passed"]
+    result.failed = doc["failed"]
+    result.ignored = doc["ignored"]
+    return result
+  end
+
   
 end

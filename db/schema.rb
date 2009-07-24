@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090601000000) do
+ActiveRecord::Schema.define(:version => 20090724155533) do
 
   create_table "javascript_test_results", :force => true do |t|
     t.integer  "litmus_test_page_id"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20090601000000) do
     t.text     "results_xml"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "results_json"
   end
 
   create_table "litmus_test_pages", :force => true do |t|
@@ -40,11 +41,81 @@ ActiveRecord::Schema.define(:version => 20090601000000) do
     t.datetime "updated_at"
   end
 
+  create_table "plugins", :force => true do |t|
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.string   "image_file"
+    t.decimal  "price",      :precision => 8, :scale => 2, :default => 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "tag_configuration_plugin_parameters", :force => true do |t|
+    t.integer "tag_configuration_plugin_id", :null => false
+    t.string  "param_name"
+    t.string  "param_value"
+  end
+
+  create_table "tag_configuration_plugins", :force => true do |t|
+    t.integer "tag_configuration_id", :null => false
+    t.integer "plugin_id",            :null => false
+  end
+
+  create_table "tag_configuration_revision_messages", :force => true do |t|
+    t.integer "tag_configuration_revision_id", :null => false
+    t.integer "position"
+    t.string  "message"
+  end
+
+  create_table "tag_configuration_revisions", :force => true do |t|
+    t.integer  "tag_configuration_id", :null => false
+    t.integer  "revision_number"
+    t.text     "generated_code"
+    t.string   "sha1_debug"
+    t.string   "sha1_production"
+    t.integer  "user_id",              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tag_configurations", :force => true do |t|
+    t.string   "name",          :null => false
+    t.integer  "user_id"
+    t.string   "site_name"
+    t.string   "jshub_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "user_agents", :force => true do |t|
     t.string   "ua_string"
     t.string   "family"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "email_address"
+    t.string   "hashed_password"
+    t.string   "salt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name",            :limit => 30
   end
 
 end
