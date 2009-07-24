@@ -21,7 +21,7 @@
   }
   
   if (typeof suite === 'undefined') {
-    alert("Configuration error: test suite is not defined");
+    alert("Configuration error: A test suite is not defined");
     return;
   }
   
@@ -96,7 +96,7 @@
     // ... and send the results to the local data collection server
 	  var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
 	  
-	  // or if its a Litmus test, e.g. http://some.domain/core/test/external/:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
+	  // or if its a External Vendor test, e.g. http://some.domain/core/test/external/:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
     if (/test\/external/.test(window.location.pathname)){
    	  resultsUrl = window.location.pathname.replace(/test\/external\/(\d+)\/.*/, "test/external/$1/results");
     }
@@ -106,7 +106,7 @@
       resultsUrl = "/core/test/results";
     }
 
-    var reporter = new Y.Test.Reporter(resultsUrl);
+    var reporter = new Y.Test.Reporter(resultsUrl, Y.Test.Format.JSON);
     reporter.report(evt.results);
   }
   

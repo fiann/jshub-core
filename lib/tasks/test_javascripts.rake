@@ -17,7 +17,8 @@ namespace :test do
   Rake::TestTask.new(:javascripts) do |t|
     t.pattern = 'test/unit/javascript/**/*.html.erb'
     t.libs << 'test'
-    t.verbose = true
+    t.verbose = true if ENV['JSHUB_DEBUG'] == 'true'
+
     
     # Create the tasks defined by this task lib.
     def t.define
@@ -30,7 +31,6 @@ namespace :test do
             " -e \"load './lib/testing/javascript_test.rb'; JavascriptTest.initialize_tests(%w{#{file_list}})\""
         end
       end
-      self
     end
     
   end

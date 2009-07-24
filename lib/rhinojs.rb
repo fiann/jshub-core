@@ -20,7 +20,7 @@ class RhinoJS
     # turn array into string for use in a shell
     args.collect! { |arg| "'#{arg}'" }
     cmd_line = "cd '#{RAILS_ROOT}' && java -cp '#{rhino_jar}' #{rhino_class} '#{file}' #{args.join(' ')}"
-    verbose(true) do
+    verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
           puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
