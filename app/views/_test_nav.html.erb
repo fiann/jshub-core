@@ -1,18 +1,20 @@
   <div class="nav" id="ctxtnav">
     <h2>Context Navigation</h2>
     <ul>
-        <li class="first">
-          <span><%= link_to 'Home', root_url %></span>
-        </li>
-        <li>
-          <span><%= link_to 'Test Pages', :javascript_test %></span>
-        </li>
-        <li>
-          <span><%= link_to 'Test Results', :javascript_test_result_index %></span>
-        </li>
-        <li class="last">
-          <span><%= link_to 'Test Runs', :litmus_test_runs %></span>
-        </li>
+      <li class="first">
+        <span><%= link_to 'Home', root_url %></span>
+      </li>
+      <li>
+        <span><%= link_to 'Test Pages', :javascript_test %></span>
+      </li>
+      <li>
+        <span><%= link_to 'Test Results', :javascript_test_result_index %></span>
+      </li>
+      <li>
+        <span><%= link_to 'Test Runs', :litmus_test_runs %></span>
+      </li>
+      <li class="last">
+        <span><%= link_to 'Help', "#{root_url}help/" %></span>
+      </li>
     </ul>
-    <hr/>
   </div>

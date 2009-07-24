@@ -42,6 +42,8 @@ Mac OS X 10.5 comes pre-installed with many of the necessary languages and libra
 
 It is recommended that the OS is updated to the latest available from Apple using the Software Update application.
 
+Most other operating systems have downloadable binary installers or packages in their management system.
+
 On Windows we recommend the Ruby One-Click Installer available from http://www.ruby-lang.org and select the 'Enable Rubygems' option in the installer.
 
 === Environment for javascript development
@@ -94,7 +96,7 @@ To install missing gems run:
 
     % sudo rake gems:install
   
-The gem list is configured in the environment.rb file should you wish more information on the specific gems and versions needed.
+The gem list is configured in the <tt>environment.rb</tt> file should you wish more information on the specific gems and versions needed.
 
 == Running the application
 
@@ -109,6 +111,8 @@ To run the application use:
 you can now access the application on http://localhost:3000 (by default)
 
 On Windows you may be prompted by the Windows Firewall or other security software to allow the application to run.
+
+For other deployment instructions please see the {doc/help/deployment.rdoc}[link:files/doc/help/deployment_rdoc.html] file
 
 == Running Unit Tests in a browser
 
@@ -131,7 +135,7 @@ For further information on:
 
 Generate the local documentation with:
 
-    % rake jshub:doc:app_help
+    % rake jshub:doc:help
 
 Please refer to the local help pages at {doc/help}[link:index.html]
 

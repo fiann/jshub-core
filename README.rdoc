@@ -30,9 +30,9 @@ Unzip the archive anywhere on your computer
 This application is a traditional Ruby on Rails application, meaning that you can
 configure and run it the way you would a normal Rails application:
 
- 1. Change to the unzipped application: <tt>cd /path/to/app</tt>
- 2. Load the database schema: <tt>rake db:migrate</tt>
- 3. Start the web server: <tt>./script/server</tt> (run with --help for options)
- 4. Go to http://localhost:3000 for the homepage
+1. Change to the unzipped application: <tt>cd /path/to/app</tt>
+2. Load the database schema: <tt>rake db:migrate</tt>
+3. Start the web server: <tt>./script/server</tt> (run with --help for options)
+4. Go to http://localhost:3000 for the homepage
 
 For more detailed instructions please see the {doc/help/install.rdoc}[link:files/doc/help/install_rdoc.html] file and our website at http://jshub.org
