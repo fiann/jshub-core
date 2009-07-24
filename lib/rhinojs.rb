@@ -23,7 +23,7 @@ class RhinoJS
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
-          puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
+          #puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
           allok = false
         end    
       end
