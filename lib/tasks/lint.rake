@@ -29,6 +29,16 @@ namespace :jshub do
         fail "Lint validation errors"
       end
     end
+
+    desc "Create a shell environment in Rhino"
+    task :shell do
+      rhinojs = RhinoJS.new
+      allok = rhinojs.shell("lib/testing/shell.js")
+
+      if !allok
+        fail "There was a problem launching the shell"
+      end
+    end
   
   end  
 end

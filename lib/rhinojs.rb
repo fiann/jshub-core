@@ -5,21 +5,36 @@ class RhinoJS
   # default options can be get/set
   # mylinter = RhinoJS.new
   # mylinter.rhino_jar = '/some/other/jar'
-  attr_accessor :rhino_jar, :rhino_class, :jslint_options
+  attr_accessor :rhino_jar, :rhino_options, :jslint_options
   
   # setup class
   def initialize
     @rhino_jar = "#{RAILS_ROOT}/lib/js.jar"
-    @rhino_class = "org.mozilla.javascript.tools.shell.Main"
+    @rhino_options = "-w -debug"
     @jslint_options = "#{RAILS_ROOT}/lib/jslint/jslint-jshub-options.js"
   end
 
+  # Open file as a shell using '-f -'
+  def shell(file, args=[])
+    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} -f '#{file}' -f - #{args.join(' ')}"
+    verbose(false) do
+      sh cmd_line do |ok, res|
+        if !ok
+          puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
+        end    
+      end
+    end 
+  end
+  
   # load all javascript files into Rhino
   def run(file, args=[])
+  
+    # if no file passed open as a shell
+  
     allok = true
     # turn array into string for use in a shell
     args.collect! { |arg| "'#{arg}'" }
-    cmd_line = "cd '#{RAILS_ROOT}' && java -cp '#{rhino_jar}' #{rhino_class} '#{file}' #{args.join(' ')}"
+    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{file}' #{args.join(' ')}"
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
@@ -37,7 +52,7 @@ class RhinoJS
   def lint(files)
     allok = true
     files.each do |src_file|
-      sh "cd '#{RAILS_ROOT}' && java -cp '#{rhino_jar}' '#{rhino_class}' '#{jslint_options}' '#{src_file}'" do |ok, res|
+      sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
         if !ok
           puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})"
           allok = false
