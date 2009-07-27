@@ -52,10 +52,12 @@ class RhinoJS
   def lint(files)
     allok = true
     files.each do |src_file|
-      sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
-        if !ok
-          puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})"
-          allok = false
+      verbose(false) do
+        sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
+          if !ok
+            puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})"
+            allok = false
+          end
         end
       end
     end
