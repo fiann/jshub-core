@@ -10,7 +10,7 @@ class RhinoJS
   # setup class
   def initialize
     @rhino_jar = "#{RAILS_ROOT}/lib/js.jar"
-    @rhino_options = "-w -debug"
+    @rhino_options = ""
     @jslint_options = "#{RAILS_ROOT}/lib/jslint/jslint-jshub-options.js"
   end
 
