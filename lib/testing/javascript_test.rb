@@ -6,7 +6,7 @@ class JavascriptTest < ActionController::IntegrationTest
   # All the tests should be in the folder RAILS_ROOT/test/unit/javascript/
   def self.initialize_tests(test_cases=[])
     debug = ENV['JSHUB_DEBUG'] == 'true' ? true : false
-    test_files_path = "#{RAILS_ROOT}/test/unit/javascript";
+    test_files_path = "#{RAILS_ROOT}/test/unit/javascript"
 
     puts "INITIALISING TESTS #{test_cases.inspect}" if debug  
     if test_cases.empty?
@@ -31,7 +31,7 @@ class JavascriptTest < ActionController::IntegrationTest
   
   def execute_test(test_case)
     debug = ENV['JSHUB_DEBUG'] == 'true' ? true : false
-    reports_path = "#{RAILS_ROOT}/test/reports";
+    reports_path = "#{RAILS_ROOT}/test/reports"
     temp_path = "#{RAILS_ROOT}/tmp/test/javascript"
     test_runner = "#{RAILS_ROOT}/lib/testing/javascript_test_runner.js"
 

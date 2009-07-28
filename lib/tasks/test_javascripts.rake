@@ -1,5 +1,6 @@
 # The test:javascripts task
 Rake::TestTask.new("test:javascripts") do |t|
+  # get a list of all the test files
   t.pattern = 'test/unit/javascript/**/*.html.erb'
   t.libs << 'test'
   t.verbose = true if ENV['JSHUB_DEBUG'] == 'true'
