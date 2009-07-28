@@ -31,7 +31,7 @@ class JavascriptTest < ActionController::IntegrationTest
   
   def execute_test(test_case)
     debug = ENV['JSHUB_DEBUG'] == 'true' ? true : false
-    reports_path = "#{RAILS_ROOT}/test/reports/unit";
+    reports_path = "#{RAILS_ROOT}/test/reports";
     temp_path = "#{RAILS_ROOT}/tmp/test/javascript"
     test_runner = "#{RAILS_ROOT}/lib/testing/javascript_test_runner.js"
 
