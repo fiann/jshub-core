@@ -12,15 +12,16 @@ class RhinoJS
     @rhino_jar = "#{RAILS_ROOT}/lib/js.jar"
     @rhino_options = ""
     @jslint_options = "#{RAILS_ROOT}/lib/jslint/jslint-jshub-options.js"
+    @debug = ENV['JSHUB_DEBUG'] == 'true' ? true : false    
   end
 
   # Open file as a shell using '-f -'
   def shell(file, args=[])
-    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} -f '#{file}' -f - #{args.join(' ')}"
+    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{rhino_options} -f '#{file}' -f - #{args.join(' ')}"
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
-          puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
+          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if debug
         end    
       end
     end 
@@ -34,11 +35,11 @@ class RhinoJS
     allok = true
     # turn array into string for use in a shell
     args.collect! { |arg| "'#{arg}'" }
-    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{file}' #{args.join(' ')}"
+    cmd_line = "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{rhino_options} '#{file}' #{args.join(' ')}"
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
-          #puts "Rhino had a problem loading the file (status = #{res.exitstatus})"
+          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if debug
           allok = false
         end    
       end
@@ -53,9 +54,9 @@ class RhinoJS
     allok = true
     files.each do |src_file|
       verbose(false) do
-        sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{@rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
+        sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
           if !ok
-            puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})"
+            puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})" if debug
             allok = false
           end
         end
