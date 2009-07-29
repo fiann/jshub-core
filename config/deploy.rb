@@ -35,7 +35,7 @@ end
 
 # additional custom tasks viewable with 'cap -T'
 namespace :custom do
-  desc 'Create the initial dist JS files. These files are linted and then merged via rake and an ERB template, if something goes wrong then the whole application is rolled back.'
+  desc 'Lint the initial dist JS files. If they do not pass then the whole application is rolled back.'
   task :dist, :roles => [:app] do
     transaction do
       run "cd #{current_path} && rake jshub:javascripts:lint"
@@ -50,12 +50,12 @@ namespace :custom do
   
   desc 'Output the Subversion version number'
   task :version do
-    run "echo \"r#{real_revision}\" > #{release_path}/app/views/shared/_version.html.erb"
+    run "echo \"r#{real_revision}\" > #{current_path}/app/views/shared/_version.html.erb"
   end  
 
   desc "Make symlink for server specific app_config yaml" 
   task :link_app_config do
-    run "ln -nfs #{shared_path}/config/app_config.yml #{release_path}/config/app_config.yml" 
+    run "ln -nfs #{shared_path}/config/app_config.yml #{current_path}/config/app_config.yml" 
   end
   
   desc "Create an archive of this application and put it in the downloads folder"
@@ -75,5 +75,5 @@ end
 # e.g. before :deploy, :my_custom_task
 #      after  "deploy:symlink", :do_this, :and_do_that
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
-after "deploy:symlink",   "custom:link_webroot", "custom:link_app_config"
+after "deploy:setup",   "custom:link_webroot", "custom:link_app_config"
 after "deploy:restart", "custom:archive", "custom:help"
