@@ -1,5 +1,10 @@
 = Deployment
 
+These instructions are intended to enable a developer to:
+
+* Run the application under an existing Apache server
+* Deploy the application to a server [soon]
+
 == Running under Phusion Passenger
 
 Phusion Passenger integrates Rails applications with the Apache web server, and in particular allows for multiple Rails applications to be hosted easily under one domain name using URLs rather than virtual hosts.

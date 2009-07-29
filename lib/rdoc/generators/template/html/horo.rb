@@ -264,6 +264,14 @@ HEADER = XHTML_PREAMBLE + <<ENDHEADER
         }
       // ]]>
     </script>
+
+    <!-- YUI Code Syntax Highlighter -->
+    <link rel="stylesheet" href="assets/dpSyntaxHighlighter.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="assets/dpSyntaxHighlighter.js">/* code syntax highlighter */</script>
+    <script language="javascript"> 
+      window.onload = dp.SyntaxHighlighter.HighlightAll('code'); 
+    </script>    
+    
   </head>
 
   <body>

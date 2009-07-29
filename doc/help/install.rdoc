@@ -135,7 +135,7 @@ For further information on:
 
 Generate the local documentation with:
 
-    % rake jshub:doc:help
+    % rake jshub:doc
 
 Please refer to the local help pages at {doc/help}[link:index.html]
 
