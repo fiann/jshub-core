@@ -17,22 +17,22 @@ namespace "jshub" do
       stub_path = "/usr/local/lib/ruby/gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # gromit
 
       # invoke the CI task in same process as test to output results in JUnit XML format into the default location (./test/reports)
-      sh "#{RAILS_ROOT} && rake -f #{stub_path} ci:setup:testunit test" 
+      sh "cd '#{RAILS_ROOT}' && rake -f #{stub_path} ci:setup:testunit test" 
       
       # stop the server instance
-      sh "#{RAILS_ROOT} && rake jshub:hudson:server:stop"
+      sh "cd '#{RAILS_ROOT}' && rake jshub:hudson:server:stop"
     end
   
     desc "Start the local Rails server"
     task "server:start" do
       # start the local server so tests can be requested directly from the app
       puts "Starting local server"
-      sh "cd #{RAILS_ROOT} && mongrel_rails start --port 30000 --pid tmp/pids/server.pid --daemonize"
+      sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port 30000 --pid tmp/pids/server.pid --daemonize"
     end
     task "server:stop" do
       # stop the local server
       puts "Stopping local server"
-      sh "#{RAILS_ROOT} && mongrel_rails stop --pid tmp/pids/server.pid --wait 5"
+      sh "cd '#{RAILS_ROOT}' && mongrel_rails stop --pid tmp/pids/server.pid --wait 5"
     end
   
   end
