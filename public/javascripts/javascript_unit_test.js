@@ -12,7 +12,7 @@
 
   // TODO wrap window.console properly to stop x-browser errors
   if (window.jsHub) {
-    jsHub.logger.log("Running tests", suite);
+    jsHub.logger.log("Running tests", Y.JSON.stringify(suite,null,2));
   }
   
   if (typeof Y === 'undefined') {
@@ -109,28 +109,38 @@
     var reporter = new Y.Test.Reporter(resultsUrl, Y.Test.Format.JSON);
     reporter.report(evt.results);
   }
+
+  if (!navigator.userAgent.match(/Rhino/)){
+    console.info("Browser UA: " + navigator.userAgent)  
+    console.info("Browser UA: " + Y.JSON.stringify(Y.UA,null,2))  
+
+    // time how long it takes to run
+    var startTime = 0;
+
+    // initialise test runner
+    var TestRunner = Y.Test.Runner;
+    
+    // add the test cases and suites
+    TestRunner.add(window.suite);
+    
+    // visualise results
+    TestRunner.subscribe(TestRunner.BEGIN_EVENT, function () {
+      startTime = +new Date();
+      updateStatus("Test execution started");
+    });
+    TestRunner.subscribe(TestRunner.TEST_PASS_EVENT, reportResult);
+    TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, reportResult);
+    TestRunner.subscribe(TestRunner.TEST_IGNORE_EVENT, reportResult);
+    TestRunner.subscribe(TestRunner.COMPLETE_EVENT, reportCompletionStatus);
+    console.info("Browser: YUI TestRunner events subscribed");
   
-  // initialise test runner
-  var startTime = 0;
-  var TestRunner = Y.Test.Runner;
-  
-  // add the test cases and suites
-  TestRunner.add(window.suite);
-  
-  // visualise results
-  TestRunner.subscribe(TestRunner.BEGIN_EVENT, function () {
-  	startTime = +new Date();
-	updateStatus("Test execution started");
-  });
-  TestRunner.subscribe(TestRunner.TEST_PASS_EVENT, reportResult);
-  TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, reportResult);
-  TestRunner.subscribe(TestRunner.TEST_IGNORE_EVENT, reportResult);
-  TestRunner.subscribe(TestRunner.COMPLETE_EVENT, reportCompletionStatus);
-  
-  // ... but also report to Firebug console
-  Y.config.useConsole = true;
-  
-  // run all tests
-  Y.Test.Runner.run();
-  
+    // clear any old tests from previous pages
+    TestRunner.clear();
+    // add the test cases and suites from the loaded HTML file
+    console.log("Browser: Running tests " + Y.JSON.stringify(suite,null,2))
+    TestRunner.add(suite);    
+    // run all tests
+    TestRunner.run();
+    console.log("Browser: TestRunner complete");
+  }  
 })();
