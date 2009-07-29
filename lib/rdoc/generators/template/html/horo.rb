@@ -1,3 +1,16 @@
+# Horo RDoc template
+# Author: Hongli Lai - http://izumi.plan99.net/blog/
+#
+# Based on the Jamis template:
+# http://weblog.jamisbuck.org/2005/4/8/rdoc-template
+
+if defined?(RDoc::Diagram)
+	RDoc::Diagram.class_eval do
+		remove_const(:FONT)
+		const_set(:FONT, "\"Bitstream Vera Sans\"")
+	end
+end
+
 module RDoc
 module Page
 
@@ -22,8 +35,15 @@ body, td, p {
   font-size: small;
 }
 
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
 #content {
   margin: 2em;
+  margin-left: 3.5em;
+  margin-right: 3.5em;
 }
 
 #description p {
@@ -38,7 +58,6 @@ body, td, p {
   background: #005;
   color: #FFF;
   font-weight: bold;
-  border: 1px dotted black;
 }
 
 .attr-rw {
@@ -92,9 +111,9 @@ h1 a:hover, h2 a:hover, .sectiontitle a:hover, .banner a:hover {
 
 .dyn-source {
   display: none;
-  background: #FFE;
+  background: #fffde8;
   color: #000;
-  border: 1px dotted black;
+  border: #ffe0bb dotted 1px;
   margin: 0.5em 2em 0.5em 2em;
   padding: 0.5em;
 }
@@ -117,8 +136,8 @@ h1 a:hover, h2 a:hover, .sectiontitle a:hover, .banner a:hover {
 
 .description pre {
   padding: 0.5em;
-  border: 1px dotted black;
-  background: #FFE;
+  border: #ffe0bb dotted 1px;
+  background: #fffde8;
 }
 
 .method .title {
@@ -151,7 +170,7 @@ h1 a:hover, h2 a:hover, .sectiontitle a:hover, .banner a:hover {
 
 h1 {
   padding: 1em;
-  border: 1px solid black;
+  margin-left: -1.5em;
   font-size: x-large;
   font-weight: bold;
   color: #FFF;
@@ -160,7 +179,7 @@ h1 {
 
 h2 {
   padding: 0.5em 1em 0.5em 1em;
-  border: 1px solid black;
+  margin-left: -1.5em;
   font-size: large;
   font-weight: bold;
   color: #FFF;
@@ -168,10 +187,8 @@ h2 {
 }
 
 h3, h4, h5, h6 {
-  padding: 0.2em 1em 0.2em 1em;
-  border: 1px dashed black;
-  color: #000;
-  background: #AAF;
+  color: #220088;
+  border-bottom: #5522bb solid 1px;
 }
 
 .sourcecode > pre {
@@ -180,12 +197,25 @@ h3, h4, h5, h6 {
   background: #FFE;
 }
 
+dt {
+  font-weight: bold
+}
+
+dd {
+  margin-bottom: 0.7em;
+}
 CSS
 
 XHTML_PREAMBLE = %{<?xml version="1.0" encoding="%charset%"?>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+}
+
+XHTML_FRAMESET_PREAMBLE = %{
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">    
 }
 
 HEADER = XHTML_PREAMBLE + <<ENDHEADER
@@ -230,7 +260,7 @@ HEADER = XHTML_PREAMBLE + <<ENDHEADER
 
         function openCode( url )
         {
-          window.open( url, "SOURCE_CODE", "width=400,height=400,scrollbars=yes" )
+          window.open( url, "SOURCE_CODE", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=480,width=750" ).focus();
         }
       // ]]>
     </script>
@@ -250,7 +280,7 @@ FILE_PAGE = <<HTML
             <td>Path:</td>
             <td>%full_path%
 IF:cvsurl
-              &nbsp;(<a href="%cvsurl%">CVS</a>)
+				&nbsp;(<a href="%cvsurl%">CVS</a>)
 ENDIF:cvsurl
             </td>
           </tr>
@@ -262,7 +292,7 @@ ENDIF:cvsurl
       </td></tr>
     </table>
   </td></tr>
-</table><br>
+</table><br />
 HTML
 
 ###################################################################
@@ -271,7 +301,7 @@ CLASS_PAGE = <<HTML
 <table width="100%" border='0' cellpadding='0' cellspacing='0' class='banner'><tr>
   <td class="file-title"><span class="file-title-prefix">%classmod%</span><br />%full_name%</td>
   <td align="right">
-    <table cellspacing=0 cellpadding=2>
+    <table cellspacing="0" cellpadding="2">
       <tr valign="top">
         <td>In:</td>
         <td>
@@ -355,7 +385,7 @@ ENDIF:includes
 
 START:sections
 IF:sectitle
-<div class="sectiontitle"><a nem="%secsequence%">%sectitle%</a></div>
+<div class="sectiontitle"><a name="%secsequence%">%sectitle%</a></div>
 IF:seccomment
 <div class="description">
 %seccomment%
@@ -418,7 +448,7 @@ IFNOT:callseq
     <a name="%aref%"></a><b>%name%</b>%params%
 ENDIF:callseq
 IF:codeurl
-[ <a href="javascript:openCode('%codeurl%')">source</a> ]
+[&nbsp;<a href="%codeurl%" target="SOURCE_CODE" onclick="javascript:openCode('%codeurl%'); return false;">source</a>&nbsp;]
 ENDIF:codeurl
   </div>
 IF:m_desc
@@ -473,8 +503,8 @@ ENDBODY
 SRC_PAGE = XHTML_PREAMBLE + <<HTML
 <html>
 <head><title>%title%</title>
-<meta http-equiv="Content-Type" content="text/html; charset=%charset%">
-<style>
+<meta http-equiv="Content-Type" content="text/html; charset=%charset%" />
+<style type="text/css">
 .ruby-comment    { color: green; font-style: italic }
 .ruby-constant   { color: #4433aa; font-weight: bold; }
 .ruby-identifier { color: #222222;  }
@@ -505,8 +535,9 @@ HTML
 FILE_INDEX = XHTML_PREAMBLE + <<HTML
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=%charset%">
-<style>
+<meta http-equiv="Content-Type" content="text/html; charset=%charset%" />
+<title>Index</title>
+<style type="text/css">
 <!--
   body {
     background-color: #EEE;
@@ -537,13 +568,13 @@ FILE_INDEX = XHTML_PREAMBLE + <<HTML
   }
 -->
 </style>
-<base target="docwin">
+<base target="docwin" />
 </head>
 <body>
 <div class="banner">%list_title%</div>
 <div class="entries">
 START:entries
-<a href="%href%">%name%</a><br>
+<a href="%href%">%name%</a><br />
 END:entries
 </div>
 </body></html>
@@ -552,28 +583,20 @@ HTML
 CLASS_INDEX = FILE_INDEX
 METHOD_INDEX = FILE_INDEX
 
-INDEX = XHTML_PREAMBLE + <<HTML
+INDEX = XHTML_FRAMESET_PREAMBLE + <<HTML
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>%title%</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=%charset%">
+  <meta http-equiv="Content-Type" content="text/html; charset=%charset%" />
 </head>
 
 <frameset cols="20%,*">
-    <frameset rows="15%,35%,50%">
+    <frameset rows="15%,55%,30%">
         <frame src="fr_file_index.html"   title="Files" name="Files" />
         <frame src="fr_class_index.html"  name="Classes" />
         <frame src="fr_method_index.html" name="Methods" />
     </frameset>
-IF:inline_source
-      <frame  src="%initial_page%" name="docwin">
-ENDIF:inline_source
-IFNOT:inline_source
-    <frameset rows="80%,20%">
-      <frame  src="%initial_page%" name="docwin">
-      <frame  src="blank.html" name="source">
-    </frameset>
-ENDIF:inline_source
+    <frame  src="%initial_page%" name="docwin" />
     <noframes>
           <body bgcolor="white">
             Click <a href="html/index.html">here</a> for a non-frames
@@ -587,5 +610,4 @@ HTML
 
 end
 end
-
 
