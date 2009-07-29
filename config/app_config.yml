@@ -10,6 +10,9 @@ development: &non_production_settings
       :password: secret
       :url_prefix: secret
       :url_pattern: secret
+  :continuous_integration:
+    :reports_path: test/reports
+    :base_url: http://localhost:30000/
       
 test:
   <<: *non_production_settings
