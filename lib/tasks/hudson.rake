@@ -27,6 +27,7 @@ namespace "jshub" do
     task "server:start" do
       # start the local server so tests can be requested directly from the app
       puts "Starting local server"
+      FileUtils.mkpath "tmp/pids"  
       sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port 30000 --pid tmp/pids/server.pid --daemonize"
     end
     task "server:stop" do
