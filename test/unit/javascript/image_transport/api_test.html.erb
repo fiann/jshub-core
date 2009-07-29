@@ -21,8 +21,12 @@
   var baseUrl = (function() {
     if (window.location.protocol === "file:") {
       return "";
+    } else if(navigator.userAgent.match(/Rhino/)) {
+      return "";
     } else {
-      return window.location.protocol + "//" + window.location.host;
+      // get the base url of the page, e.g. http://localhost:3000/
+      return window.location.href.substring(0, window.location.href.indexOf(window.location.pathname));
+
     }
   })();
 
