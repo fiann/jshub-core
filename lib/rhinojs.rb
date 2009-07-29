@@ -21,7 +21,7 @@ class RhinoJS
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
-          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if debug
+          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if @debug
         end    
       end
     end 
@@ -39,7 +39,7 @@ class RhinoJS
     verbose(false) do
       sh cmd_line do |ok, res|
         if !ok
-          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if debug
+          puts "Rhino had a problem loading the file (status = #{res.exitstatus})" if @debug
           allok = false
         end    
       end
@@ -56,7 +56,7 @@ class RhinoJS
       verbose(false) do
         sh "cd '#{RAILS_ROOT}' && java -jar '#{rhino_jar}' #{rhino_options} '#{jslint_options}' '#{src_file}'" do |ok, res|
           if !ok
-            puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})" if debug
+            puts "File: #{src_file} had JSLint errors (status = #{res.exitstatus})" if @debug
             allok = false
           end
         end
