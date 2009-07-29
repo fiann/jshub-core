@@ -9,11 +9,6 @@
 /*global Y, suite */
 
 (function() {
-
-  // TODO wrap window.console properly to stop x-browser errors
-  if (window.jsHub) {
-    jsHub.logger.log("Running tests", Y.JSON.stringify(suite,null,2));
-  }
   
   if (typeof Y === 'undefined') {
     alert("Configuration error: YUI3 is not present");
