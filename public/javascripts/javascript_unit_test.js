@@ -106,8 +106,8 @@
   }
 
   if (!navigator.userAgent.match(/Rhino/)){
-    console.info("Browser UA: " + navigator.userAgent)  
-    console.info("Browser UA: " + Y.JSON.stringify(Y.UA,null,2))  
+    //console.info("Browser UA: " + navigator.userAgent)  
+    //console.info("Browser UA: " + Y.JSON.stringify(Y.UA,null,2))  
 
     // time how long it takes to run
     var startTime = 0;
@@ -127,15 +127,15 @@
     TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, reportResult);
     TestRunner.subscribe(TestRunner.TEST_IGNORE_EVENT, reportResult);
     TestRunner.subscribe(TestRunner.COMPLETE_EVENT, reportCompletionStatus);
-    console.info("Browser: YUI TestRunner events subscribed");
+    //console.info("Browser: YUI TestRunner events subscribed");
   
     // clear any old tests from previous pages
     TestRunner.clear();
     // add the test cases and suites from the loaded HTML file
-    console.log("Browser: Running tests " + Y.JSON.stringify(suite,null,2))
+    //console.log("Browser: Running tests " + Y.JSON.stringify(suite,null,2))
     TestRunner.add(suite);    
     // run all tests
     TestRunner.run();
-    console.log("Browser: TestRunner complete");
+    //console.log("Browser: TestRunner complete");
   }  
 })();
