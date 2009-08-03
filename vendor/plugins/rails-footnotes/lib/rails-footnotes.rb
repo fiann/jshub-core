@@ -1,4 +1,4 @@
-if RAILS_ENV == 'development' || 'passenger'
+if RAILS_ENV == 'development'
   dir = File.dirname(__FILE__)
   require File.join(dir, 'rails-footnotes', 'footnotes')
   require File.join(dir, 'rails-footnotes', 'backtracer')
