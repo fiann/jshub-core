@@ -25,6 +25,8 @@ Below is a sample Apache configuration:
     RailsBaseURI /core
   </VirtualHost>
 
+A useful utility on Mac OS X is the {Passenger Pane}[http://www.fngtps.com/passenger-preference-pane] for the setting up virtual hosts as an alternative during development.
+
 == Deploying to servers
 
 Deployment is undertaken using Capistrano and requires the following gems:

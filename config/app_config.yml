@@ -9,12 +9,12 @@ development: &non_production_settings
       :password: secret
       # URL to Litmus API, e.g. http://<username>.litmusapp.com/
       :site: secret
-      # Test Run URL pattern for public pages, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
+      # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
       :url_pattern: secret
   :continuous_integration:
     :reports_path: test/reports
-    # URL to test pages, e.g. http://localhost:3000/ http://localhost/core/
-    :base_url: secret
+    # URL prefix to test server, e.g. http://some.server.com/core/
+    :base_url: http://localhost:3000/
       
 test:
   <<: *non_production_settings
