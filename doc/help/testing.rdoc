@@ -1,0 +1,173 @@
+= Testing
+
+These instructions are intended to enable a developer to:
+
+* run the jsHub Unit Tests in a local web browser
+* create additional Unit Testscases and pages
+* run the jsHub Unit Test Suite in a headless browser
+* run the jsHub Unit Test Suite from a Continuous Integration server [soon]
+
+== Syntax's
+
+=== Link types
+
+mailto:liamc@jshub.org
+
+www.jshub.org
+
+http://www.jshub.org
+
+https://www.jshub.org
+
+ftp://www.jshub.org
+
+link:files/doc/help/testing_rdoc.html
+
+[http://www.jshub.org/ link]
+
+
+=== Text types
+
+multi-line text that is
+over 2 lines in src
+
+  indented multi-line text that is
+  over 2 lines in src
+
+=== HTML and tags
+
+Single line of code in tt
+
+<code>
+some code
+</code>
+
+Multi-line of code in tt
+
+<tt>
+some 
+code
+</tt>
+
+Indented lines of code in tt
+
+<tt>
+some
+  code
+    indented
+</tt>
+
+<no>
+text should be strike-throughed
+</no>
+
+  <tt>
+  Literal <tt>
+  </tt>
+  
+  <code>
+  Literal <code>
+  </code>
+
+=== Syntax highlighting
+
+*CSS*
+
+Single line
+
+<css>
+#container {background-color:#00CCFF; border:1px dotted black; padding:1em; cursor:pointer;}
+</css>
+
+Multi-line
+
+<css>
+#container {
+background-color:#00CCFF; 
+border:1px dotted black; 
+padding:1em; cursor:pointer;
+}
+</css>
+
+<css>
+# #container {
+# background-color:#00CCFF; 
+# border:1px dotted black; 
+# padding:1em; cursor:pointer;
+# }
+</css>
+
+Multi-line indented
+
+<css>
+#container {
+  background-color:#00CCFF; 
+  border:1px dotted black; 
+  padding:1em; cursor:pointer;
+}
+</css>
+
+*Microformat*
+
+<mf>
+<div class="hpage"><span class="page-name">Example page</span></div>
+</mf>
+
+<mf>
+<div class="hpage">
+<span class="page-name">Example page</span>
+</div>
+</mf>
+
+<mf>
+<div class="hpage">
+  <span class="page-name">Example page</span>
+</div>
+</mf>
+
+*Javascript*
+
+<js>
+function test() { var a; a = 10; return a; }
+</js>
+
+<js>
+function test() {
+var a;
+a = 10;
+return a;
+}
+</js>
+
+<js>
+function test() {
+  var a;
+  a = 10;
+  return a;
+}
+</js>
+
+== Cheat sheet
+
+Normal Paragraph text
+  def indented_text()
+    # is treated as code -- not reformatted
+  end
+
+Lists:
+* This is a list element
+- This is one too.
+1. This one will be numbered
+[label] item description,
+        can be continued at same
+        indent level
+label::
+  or start the description on the following line
+  and continue at the same indent level
+
+= Level One Heading
+== Level Two Heading
+_italic_::                  _word_ or <em>text</em>
+*bold*::                    *word* or <b>text</b>
++typewriter+::              +word+ or <tt>text</tt>
+  

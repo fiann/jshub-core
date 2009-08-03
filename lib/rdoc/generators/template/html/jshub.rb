@@ -4,6 +4,9 @@
 # Based on the Jamis template:
 # http://weblog.jamisbuck.org/2005/4/8/rdoc-template
 
+# patch RDoc with additional patterns for use
+require 'lib/rdoc/generators/template/html/jshub_rdoc_extensions.rb'
+
 if defined?(RDoc::Diagram)
 	RDoc::Diagram.class_eval do
 		remove_const(:FONT)
@@ -266,10 +269,31 @@ HEADER = XHTML_PREAMBLE + <<ENDHEADER
     </script>
 
     <!-- YUI Code Syntax Highlighter -->
-    <link rel="stylesheet" href="assets/dpSyntaxHighlighter.css" type="text/css" media="screen" />
-    <script type="text/javascript" src="assets/dpSyntaxHighlighter.js">/* code syntax highlighter */</script>
-    <script language="javascript"> 
-      window.onload = dp.SyntaxHighlighter.HighlightAll('code'); 
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shCore.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushBash.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushCpp.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushCSharp.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushCss.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushDelphi.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushDiff.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushGroovy.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushJava.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushPhp.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushPlain.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushPython.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushRuby.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushScala.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushSql.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushVb.js"></script>
+    <script type="text/javascript" src="../../../assets/javascripts/SyntaxHighlighter/scripts/shBrushXml.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../assets/javascripts/SyntaxHighlighter/styles/shCore.css"/>
+    <link type="text/css" rel="stylesheet" href="../../../assets/javascripts/SyntaxHighlighter/styles/shThemeDefault.css"/>  
+    <script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = '../../../assets/javascripts/SyntaxHighlighter/scripts/clipboard.swf';
+      SyntaxHighlighter.defaults['class-name'] = 'syntaxhighlighted';
+      SyntaxHighlighter.defaults['html-script'] = true;
+      SyntaxHighlighter.all();
     </script>    
     
   </head>

@@ -1,5 +1,5 @@
 output_location = "public/help"
-assets_location = output_location + "/files/doc/help/assets"
+assets_location = output_location
 
 # ref: http://michaelxavier.net/posts/4-Custom-doc-app-for-Breaking-Up-Large-READMEs
 namespace :jshub do 
@@ -7,7 +7,7 @@ namespace :jshub do
 
     desc 'Generate help documentation for the application using rdoc and a template'
     Rake::RDocTask.new("help") { |rdoc|
-      rdoc.template = "lib/rdoc/generators/template/html/horo.rb"
+      rdoc.template = "jshub"
       rdoc.options << '--line-numbers' << '--inline-source'
 
       # paths are relative to RAILS_ROOT
@@ -25,9 +25,7 @@ namespace :jshub do
     desc 'Copy static assets for help documentation'
     task "static" do
       FileUtils.mkdir_p(assets_location)
-      # add YUI files for syntax highlighting
-      FileUtils.cp 'public/javascripts/yui3/assets/dpSyntaxHighlighter.js', assets_location
-      FileUtils.cp 'public/javascripts/yui3/assets/dpSyntaxHighlighter.css', assets_location
+      FileUtils.cp_r 'doc/assets/', assets_location
     end
     
   end
