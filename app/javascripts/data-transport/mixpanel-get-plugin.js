@@ -276,17 +276,17 @@
      */
     if(account !== ""){
       // insert the account token for encoding
-      dispatch.data.properties['token'] = account;    
+      dispatch.data.properties.token = account;    
     }
 
     // determine the name of the interaction event if supplied else is a generic event from a listener
-    if (event.type = "interaction"){
+    if (event.type === "interaction"){
       // cast to string so we have a property copy not reference since we delete it
-      var event_id = "" + dispatch.data.properties["event"]
-      dispatch.data["event"] = event_id;
-      delete dispatch.data.properties["event"];
+      var event_id = "" + dispatch.data.properties.event;
+      dispatch.data.event = event_id;
+      delete dispatch.data.properties.event;
     } else {
-      dispatch.data["event"] = event.type;
+      dispatch.data.event = event.type;
     }
 
     // encode merged data payload
