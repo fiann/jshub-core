@@ -1,0 +1,54 @@
+<% set_title "YUI Test Examples" %>
+
+<% content_for :javascripts do %>  
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  Examples of YUI Test assertions.
+</p>
+<p>
+  For more information see the <a href="http://developer.yahoo.com/yui/3/test/" title="YDN">YUI Test documentation on YDN</a>.
+</p>
+
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+
+  suite.add(new Y.Test.Case({ 
+    name : "Suite Number One",
+  
+    "test number one" : function () {
+      Y.Assert.isNotUndefined(window.Y, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.suite, "The 'suite' variable is required");
+    },
+  
+    "test number two" : function () {
+      var a_number = 1;
+      Y.Assert.isNumber(a_number, "Is not a Number");
+      var a_string = "A string";
+      Y.Assert.isString(a_string, "Is not a String");
+    }
+  }));
+  
+  suite.add(new Y.Test.Case({
+    name: "Suite Number Two",
+  
+    "test number three" : function () {
+      function a_function () {};
+      Y.Assert.isFunction(a_function, "Is not a Function");
+      var a_object = {};
+      Y.Assert.isObject(a_object, "Is not a String");
+    },
+
+    "test number three" : function () {
+      var a_string = "A string";
+      Y.Assert.areEqual("A string", a_string, "Are not Equal");
+    }
+
+  }));
+
+})(); // end anonymous function
+
+</script> 

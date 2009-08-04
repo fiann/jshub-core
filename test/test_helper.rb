@@ -36,6 +36,3 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
-
-# add our classes from lib/
-require 'rhinojs'

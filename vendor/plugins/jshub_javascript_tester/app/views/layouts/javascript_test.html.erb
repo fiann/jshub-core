@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Test Page: <%= h title %></title>
+    
+  <!-- Test pages stylesheet -->
+  <%= stylesheet_link_tag :jshub %>
+  
+  <!-- jsHub tag files -->
+  <%= javascript_include_tag :jquery %>
+  <%= javascript_include_tag "/js/src/hub" %>
+  <%= javascript_include_tag "/js/src/api" %>
+
+
+  <% # If you need to include a reference to specific Javascript files, either for
+     # plugin libraries or for inline test harness code, create a
+     # "content_for :javascripts" block in the page %>
+  <!-- Javascripts specific to this test case -->
+  <%= yield :javascripts %>
+  
+  <!-- YUI Test framework -->
+  <%= javascript_include_tag :yuitest %>
+
+  <!-- Create a test suite for the page -->
+  <script type="text/javascript">
+    // Create new YUI instance, and populate it with the required modules
+    var Y = YUI({useBrowserConsole:true, ignore: "test"}).use("test");
+    var suite = new Y.Test.Suite("<%= title %>");
+  </script>
+</head>
+<body class="jshub">
+  <%= render :partial => '/jshub_title' %>
+  <%= render :partial => '/test_nav' %>
+
+    <div id="main">
+      <div id="content">
+
+  <h2><%= h title %></h2>
+
+  <% # This is an html description of the purpose of the code, which will appear
+     # above the test results output. %>
+  <%= yield :intro %>
+
+  <!-- Test results will be placed here -->
+  <div id="results"></div>
+
+  <h2 id="examples">HTML to test.</h2>
+
+  <%= yield :layout %>
+
+  <!-- Execute the tests -->
+  <%= stylesheet_link_tag :yuitest_visualizer %>
+  <%= javascript_include_tag :yuitest_visualizer %>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(<%= render :partial => 'shared/version' %>)</p>
+    </div>
+</body>
+</html>
