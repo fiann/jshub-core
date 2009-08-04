@@ -12,6 +12,7 @@ development: &non_production_settings
       # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
       :url_pattern: secret
   :continuous_integration:
+    :port: 30000
     :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
     :base_url: http://localhost:3000/

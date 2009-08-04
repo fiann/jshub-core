@@ -24,11 +24,12 @@ namespace "jshub" do
     end
   
     desc "Start the local Rails server"
-    task "server:start" do
+    task "server:start" => "environment" do
+      port = APP_CONFIG[:continuous_integration][:port]
       # start the local server so tests can be requested directly from the app
-      puts "Starting local server"
+      puts "Starting local server on port #{port}"
       FileUtils.mkpath "tmp/pids"  
-      sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port 3000 --pid tmp/pids/server.pid --daemonize"
+      sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port #{port} --pid tmp/pids/server.pid --daemonize"
     end
     task "server:stop" do
       # stop the local server
