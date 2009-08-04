@@ -67,7 +67,7 @@
       Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
     },
 
-    "test page name is captured": function() {
+    "test interaction event properties is converted to Mixpanel API format": function() {
       var mock = new MockAPI();
       jsHub.trigger('interaction', {"event": 'test-interaction-event', "property1" : "value1", "property2" : "value2"});  
       var expectedData = {
