@@ -1,4 +1,11 @@
+# TODO Not sure this is actually executing?
+
 require 'test_helper'
+require 'action_controller'
+require 'action_controller/test_process'
+
+# include routes for testing
+require File.expand_path("#{File.dirname(__FILE__)}/../../config/routes.rb")
 
 class JavascriptTestControllerTest < ActionController::TestCase
   
