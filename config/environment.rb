@@ -33,6 +33,9 @@ Rails::Initializer.run do |config|
   # for writing XPI file
   config.gem "rubyzip", :version => '>= 0.9.1', :lib => "zip/zip"
 
+  # for documentation
+  config.gem "jekyll", :version => '>= 0.4.1'
+
   # for deployment
   config.gem "capistrano", :version => '>= 2.5.8'
   # along with Apache integration
