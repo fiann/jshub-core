@@ -15,7 +15,7 @@ development: &non_production_settings
     :port: 30000
     :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
-    :base_url: http://work.scribble.local/core/
+    :base_url: http://localhost:30000/
       
 test:
   <<: *non_production_settings
