@@ -1,0 +1,3 @@
+[submodule "website"]
+	path = website
+	url = git@jshub.org:jshub-core.git
