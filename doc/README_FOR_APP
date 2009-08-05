@@ -1,4 +1,4 @@
-= About jsHub
+# About jsHub
 
 jsHub.org is a non-profit that is sponsoring several projects to make the deployment of data capture for web analytics and other online optimization solutions more professional.
 
@@ -6,11 +6,11 @@ This application is a Ruby on Rails application for development of the jsHub jav
 
 Application features:
 
-* Modular source code
-* Plugins
-* Unit test pages
-* Automated test suite and runner
-* Continuous integration and cross-browser testing support
-* Developer help and guides
+ * Modular source code
+ * Plugins
+ * Unit test pages
+ * Automated test suite and runner
+ * Continuous integration and cross-browser testing support
+ * Developer help and guides
 
-For more information see our website at http://jshub.org
+For more information see our website at http://jshub.org/
