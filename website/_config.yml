@@ -1,4 +1,1 @@
-auto: true
-exclude:
-- .git
-- Rakefile
+destination: ./../public/website/

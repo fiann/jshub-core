@@ -34,7 +34,7 @@ Rails::Initializer.run do |config|
   config.gem "rubyzip", :version => '>= 0.9.1', :lib => "zip/zip"
 
   # for documentation
-  config.gem "jekyll", :version => '>= 0.4.1'
+  config.gem "mojombo-jekyll", :version => '>= 0.5.3'
   # for publishing docs to Github
   config.gem "grancher", :version => '>= 0.1'
 

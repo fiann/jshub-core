@@ -98,6 +98,7 @@ A list of these with their install status can be determined by running, from the
 
 To install missing gems run:
 
+    % sudo gem sources -a http://gems.github.com/
     % sudo rake gems:install
   
 The gem list is configured in the `environment.rb` file should you wish more information on the specific gems and versions needed.
