@@ -1,0 +1,4 @@
+auto: true
+exclude:
+- .git
+- Rakefile

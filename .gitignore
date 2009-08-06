@@ -8,6 +8,9 @@ doc/api
 doc/app
 public/help
 
+# Ignore generated static documentation
+website/_site
+
 # Ignore the SQLite databases
 db/*.sqlite3
 
