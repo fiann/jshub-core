@@ -6,7 +6,7 @@ doc/api
 
 # Ignore the generated app files
 doc/app
-public/help
+public/website
 
 # Ignore generated static documentation
 website/_site

@@ -1,5 +1,5 @@
 ---
-layout: help
+layout: homepage
 ---
 
 # About jsHub
@@ -39,4 +39,4 @@ configure and run it the way you would a normal Rails application:
  3. Start the web server: `./script/server` (run with `--help` for options)
  4. Go to `http://localhost:3000/` for the homepage
 
-For more detailed instructions please see the [installation guide](install.html "Installation") and our website at [http://jshub.org/](http://jshub.org/)
+For more detailed instructions please see the [installation guide](help/install.html "Installation") and our website at [http://jshub.org/](http://jshub.org/)

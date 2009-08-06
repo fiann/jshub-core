@@ -64,10 +64,10 @@ namespace :custom do
     run "cd #{current_path} && git archive --format=zip HEAD > #{current_path}/public/download/jshub-core.zip"  
   end
   
-  desc "Generate help and guides"
-  task :help do
-    puts "Generating help"
-    run "cd #{current_path} && rake jshub:doc:help"
+  desc "Generate website with help and guides"
+  task :website do
+    puts "Generating website"
+    run "cd #{current_path} && rake jshub:website"
   end
 
 end
@@ -77,4 +77,4 @@ end
 after "deploy:setup",   "custom:link_webroot"
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
 after "deploy:symlink",   "custom:link_app_config"
-after "deploy:restart", "custom:archive", "custom:help"
+after "deploy:restart", "custom:archive", "custom:website"

@@ -9,7 +9,7 @@ These instructions are intended to enable a developer to:
 * run the jsHub Unit Tests in a local web browser
 * create additional Unit Testscases and pages
 * run the jsHub Unit Test Suite in a headless browser
-* run the jsHub Unit Test Suite from a Continuous Integration server [soon]
+* run the jsHub Unit Test Suite from a Continuous Integration server (soon)
 
 ## Syntax highlighting
 

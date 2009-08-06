@@ -137,9 +137,9 @@ For further information on:
 * creating and testing jsHub data-capture and transport plug-ins
 * contributing additional code, bug fixes and Unit Tests
 
-Generate the local documentation with:
+Generate the local website with documentation using:
 
-    % rake jshub:doc
+    % rake jshub:website
 
 Please refer to these [local](index.html) help pages.
 

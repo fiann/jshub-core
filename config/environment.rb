@@ -35,6 +35,8 @@ Rails::Initializer.run do |config|
 
   # for documentation
   config.gem "jekyll", :version => '>= 0.4.1'
+  # for publishing docs to Github
+  config.gem "grancher", :version => '>= 0.1'
 
   # for deployment
   config.gem "capistrano", :version => '>= 2.5.8'
