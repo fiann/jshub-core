@@ -13,12 +13,11 @@ These instructions are intended to enable a developer to set-up a development en
 
 The latest release of the JsHub code is made available for download at:
 
-* [https://github.com/jshub/jshub/downloads](https://github.com/jshub/jshub/downloads)
-
+<http://github.com/jshub/jshub/downloads>
 
 ### Git repositories
 
-If you have Git installed you can clone from the following URLs on Github:
+If you have Git installed (see [below](#environment_for_contributing_to_the_project)) you can clone from the following URLs on Github:
 
     git://github.com/jshub/jshub.git
 
@@ -48,8 +47,6 @@ It is recommended that the OS is updated to the latest available from Apple usin
 
 Most other operating systems have downloadable binary installers or packages in their management system.
 
-On Windows we recommend the Ruby One-Click Installer available from `http://www.ruby-lang.org/` and select the *Enable Rubygems* option in the installer.
-
 ### Environment for javascript development
 
 Currently development is undertaken on Mac OS X 10.5.7 with the following versions:
@@ -59,6 +56,8 @@ Currently development is undertaken on Mac OS X 10.5.7 with the following versio
 * Rails version    - `Rails 2.3.2`
 * SQLite version   - `sqlite3 3.4.0`
 
+On Windows we recommend the Ruby One-Click Installer available from <http://www.ruby-lang.org/> and select the *Enable Rubygems* option in the installer.
+
 Please note jsHub is not currently tested on Ruby v1.9.
 
 The easiest way to get the latest versions of RubyGems and Rails is to run the following commands in the *Terminal.app*, (you will be prompted for your user password):
@@ -66,7 +65,7 @@ The easiest way to get the latest versions of RubyGems and Rails is to run the f
     % sudo gem update --system`
     % sudo gem upgrade`
   
-On Windows the SQLite3 client (`sqlite-3-xxx.zip`) and .dll (`sqlitedll-3-xx.zip`) can be obtained from `http://www.sqlite.org/download.html` . Extract them to e.g. `C:\sqlite3` and add this folder to your system `PATH` environment variable.
+On Windows the SQLite3 client (`sqlite-3-xxx.zip`) and .dll (`sqlitedll-3-xx.zip`) can be obtained from <http://www.sqlite.org/download.html> . Extract them to e.g. `C:\sqlite3` and add this folder to your system `PATH` environment variable.
 
 ### Environment for running automated tests
  
@@ -75,18 +74,18 @@ Running of headless Unit Tests (rather than in a web browser) uses Rhino and req
 Currently development is undertaken on Mac OS X 10.5.7 with the following version:
 
 * Java version - `java version "1.6.0_13"`
-                      
+
 ### Environment for contributing to the project
                    
 If you wish to contribute back to the project you will also require Git to checkout the latest code and generate patches for submission.
 
 Most operating systems have a downloadable binary installer or package in their management system.
 
-For Mac OS X 10.5.7 we recommend the Git for OS X installer from `http://code.google.com/p/git-osx-installer/` which installs the following:
+For Mac OS X 10.5.7 we recommend the Git for OS X installer from <http://code.google.com/p/git-osx-installer/> which installs the following:
 
 * Git version  - `git version 1.6.0.2`
  
-there is also a useful GUI called 'GitX' at `http://gitx.frim.nl/`
+there is also a useful GUI called [GitX](http://gitx.frim.nl/).
 
 ## Gem dependencies
 
@@ -113,7 +112,7 @@ To run the application use:
 
     % ruby ./script/server
 
-you can now access the application on `http://localhost:3000/` (by default)
+you can now access the application on <http://localhost:3000/> (by default)
 
 On Windows you may be prompted by the Windows Firewall or other security software to allow the application to run.
 
@@ -123,11 +122,11 @@ For other deployment instructions please see the [deployment guide](deployment.h
 
 The application comes with a set of comprehensive test pages that can be run in a web browser:
 
-    http://localhost:3000/test/unit/
+<http://localhost:3000/test/unit/>
 
 Each page submits its results to a local database, also identifying the browser used, so that the Unit Test pages can be run from any other local machines with web browsers installed as part of a cross-browser test suite:
 
-    http://localhost:3000/test/results/
+<http://localhost:3000/test/results/>
 
 For more detailed instructions please see the [testing guide](testing.html) file.
 
@@ -148,4 +147,4 @@ Run `rake -T` to find other tasks in the `jshub` namespace
 
 The best place to get other support is on the mailing list:
 
-    http://groups.google.com/group/jshub-users/
+<http://groups.google.com/group/jshub-users/>
