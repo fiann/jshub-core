@@ -26,7 +26,7 @@ gromit:
   adapter: sqlite3
   # Keep data between capistrano deployments by putting the database in shared/db
   # The db:migrate version is kept in the database itself
-  database: /var/capistrano/akita-on-rails/shared/db/production.sqlite3
+  database: /var/capistrano/core/shared/db/production.sqlite3
   timeout: 5000
 
 # paths specific for the jsHub server
@@ -34,5 +34,5 @@ jshub:
   adapter: sqlite3
   # Keep data between capistrano deployments by putting the database in shared/db
   # The db:migrate version is kept in the database itself
-  database: /var/capistrano/akita-on-rails/shared/db/production.sqlite3
+  database: /var/capistrano/core/shared/db/production.sqlite3
   timeout: 5000
