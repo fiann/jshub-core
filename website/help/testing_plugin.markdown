@@ -2,16 +2,18 @@
 layout: help
 ---
 
-# The *jsHub Javascript Tester* plugin
+# The *jsHub Javascript Tester* Rails plugin
 
 These instructions are intended to enable a developer to:
 
 * run the jsHub Unit Test Suite in a headless browser
-* run the jsHub Unit Test Suite from a Continuous Integration server (soon)
+* use the jsHub Unit Test Suite with a Continuous Integration server
 
 The *jsHub Javascript Tester* plugin will be released as a separate project on Github soon, and can currently be found in the `vendor/plugins/jshub_javascript_tester/` directory.
 
 The plugin provides some additional features for including other javascript code and documentation into the HTML output, as well as for reporting results, headless running and integration with Continuous Intergration environments.
+
+**Note:** The plugin does not currently work on Windows
 
 ## Test Page Templates
 
@@ -133,3 +135,13 @@ For further information and support on the running of headless Unit Tests you ma
 
 * <http://groups.google.com/group/envjs>
 * <http://github.com/thatcher/env-js>
+
+## Using with a Continuous Integration server
+
+As a result of the Unit Tests running in a headless browser the plugin is able to generate and save to disk reports on the test runs made.
+
+Reports in [JUnit/Ant XML][junit] and [YUI Test JSON][yt-report] format are saved in `test\reports\` and the rake task `jshub:hudson:build` supplied for use with Hudson.
+
+More information on this feature will be forthcoming.
+
+  [junit]: http://www.junit.org/

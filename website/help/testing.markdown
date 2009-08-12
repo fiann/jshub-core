@@ -27,6 +27,10 @@ The test pages make use of [YUI Test][yt] and so all documentation and examples 
 
   [yt]: http://developer.yahoo.com/yui/3/test/
 
+**Note:** The existing test pages are designed to allow for easy reuse of test cases however be aware that the most common problem likely to be encountered is the accidental use of **[trailing commas][tc]** after test method declarations, which is especially difficult to debug in IE.
+
+  [tc]: http://firsttube.com/read/ie-sucking-hard-since-version-5/
+
 ### Basic test page details
 
 Test pages should be named `test_suite_name.html.erb` and placed in `test/unit/javascript/` which is accessed as <http://localhost:3000/test/unit/>
@@ -91,8 +95,6 @@ This example is taken from [test/unit/javascript/microformat/hPage/simple_nodes.
 </pre>
 
 Above is a minimal *hPage* microformat HTML section, along with a test to assert that the value found by the jsHub javascript code matches that declared in the page.
-
-**Note:** The existing test pages are designed to allow for easy reuse of test cases however be aware that the most common problem likely to be encountered is the correct use of **trailing commas** after test method declarations, especially in IE.
 
 ### Advanced test page details
 

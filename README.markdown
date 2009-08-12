@@ -21,7 +21,7 @@ JsHub is released under the BSD license and is copyright (c) 2009, jsHub.inc. A 
 
 Downloadable zip:   
 
- * [http://jshub.org/download/](http://jshub.org/download/)
+* <http://github.com/jshub/jshub/downloads>
 
 Unzip the archive anywhere on your computer
 
@@ -30,9 +30,9 @@ Unzip the archive anywhere on your computer
 This application is a traditional Ruby on Rails application, meaning that you can
 configure and run it the way you would a normal Rails application:
 
- 1. Change to the unzipped application: <code>cd /path/to/app</code>
- 2. Load the database schema: <code>rake db:migrate</code>
- 3. Start the web server: <code>./script/server</code> (run with --help for options)
- 4. Go to http://localhost:3000 for the homepage
+1. Change to the unzipped application: `cd /path/to/app`
+2. Load the database schema: `rake db:migrate`
+3. Start the web server: `ruby script/server` (run with --help for options)
+4. Go to <http://localhost:3000> for the homepage
 
-For more detailed instructions please see the [installation guide](installation.html "Installation") and our website at [http://jshub.org/](http://jshub.org/)
+For more detailed instructions please see the [installation guide](installation.html) and our website at <http://jshub.org/>

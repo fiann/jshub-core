@@ -8,6 +8,8 @@ These instructions are intended to enable a developer to set-up a development en
 
 * running the jsHub code on a local machine
 * running the jsHub Unit Tests in a local web browser
+* deploy the application
+* get development support
  
 ## Getting the code
 
@@ -77,6 +79,8 @@ Currently development is undertaken on Mac OS X 10.5.7 with the following versio
 
 * Java version - `java version "1.6.0_13"`
 
+On Windows this Java runtime can be downloaded directly from <http://www.java.com/>.
+
 ### Environment for contributing to the project
                    
 If you wish to contribute back to the project you will also require Git to checkout the latest code and generate patches for submission.
@@ -99,7 +103,7 @@ A list of these with their install status can be determined by running, from the
     % sudo rake gems
 </pre>
 
-To install missing gems run:
+To install missing gems run the following to add Github to the list of sources and get all missing gems and dependencies:
 
 <pre class="brush: bash; light: true;">
     % sudo gem sources -a http://gems.github.com/
@@ -119,7 +123,7 @@ Set-up the database:
 To run the application use:
 
 <pre class="brush: bash; light: true;">
-    % ruby ./script/server
+    % ruby script/server
 </pre>
 
 you can now access the application on <http://localhost:3000/> (by default)
@@ -138,7 +142,7 @@ Each page submits its results to a local database, also identifying the browser 
 
 <http://localhost:3000/test/results/>
 
-For more detailed instructions please see the [testing guide](testing.html) file.
+For more detailed instructions please see the [testing guide](testing.html).
 
 ## Support
 

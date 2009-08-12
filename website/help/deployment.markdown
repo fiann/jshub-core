@@ -40,4 +40,6 @@ Deployment is undertaken using Capistrano and requires the following gems:
 * capistrano 2.5.8
 * capistrano-ext 1.2.1
 
-Information on the deployment setting can be found in the `config/deploy.rb` and `config/deploy/*` files
+Information on the deployment setting can be found in the `config/deploy.rb` and `config/deploy/*` files.
+
+More information on this feature will be forthcoming.
