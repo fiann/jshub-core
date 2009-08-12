@@ -35,4 +35,4 @@ configure and run it the way you would a normal Rails application:
 3. Start the web server: `ruby script/server` (run with --help for options)
 4. Go to <http://localhost:3000> for the homepage
 
-For more detailed instructions please see the [installation guide](installation.html) and our website at <http://jshub.org/>
+For more detailed instructions please see the [installation guide](http://jshub.github.com/jshub/) and our website at <http://jshub.org/>
