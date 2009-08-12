@@ -1,0 +1,222 @@
+[liamc]: master $ rake test:javascripts TEST=test/unit/javascript/microformat/hPage/simple_nodes.html.erb
+(in /Users/liamc/Projects/Work/Code/git/jshub-core)
+/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby -Ilib:test -e "load '/Users/liamc/Projects/Work/Code/git/jshub-core/vendor/plugins/jshub_javascript_tester/lib/jshub_javascript_tester/jshub_test_runner.rb'; JshubTestRunner.initialize_tests(%w{test/unit/javascript/microformat/hPage/simple_nodes.html.erb})"
+Loaded suite -e
+Started
+Defining method for file: test/unit/javascript/microformat/hPage/simple_nodes.html.erb
+Test Case test/unit/javascript/microformat/hPage/simple_nodes.html.erb
+URL to Test Case http://liamc.local/core/test/unit/microformat/hPage/simple_nodes.html.erb
+cd '/Users/liamc/Projects/Work/Code/git/jshub-core' && java -jar '/Users/liamc/Projects/Work/Code/git/jshub-core/vendor/plugins/jshub_javascript_tester/lib/rhino/js.jar'  '/Users/liamc/Projects/Work/Code/git/jshub-core/vendor/plugins/jshub_javascript_tester/lib/jshub_javascript_tester/jshub_test_runner.js' 'http://liamc.local/core/test/unit/microformat/hPage/simple_nodes.html.erb' 'true'
+javascript_test_runner.js: Using 'debug' mode
+info: Loading Env.js: started
+info: Loading Env.js: finished
+info: Loading HTML test file: http://liamc.local/core/test/unit/microformat/hPage/simple_nodes.html.erb
+log: Hub initialized, triggering page lifecycle events
+log: + Event plugin-initialization-start triggered with data, ({name:"hPage Microformat Parser Plugin", id:"hPage-plugin", version:"0.1", author:"Liam Clancy", email:"liamc@jshub.org", vendor:"jsHub.org", type:"microformat"})
+log: + Event plugin-initialization-complete triggered with data, ({name:"hPage Microformat Parser Plugin", id:"hPage-plugin", version:"0.1", author:"Liam Clancy", email:"liamc@jshub.org", vendor:"jsHub.org", type:"microformat"})
+log: + Event data-capture-start triggered with data, 'none'
+log: + Event page-view triggered with data, 'none'
+debug: + Sending event page-view to listener hPage-plugin with data, ({})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331068", data:"({})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-node-found triggered with data, ({count:"2", element:"Element #361 DIV", data:"({attributes:[]})"})
+log: + + Event hpage-node-found triggered with data, ({count:"3", element:"Element #374 DIV", data:"({title:\"implicit page title value\", 'title-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-node-found triggered with data, ({count:"4", element:"Element #406 DIV", data:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-node-found triggered with data, ({count:"5", element:"Element #454 DIV", data:"({name:\"name with an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'name-source':\"hPage-plugin\", title:\"title with whitespace and an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'title-source':\"hPage-plugin\", referrer:\"referrer with a <span id=\\\"\\\" >span nesting more <a id=\\\"\\\" href=\\\"#\\\" >html</a></span>\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:undefined, hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"name with an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'name-source':\"hPage-plugin\", title:\"title with whitespace and an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'title-source':\"hPage-plugin\", referrer:\"referrer with a <span id=\\\"\\\" >span nesting more <a id=\\\"\\\" href=\\\"#\\\" >html</a></span>\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({version:"version with inline newlines and spaces", 'version-source':"hPage-plugin", name:"name with an <a id=\"\" href=\"#\" >embedded link</a>", 'name-source':"hPage-plugin", title:"title with whitespace and an <a id=\"\" href=\"#\" >embedded link</a>", 'title-source':"hPage-plugin", referrer:"referrer with a <span id=\"\" >span nesting more <a id=\"\" href=\"#\" >html</a></span>", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: + Event data-capture-complete triggered with data, 'none'
+info: File name: microformat/hPage/simple_nodes.html.erb
+info: Browser UA: Envjs/0.1 (Rhino ; U; Mac OS X x86_64 10.5.8; null; rv:0.0.0.0) Resig/20070309 BirdDog/0.0.0.1
+info: Browser UA: {
+  "ie": 0,
+  "opera": 0,
+  "gecko": 0,
+  "webkit": 0,
+  "mobile": null,
+  "air": 0,
+  "secure": false,
+  "os": null
+}
+info: Rhino: YUI TestRunner events subscribed
+log: Rhino: Running tests {
+  "name": "Single nodes &lt; hPage value excerpting &lt; Microformat parser &lt; Unit Tests",
+  "items": [
+    {
+      "_should": {},
+      "name": "Environment check"
+    },
+    {
+      "_should": {},
+      "name": "Text field values"
+    },
+    {
+      "_should": {},
+      "name": "hPage without required fields"
+    },
+    {
+      "_should": {},
+      "name": "Whitespace normalization"
+    },
+    {
+      "_should": {},
+      "name": "Embedded HTML"
+    }
+  ]
+}
+info: TestRunner: Testing began at Wed Aug 12 2009 11:18:51 GMT+0100 (BST).
+info: Test execution started
+info: TestRunner: Test suite "Single nodes &lt; hPage value excerpting &lt; Microformat parser &lt; Unit Tests" started.
+info: TestRunner: Test case "Environment check" started.
+log: TestRunner: test required test dependencies: passed.
+log: TestRunner: test jsHub API dependencies: passed.
+info: TestRunner: Test case "Environment check" completed.
+Passed:2 Failed:0 Total:2
+info: TestRunner: Test case "Text field values" started.
+log: + Event page-view triggered with data, ({context:"#example1"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example1"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331332", data:"({context:\"#example1\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example1", version:"1.0", 'version-source':"hPage-plugin", name:"page name", 'name-source':"hPage-plugin", title:"page title", 'title-source':"hPage-plugin", referrer:"referrer URL", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: TestRunner: test version field: passed.
+log: + Event page-view triggered with data, ({context:"#example1"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example1"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331413", data:"({context:\"#example1\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example1", version:"1.0", 'version-source':"hPage-plugin", name:"page name", 'name-source':"hPage-plugin", title:"page title", 'title-source':"hPage-plugin", referrer:"referrer URL", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: TestRunner: test name field: passed.
+log: + Event page-view triggered with data, ({context:"#example1"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example1"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331452", data:"({context:\"#example1\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example1", version:"1.0", 'version-source':"hPage-plugin", name:"page name", 'name-source':"hPage-plugin", title:"page title", 'title-source':"hPage-plugin", referrer:"referrer URL", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: TestRunner: test title field: passed.
+log: + Event page-view triggered with data, ({context:"#example1"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example1"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331482", data:"({context:\"#example1\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example1", version:"1.0", 'version-source':"hPage-plugin", name:"page name", 'name-source':"hPage-plugin", title:"page title", 'title-source':"hPage-plugin", referrer:"referrer URL", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: TestRunner: test referrer field: passed.
+log: + Event page-view triggered with data, ({context:"#example1"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example1"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331604", data:"({context:\"#example1\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #260 DIV", data:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example1", hpage:"({version:\"1.0\", 'version-source':\"hPage-plugin\", name:\"page name\", 'name-source':\"hPage-plugin\", title:\"page title\", 'title-source':\"hPage-plugin\", referrer:\"referrer URL\", 'referrer-source':\"hPage-plugin\", type:\"Homepage\", 'type-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example1", version:"1.0", 'version-source':"hPage-plugin", name:"page name", 'name-source':"hPage-plugin", title:"page title", 'title-source':"hPage-plugin", referrer:"referrer URL", 'referrer-source':"hPage-plugin", type:"Homepage", 'type-source':"hPage-plugin"})
+log: TestRunner: test type field: passed.
+info: TestRunner: Test case "Text field values" completed.
+Passed:5 Failed:0 Total:5
+info: TestRunner: Test case "hPage without required fields" started.
+log: + Event page-view triggered with data, ({context:"#example2"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example2"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331661", data:"({context:\"#example2\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #361 DIV", data:"({attributes:[]})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+log: TestRunner: test no hPage found when no fields are specified: passed.
+log: + Event page-view triggered with data, ({context:"#example3"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example3"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331678", data:"({context:\"#example3\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #374 DIV", data:"({title:\"implicit page title value\", 'title-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+log: TestRunner: test no hPage found when required fields are not specified: passed.
+info: TestRunner: Test case "hPage without required fields" completed.
+Passed:2 Failed:0 Total:2
+info: TestRunner: Test case "Whitespace normalization" started.
+log: + Event page-view triggered with data, ({context:"#example4"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example4"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331697", data:"({context:\"#example4\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #406 DIV", data:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example4", version:"version with inline newlines and spaces", 'version-source':"hPage-plugin", name:"page name with newlines", 'name-source':"hPage-plugin", title:"page title with spaces", 'title-source':"hPage-plugin", referrer:"page referrer with tabs", 'referrer-source':"hPage-plugin"})
+log: TestRunner: test leading and trailing newlines removed: passed.
+log: + Event page-view triggered with data, ({context:"#example4"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example4"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331718", data:"({context:\"#example4\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #406 DIV", data:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example4", version:"version with inline newlines and spaces", 'version-source':"hPage-plugin", name:"page name with newlines", 'name-source':"hPage-plugin", title:"page title with spaces", 'title-source':"hPage-plugin", referrer:"page referrer with tabs", 'referrer-source':"hPage-plugin"})
+log: TestRunner: test leading and trailing spaces removed: passed.
+log: + Event page-view triggered with data, ({context:"#example4"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example4"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331736", data:"({context:\"#example4\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #406 DIV", data:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example4", version:"version with inline newlines and spaces", 'version-source':"hPage-plugin", name:"page name with newlines", 'name-source':"hPage-plugin", title:"page title with spaces", 'title-source':"hPage-plugin", referrer:"page referrer with tabs", 'referrer-source':"hPage-plugin"})
+log: TestRunner: test leading and trailing tabs removed: passed.
+log: + Event page-view triggered with data, ({context:"#example4"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example4"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331755", data:"({context:\"#example4\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #406 DIV", data:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example4", hpage:"({version:\"version with inline newlines and spaces\", 'version-source':\"hPage-plugin\", name:\"page name with newlines\", 'name-source':\"hPage-plugin\", title:\"page title with spaces\", 'title-source':\"hPage-plugin\", referrer:\"page referrer with tabs\", 'referrer-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example4", version:"version with inline newlines and spaces", 'version-source':"hPage-plugin", name:"page name with newlines", 'name-source':"hPage-plugin", title:"page title with spaces", 'title-source':"hPage-plugin", referrer:"page referrer with tabs", 'referrer-source':"hPage-plugin"})
+log: TestRunner: test inline whitespace normalized: passed.
+info: TestRunner: Test case "Whitespace normalization" completed.
+Passed:4 Failed:0 Total:4
+info: TestRunner: Test case "Embedded HTML" started.
+log: + Event page-view triggered with data, ({context:"#example5"})
+debug: + Sending event page-view to listener hPage-plugin with data, ({context:"#example5"})
+log: + + Event hpage-parse-start triggered with data, ({type:"page-view", timestamp:"1250072331781", data:"({context:\"#example5\"})"})
+log: + + Event hpage-node-found triggered with data, ({count:"1", element:"Element #454 DIV", data:"({name:\"name with an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'name-source':\"hPage-plugin\", title:\"title with whitespace and an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'title-source':\"hPage-plugin\", referrer:\"referrer with a <span id=\\\"\\\" >span nesting more <a id=\\\"\\\" href=\\\"#\\\" >html</a></span>\", 'referrer-source':\"hPage-plugin\", attributes:[]})"})
+log: + + Event hpage-found triggered with data, ({context:"#example5", hpage:"({name:\"name with an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'name-source':\"hPage-plugin\", title:\"title with whitespace and an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'title-source':\"hPage-plugin\", referrer:\"referrer with a <span id=\\\"\\\" >span nesting more <a id=\\\"\\\" href=\\\"#\\\" >html</a></span>\", 'referrer-source':\"hPage-plugin\"})"})
+debug: + + Sending event hpage-found to listener unittest with data, ({context:"#example5", hpage:"({name:\"name with an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'name-source':\"hPage-plugin\", title:\"title with whitespace and an <a id=\\\"\\\" href=\\\"#\\\" >embedded link</a>\", 'title-source':\"hPage-plugin\", referrer:\"referrer with a <span id=\\\"\\\" >span nesting more <a id=\\\"\\\" href=\\\"#\\\" >html</a></span>\", 'referrer-source':\"hPage-plugin\"})"})
+log: + + Event hpage-parse-complete triggered with data, 'none'
+debug: + Listener hPage-plugin added data, event is now , ({context:"#example5", name:"name with an <a id=\"\" href=\"#\" >embedded link</a>", 'name-source':"hPage-plugin", title:"title with whitespace and an <a id=\"\" href=\"#\" >embedded link</a>", 'title-source':"hPage-plugin", referrer:"referrer with a <span id=\"\" >span nesting more <a id=\"\" href=\"#\" >html</a></span>", 'referrer-source':"hPage-plugin"})
+log: TestRunner: test inline HTML is preserved: passed.
+info: TestRunner: Test case "Embedded HTML" completed.
+Passed:1 Failed:0 Total:1
+info: TestRunner: Test suite "Single nodes &lt; hPage value excerpting &lt; Microformat parser &lt; Unit Tests" completed.
+Passed:14 Failed:0 Total:14
+info: TestRunner: Testing completed at Wed Aug 12 2009 11:18:51 GMT+0100 (BST).
+Passed:14 Failed:0 Total:14
+
+Unit Test Report: 14 Passed, 0 Failed, 0 Ignored, 14 Total tests in 481ms for microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI testsuite => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI testcase => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI test => JUnit testcase.@name = test required test dependencies
+debug: xml: YUI test => JUnit testcase.@name = test jsHub API dependencies
+debug: xml: YUI testcase => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI test => JUnit testcase.@name = test version field
+debug: xml: YUI test => JUnit testcase.@name = test name field
+debug: xml: YUI test => JUnit testcase.@name = test title field
+debug: xml: YUI test => JUnit testcase.@name = test referrer field
+debug: xml: YUI test => JUnit testcase.@name = test type field
+debug: xml: YUI testcase => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI test => JUnit testcase.@name = test no hPage found when no fields are specified
+debug: xml: YUI test => JUnit testcase.@name = test no hPage found when required fields are not specified
+debug: xml: YUI testcase => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI test => JUnit testcase.@name = test leading and trailing newlines removed
+debug: xml: YUI test => JUnit testcase.@name = test leading and trailing spaces removed
+debug: xml: YUI test => JUnit testcase.@name = test leading and trailing tabs removed
+debug: xml: YUI test => JUnit testcase.@name = test inline whitespace normalized
+debug: xml: YUI testcase => JUnit suite.@name = microformat/hPage/simple_nodes.html.erb
+debug: xml: YUI test => JUnit testcase.@name = test inline HTML is preserved
+debug: xml: changing <root/> to <testsuites>
+log: Report saved in JUnit XML at test/reports/TEST-microformat_hPage_simple_nodes.html.erb.xml
+log: Report saved in YUITest JSON at test/reports/YUITEST-microformat_hPage_simple_nodes.html.erb.json
+.
+Finished in 3.586377 seconds.
+
+1 tests, 1 assertions, 0 failures, 0 errors

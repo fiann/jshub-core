@@ -15,8 +15,8 @@ Phusion Passenger integrates Rails applications with the Apache web server, and 
 
 For installation instructions please see the Phusion Passenger website and section on Sub-URIs:
 
-    http://www.modrails.com/install.html
-    http://www.modrails.com/documentation/Users%20guide.html#deploying_rails_to_sub_uri
+* <http://www.modrails.com/install.html>
+* <http://www.modrails.com/documentation/Users%20guide.html#deploying_rails_to_sub_uri>
  
 The jsHub application comes pre-configured to run on the URL `/core/` and this can be changed in the `environments/passenger.rb` file.
 
@@ -29,7 +29,9 @@ Below is a sample Apache configuration:
       RailsBaseURI /core
     </VirtualHost>
 
-A useful utility on Mac OS X is the [Passenger Pane](http://www.fngtps.com/passenger-preference-pane) for the setting up virtual hosts as an alternative during development.
+A useful utility on Mac OS X is the [Passenger Pane][pp] for the setting up virtual hosts as an alternative during development.
+
+  [pp]: http://www.fngtps.com/passenger-preference-pane
 
 ## Deploying to servers
 
@@ -37,3 +39,5 @@ Deployment is undertaken using Capistrano and requires the following gems:
 
 * capistrano 2.5.8
 * capistrano-ext 1.2.1
+
+Information on the deployment setting can be found in the `config/deploy.rb` and `config/deploy/*` files

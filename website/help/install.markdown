@@ -62,8 +62,10 @@ Please note jsHub is not currently tested on Ruby v1.9.
 
 The easiest way to get the latest versions of RubyGems and Rails is to run the following commands in the *Terminal.app*, (you will be prompted for your user password):
 
-    % sudo gem update --system`
-    % sudo gem upgrade`
+<pre class="brush: bash; light: true;">
+    % sudo gem update --system
+    % sudo gem upgrade
+</pre>
   
 On Windows the SQLite3 client (`sqlite-3-xxx.zip`) and .dll (`sqlitedll-3-xx.zip`) can be obtained from <http://www.sqlite.org/download.html> . Extract them to e.g. `C:\sqlite3` and add this folder to your system `PATH` environment variable.
 
@@ -93,12 +95,16 @@ The application requires a number of gems to be present.
 
 A list of these with their install status can be determined by running, from the root of the application:
 
+<pre class="brush: bash; light: true;">
     % sudo rake gems
+</pre>
 
 To install missing gems run:
 
+<pre class="brush: bash; light: true;">
     % sudo gem sources -a http://gems.github.com/
     % sudo rake gems:install
+</pre>
   
 The gem list is configured in the `environment.rb` file should you wish more information on the specific gems and versions needed.
 
@@ -106,11 +112,15 @@ The gem list is configured in the `environment.rb` file should you wish more inf
 
 Set-up the database:
 
+<pre class="brush: bash; light: true;">
     % rake db:migrate
+</pre>
 
 To run the application use:
 
+<pre class="brush: bash; light: true;">
     % ruby ./script/server
+</pre>
 
 you can now access the application on <http://localhost:3000/> (by default)
 
@@ -139,7 +149,9 @@ For further information on:
 
 Generate the local website with documentation using:
 
+<pre class="brush: bash; light: true;">
     % rake jshub:website
+</pre>
 
 Please refer to these [local](index.html) help pages.
 
