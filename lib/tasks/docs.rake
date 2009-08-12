@@ -16,10 +16,11 @@ namespace :jshub do
       require 'grancher'
       # Uses library version so that rake -T and rake gems:install do not fail if gem is missing
       grancher = Grancher.new do |g|
+        g.directory 'website'
+
         g.branch = 'gh-pages'
         g.push_to = 'github' # automatically push too    
-        g.directory 'website'
-        g.message 'Updated website'
+        g.message = 'Updated website'
       end
       grancher.commit
       grancher.push
