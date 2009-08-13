@@ -157,7 +157,7 @@ Generate the local website with documentation using:
     % rake jshub:website
 </pre>
 
-Please refer to these [local](index.html) help pages.
+Please refer to these [local](../) help pages.
 
 Run `rake -T` to find other tasks in the `jshub` namespace
 
