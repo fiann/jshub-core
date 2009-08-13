@@ -2,9 +2,18 @@
 layout: homepage
 ---
 
-# About jsHub
+# jsHub Core
 
-jsHub.org is a non-profit that is sponsoring several projects to make the deployment of data capture for web analytics and other online optimization solutions more professional.
+* Documentation: <http://jshub.org/core/website/>
+* License: <http://jshub.org/legal/>
+* Latest Stable Release: <http://github.com/jshub/jshub-core/downloads/>
+* Discuss: <http://groups.google.com/group/jshub-users/>
+* Contributor Info: 
+  * [Liam Clancy (metafeather)][mf]
+  * [Fiann O'Hagan (fiann)][fo]
+
+  [mf]: http://github.com/metafeather
+  [fo]: http://github.com/fiann
 
 This application is a Ruby on Rails application for development of the jsHub javascript library.
 
@@ -17,15 +26,19 @@ Application features:
 * Continuous integration and cross-browser testing support
 * Developer help and guides
 
+## About jsHub
+
+jsHub.org is a non-profit that is sponsoring several projects to make the deployment of data capture for web analytics and other online optimization solutions more professional.
+
 ## License
 
-JsHub is released under the BSD license and is copyright (c) 2009, jsHub.inc. A copy of the BSD license can be found in the LICENSE file.
+jsHub Core is released under the BSD license and is copyright (c) 2009, jsHub.inc. A copy of the BSD license can be found in the LICENSE file.
 
 ## Getting the code
 
 Downloads:   
 
-* [https://github.com/jshub/jshub/downloads](https://github.com/jshub/jshub/downloads)
+* <http://github.com/jshub/jshub-core/downloads/>
 
 Unzip the archive anywhere on your computer
 
