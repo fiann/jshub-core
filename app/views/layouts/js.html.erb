@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title><%= h @title %></title>
+    <%= stylesheet_link_tag 'jshub' %>
+    <%= stylesheet_link_tag :syntaxhighlighter %>
+    <%= javascript_include_tag :syntaxhighlighter %>
+  </head>
+  <body class="jshub">
+    <%= render :partial => '/jshub_title' %>
+    <%= render :partial => '/test_nav' %>
+
+    <div id="main">
+      <div id="content">
+
+      <%= yield :layout %>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(<%= render :partial => 'shared/version' %>)</p>
+    </div>    
+
+    <script type="text/javascript">
+      // highlight any code on the page
+      dp.SyntaxHighlighter.HighlightAll('code');
+    </script>
+
+  </body>
+</html>

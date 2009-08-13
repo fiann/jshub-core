@@ -1,0 +1,27 @@
+<% @title = 'Javascript Unit Test Pages' %>
+
+<h1>Unit test files</h1>
+
+<p>
+  <%= link_to 'unit tests', javascript_test_path(:unit) %>
+  <% params[:path].each_index do |i| %>
+  / <%= link_to params[:path][i], :path => params[:path][0..i] %>
+  <% end %>
+</p>
+
+<% unless @folders.empty? %>
+<ul>
+  <% @folders.each do |f| %>
+  <li class="folder"><%= link_to f.basename, :path => params[:path] + [f.basename]%> tests</li>
+  <% end %>
+</ul>
+<% end %>
+
+<% unless @files.empty? %>
+<ul>
+  <% @files.each do |f| %>
+  <li class="file"><%= link_to f.basename('.html.erb'), :path => params[:path] + [f.basename('.html.erb')]%></li>
+  <% end %>
+</ul>
+<% end %>
+

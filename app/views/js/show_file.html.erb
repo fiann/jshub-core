@@ -1,0 +1,9 @@
+<h2>
+  <code>
+    <%= path_components %>
+    [<%= link_to "raw", :action => 'src', :path => params[:path] %>]
+  </code>
+</h2>
+<textarea name="code" class="JavaScript">
+  <%= h @code %>
+</textarea>

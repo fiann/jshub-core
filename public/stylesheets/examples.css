@@ -1,0 +1,12 @@
+/* Note: when making references to images use the path ../../images/ */
+/* CONSTANTS */
+/* Mixins */
+body.jshub div.example-ui {
+  margin-bottom: 5px;
+  width: 500px;
+  height: 300px;
+  background-color: #eee;
+  background-image: url(../../images/styleguide/grid-paper.png);
+  border: 1px solid #ccc; }
+body.jshub div#example1a, body.jshub div#example1b, body.jshub div#example1c, body.jshub div#example1d {
+  height: 100px; }

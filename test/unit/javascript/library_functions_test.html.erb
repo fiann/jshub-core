@@ -1,0 +1,103 @@
+<% set_title "Date and URI utilities < Libraries" %>
+
+<% content_for :javascripts do %>  
+  <!-- Nothin required, just testing jQuery libraries here -->
+<% end %>
+
+<% content_for :intro do %>
+<p>This file tests the date and URI parsing utilities provided by jQuery.</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+/* <![CDATA[  // */
+  
+  suite.add(new Y.Test.Case({
+    name: "HREF and URI parsing",
+
+    _should: {
+      ignore: {
+		"test qualify HREF": true
+      }
+    },
+    
+    "test qualify HREF": function() {
+    
+      /*
+       * Will not always be run as localhost.
+       * If port 80 is explicitly used browsers suppress the display in the URL
+       * so this is ignored. Other ports are fine, e.g. 8080 etc
+       * May need ammending dependent on the path, but that replicated the fnctionality in the test.
+       * 
+       * TODO this does not run properly in env.js with the file: protocol
+       */
+      var server = document.location.protocol + "//" + document.location.hostname;
+      if (document.location.port && document.location.port !== '80') {
+        server += ":" + document.location.port;
+      }
+      
+      /*
+       * Base URL expected for relative links. May not be correct if routes.rb changes.
+       */
+      var baseURL = "/test/unit/";
+      
+      var href = "/index.html";
+      var uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/index.html", uri);
+      
+      href = "/somewhere/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/somewhere/index.html", uri);
+      
+      href = "/somewhere/else/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/somewhere/else/index.html", uri);
+      
+      href = "index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + baseURL + "index.html", uri);
+      
+      href = "somewhere/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + baseURL + "somewhere/index.html", uri);
+      
+      href = "somewhere/else/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + baseURL + "somewhere/else/index.html", uri);
+      
+      href = "./index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + baseURL + "index.html", uri);
+      
+      href = "../index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/test/index.html", uri);
+      
+      href = "../../index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/index.html", uri);
+      
+      href = "../somewhere/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/test/somewhere/index.html", uri);
+      
+      href = "../somewhere/else/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/test/somewhere/else/index.html", uri);
+      
+      href = "../../somewhere/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/somewhere/index.html", uri);
+      
+      href = "../../somewhere/else/index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + "/somewhere/else/index.html", uri);
+      
+      href = "somewhere/else/../../index.html";
+      uri = $.qualifyHREF(href);
+      Y.Assert.areSame(server + baseURL + "somewhere/else/../../index.html", uri);
+      
+    }
+  
+  }));
+// ]]>
+</script>

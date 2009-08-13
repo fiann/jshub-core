@@ -1,0 +1,22 @@
+  <p>Welcome to the jsHub core tag development application.</p>
+	
+	<h1>Code and tests</h1>
+	
+    <p>
+      Download or <%= link_to 'view the jsHub source code', :controller => 'js', :action => 'show' %>. 
+	</p>
+
+    <p>
+      Test related links:
+    </p>
+    <ul>      
+      <li>
+        <%= link_to 'Test Pages', :javascript_test %> - HTML test pages to load in a web browser.
+      </li>
+      <li>
+        <%= link_to 'Test Results', :javascript_test_result_index %> - Javascript unit test results collected from test pages
+      </li>
+      <li>
+        <%= link_to 'Test Runs', :litmus_test_runs %> - Collections of test pages and their test results.
+      </li>
+    </ul>

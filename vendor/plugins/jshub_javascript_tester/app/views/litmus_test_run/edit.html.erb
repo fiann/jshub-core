@@ -1,0 +1,12 @@
+<h1>Editing test_run</h1>
+
+<% form_for(@test_run) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @test_run %> |
+<%= link_to 'Back', litmus_test_runs_path %>

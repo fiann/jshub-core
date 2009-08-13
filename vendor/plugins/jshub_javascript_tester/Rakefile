@@ -1,0 +1,60 @@
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
+
+desc 'Default: run unit tests.'
+task :default => :test
+
+desc 'Test the jshub_javascript_tester plugin.'
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'lib'
+  t.libs << 'test'
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = true
+end
+
+desc 'Generate documentation for the jshub_javascript_tester plugin.'
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = 'JshubJavascriptTester'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+# Make a Gem from the plugin
+# ref: http://guides.rubyonrails.org/plugins.html
+require 'rubygems'
+require 'rubygems/package_task'
+
+PKG_FILES = FileList[
+  '[a-zA-Z]*',
+  'generators/**/*',
+  'lib/**/*',
+  'rails/**/*',
+  'tasks/**/*',
+  'test/**/*'
+]
+
+spec = Gem::Specification.new do |s|
+  s.name = "jshub_javascript_tester"
+  s.version = "0.0.1"
+  s.author = "Liam Clancy"
+  s.email = "liamc@jshub.org"
+  s.homepage = "http://jshub.org/"
+  s.platform = Gem::Platform::RUBY
+  s.summary = "A javascript tester using YUI3 Test and Rhino"
+  s.files = PKG_FILES.to_a
+  s.require_path = "lib"
+  s.has_rdoc = false
+  s.extra_rdoc_files = ["README"]
+end
+
+desc 'Turn this plugin into a gem.'
+Gem::PackageTask.new(spec) do |pkg|
+  pkg.gem_spec = spec
+end
+
+task :default => "build/#{spec.name}-#{spec.version}.gem" do
+puts "Generated latest version of #{spec.name} (#{spec.version})"
+end

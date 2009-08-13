@@ -1,0 +1,177 @@
+<% set_title "hAuthentication value excerpting < Microformat parser" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hAuthentication-plugin.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">hAuthentication test suite</a> tests 
+  <strong><a href="https://jshub.org/project/wiki/hAuthentication" title="hAuthentication specification">hAuthentication</a>
+  microformat declarations and parser functionality</strong>.
+</p>
+<p>
+  This page tests the rules for determining the value of a property (value excerpting) 
+  and the default values of undeclared properties.
+</p>
+<% end %>
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+
+  // tests for hAuthenticationEvent parser
+  // the parser listens for page-view events, so we trigger an event and then
+  // listen for authentication events that are triggered from the parser
+  suite.parse = function(selector) {
+    var data = null, count = 0;
+    jsHub.bind("authentication", "unittest", function(evt) {
+      data = evt.data;
+      count++;
+    });
+    jsHub.trigger("page-view", {
+      context: selector
+    });
+    Y.Assert.areEqual(1, count, 'wrong number of authentication events have been generated');
+    Y.Assert.isNotNull(data, 'authentication event had no data');
+	return data;
+  };
+</script>  
+
+<!-- 
+     Minimal, well formed, hAuthentication with no data
+  -->
+<div id="example1">
+  <div class="hauthentication">
+    <h2>Example 1: No hAuthentication properties set</h2>
+	<p>There are no required fields in the specification.</p>
+    <ul>
+      <li>User-id: optional field, not present</li>
+      <li>Auth-method: optional field, not present</li>
+      <li>User-attribute: optional field, not present</li>
+	  </ul>
+  </div>
+</div>
+<div id="example2">
+  <div class="hauthentication">
+    <h2>Example 2: User id is set</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, not present</li>
+      <li>User-attribute: optional field, not present</li>
+	  </ul>
+  </div>
+</div>
+<div id="example3">
+  <div class="hauthentication">
+    <h2>Example 3: Authentication method is set</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, value is <span class="auth-method">password</span></li>
+      <li>User-attribute: optional field, not present</li>
+	  </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  suite.add(new Y.Test.Case({ 
+    name : "Microformat parsing",
+
+    "test values not specified" : function () {
+	  var data = suite.parse("#example1");
+      Y.Assert.isUndefined(data['user-id'], 'user-id is not specified, it should be undefined');
+      Y.Assert.isUndefined(data['auth-method'], 'auth-method is not specified, it should be undefined');
+    },
+
+    "test optional user-id value specified" : function () {
+	  var data = suite.parse("#example2");
+      Y.Assert.areEqual("user one", data['user-id'], 'user-id is not the same as the hAuthentication userid declaration');
+    },
+
+    "test optional auth-method value specified" : function () {
+	  var data = suite.parse("#example3");
+      Y.Assert.areEqual("user one", data['user-id'], 'user-id is not the same as the hAuthentication userid declaration');
+      Y.Assert.areEqual("password", data['auth-method'], 'auth-method is not the same as the hAuthentication auth-method declaration');
+    }
+  }));
+</script> 
+
+<!-- 
+     User attributes
+  -->
+<div id="example4">
+  <div class="hauthentication">
+    <h2 style="color: red;">Example 4: TODO Single user attribute</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, value is <span class="auth-method">password</span></li>
+      <li>User-attribute: optional field, single value: 
+        <ul class="user-attribute">
+          <li><span class="type">time-on-file</span> = <span class="value">12 years</span></li>
+        </ul>
+      </li>
+	  </ul>
+  </div>
+</div>
+<div id="example5">
+  <div class="hauthentication">
+    <h2 style="color: red;">Example 5: TODO Multiple user attributes</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, value is <span class="auth-method">password</span></li>
+      <li>User-attribute: optional field, multiple values: 
+        <ul class="user-attribute">
+          <li><span class="type">time-on-file</span> = <span class="value">12 years</span></li>
+          <li><span class="type">customer-level</span> = <span class="value">gold</span></li>
+          <li><span class="type">product-holding</span> = <span class="value">mortgage</span></li>
+          <li><span class="type">product-holding</span> = <span class="value">current account</span></li>
+          <li><span class="type">product-holding</span> = <span class="value">credit card</span></li>
+        </ul>
+      </li>
+	  </ul>
+  </div>
+</div>
+
+<!-- 
+     Some test extensions not implemented yet
+  -->
+<div id="example6">
+  <div class="hauthentication">
+    <h2 style="color: red;">Example 6: TODO User information in embedded hCard</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, value is <span class="auth-method">password</span></li>
+      <li>User-attribute: optional field, not present</li>
+      <li><strong style="color: red;">TODO hCard data</strong></li>
+	  </ul>
+  </div>
+</div>
+
+<div id="example7">
+  <div class="hauthentication">
+    <h2 style="color: red;">Example 7: TODO User information in embedded geo µf</h2>
+    <ul>
+      <li>User-id: optional field, value is <span class="user-id">user one</span></li>
+      <li>Auth-method: optional field, value is <span class="auth-method">password</span></li>
+      <li>User-attribute: optional field, not present</li>
+      <li><strong style="color: red;">TODO geo data</strong></li>
+	  </ul>
+  </div>
+</div>

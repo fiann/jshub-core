@@ -1,0 +1,58 @@
+/* Stylesheet for Javascript unit test pages.
+ * Credit: http://github.com/madrobby/scriptaculous/tree/master/test/test.css
+ */
+#log {
+  padding-bottom: 1em;
+  border-bottom: 2px solid #000;
+  margin-bottom: 2em;
+}
+
+.logsummary {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 1ex;
+  border: 1px solid #000;
+  font-weight: bold;
+}
+
+table.logtable  {
+  background-color: #fff;
+  width:100%;
+  border-collapse: collapse; 
+  border: none;
+}
+
+.logtable td, .logtable th {
+  text-align: left;
+  padding: 3px 8px;
+  border: 1px dotted #666;
+}
+
+.passed {
+  background-color: #cfc;
+}
+
+.failed, .error {
+  background-color: #fcc;
+}
+
+.logtable .warning {
+  background-color: #FC6;
+}
+
+.logtable td div.action_buttons {
+  display: inline;
+}
+
+.logtable td div.action_buttons input {
+  margin: 0 5px;
+  font-size: 10px;
+}
+
+div.examples > div {
+  margin-bottom: 5px;
+  padding: 5px;
+  background-color: #eee;
+  background-image: url(../images/javascript_test/grid-paper.png);
+  border: 1px solid #ccc; 
+}

@@ -1,0 +1,1 @@
+require 'jshub_javascript_tester'

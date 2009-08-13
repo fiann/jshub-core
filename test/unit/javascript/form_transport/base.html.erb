@@ -1,0 +1,98 @@
+<% set_title "Document dot forms < Data transport" %>
+<% content_for :javascripts do %>
+<!-- None required, just testing core browser functionality -->
+<% end %>
+<% content_for :intro do %>
+<p>
+  This page tests the browsers 
+  <code>document.forms</code>
+  methods for data transport.
+</p>
+<% end %>
+<!-- Any HTML you may require for your tests to work properly -->
+<div id="main">
+  <p>Iframe form target:</p>
+  <form id="example1" action="<%= url_for :action => 'data_capture' %>?key=<%= @key = Time.now.to_i %>" 
+      target="test_iframe" method="post">
+    field1 = <input type="text" name="field1" value="value1" />
+  </form>
+  <iframe name="test_iframe" style="border: 3px solid darkred;"></iframe>
+</div>
+<script language="javascript" type="text/javascript">
+  
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  // Tests for document.forms transport
+  suite.add(new Y.Test.Case({
+    name: "Hub document dot forms data transport",
+	
+	_should: {
+		ignore: {
+			"test form submit event binding": true,
+			"test hub creates data form with correct fields": true
+		}
+	},
+    
+    "test form submit event binding": function() {
+      var test = this, form = $('#example1')[0], key = form.action.substring(form.action.indexOf("key=")+4);
+      var dataRetrieved = function(data) {
+        test.resume(function() {
+          // test data has been sent properly
+		  //console.log("Got data", data);
+          Y.Assert.areEqual("value1", data["field1"], "Wrong data");
+        });
+      };
+      form.submit();
+      test.wait(function() {
+        $.getJSON("<%= url_for :action => 'data_capture' %>?key=" + key, dataRetrieved);
+        // wait for dataRetrieved() callback
+        test.wait();
+      }, 1000); // TODO find a callback event rather than waiting a fixed time
+    },
+    
+    "test hub creates data form with correct fields": function() {
+      var test = this, key = "test" + (new Date()).getTime();
+      var eventData = {
+        event: "pageView",
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      var url = "<%= url_for :action => 'data_capture' %>?key=" + key, method = "POST";
+      var dataRetrieved = function(data) {
+        test.resume(function() {
+          // test data has been sent properly
+          for (var field in eventData) {
+            if (typeof eventData[field] == "string") {
+              Y.Assert.areEqual(eventData[field], data[field], "Data received on server wrong in field: " + field);
+            }
+          }
+        });
+      };
+      jsHub.dispatchViaForm(method, url, eventData);
+      test.wait(function() {
+        $.getJSON("<%= url_for :action => 'data_capture' %>?key=" + key, dataRetrieved);
+        // wait for dataRetrieved() callback
+        test.wait();
+      }, 1000); // TODO find a callback event rather than waiting a fixed time
+    }
+  }));
+  
+</script>
