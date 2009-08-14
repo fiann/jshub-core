@@ -6,13 +6,13 @@ development: &non_production_settings
     :vendor:
       :name: secret
       :user: secret
-      :password: secret-J4r
+      :password: secret
       # URL to Litmus API, e.g. http://<username>.litmusapp.com/
       :site: secret
       # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
       :url_pattern: secret
   :continuous_integration:
-    :port: 30000
+    :port: 3000
     :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
     :base_url: http://localhost:3000/
