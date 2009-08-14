@@ -25,6 +25,12 @@ namespace :jshub do
       grancher.commit
       grancher.push
     end
+
+    desc 'Develop the website help and documentation'
+    task "dev" do
+      sh "cd #{RAILS_ROOT}/website/ && jekyll #{output_location}"
+    end
+
   end
   
 end
