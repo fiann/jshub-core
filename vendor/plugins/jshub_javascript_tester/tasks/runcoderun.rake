@@ -5,7 +5,6 @@ namespace "jshub" do
     desc "Run the Continuous Integration build tasks for RunCodeRun"
     task :build => [
       "gems:install", 
-      "db:schema:load",
       # linting is used as an equivilant to a compile failure
       "jshub:javascripts:lint",
       # start a server instance to serve javascript unit tests html pages
@@ -15,7 +14,7 @@ namespace "jshub" do
       # stop server
       "jshub:runcoderun:server:stop"] do
       
-      puts "Running RunCodeRun build task"
+      puts "Finished RunCodeRun build task"
     end
   
     desc "Start the local Rails server"
