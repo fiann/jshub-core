@@ -19,16 +19,25 @@ namespace "jshub" do
   
     desc "Start the local Rails server"
     task "server:start" => "environment" do
-      port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
-      # start the local server so tests can be requested directly from the app
-      puts "Starting local server on port #{port}"
-      FileUtils.mkpath "tmp/pids"  
-      sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port #{port} --pid tmp/pids/server.pid --daemonize"
+      if FileTest.exists? "tmp/pids/server.pid"
+        puts "Server is already running and pid file exists"        
+      elsif
+        port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        # start the local server so tests can be requested directly from the app
+        puts "Starting local server on port #{port}"
+        FileUtils.mkpath "tmp/pids"  
+        sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port #{port} --pid tmp/pids/server.pid --daemonize"
+      end
     end
+    desc "Stop the local Rails server"
     task "server:stop" do
-      # stop the local server
-      puts "Stopping local server"
-      sh "cd '#{RAILS_ROOT}' && mongrel_rails stop --pid tmp/pids/server.pid --wait 5"
+      if FileTest.exists? "tmp/pids/server.pid"
+        # stop the local server
+        puts "Stopping local server"
+        sh "cd '#{RAILS_ROOT}' && mongrel_rails stop --pid tmp/pids/server.pid --wait 5"
+      elsif
+        puts "Cannot find pid file to stop server"        
+      end
     end
   
   end
