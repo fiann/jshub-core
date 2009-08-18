@@ -4,7 +4,7 @@ namespace :jshub do
   
   desc 'Generate the website help and  documentation'
   task "website" do
-    sh "cd #{RAILS_ROOT}/website/ && jekyll #{output_location}"
+    sh "cd #{RAILS_ROOT}/website/ && jekyll --no-auto #{output_location}"
   end
 
   namespace :website do 
