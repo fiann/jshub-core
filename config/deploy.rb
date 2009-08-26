@@ -90,7 +90,7 @@ namespace :custom do
   end
 
   desc "Create a CHANGELOG and put it in the public folder"
-  task :archive do
+  task :changelog do
     puts "Creating CHANGELOG.txt"
     run "cd #{current_path} && rake jshub:changelog"
   end
