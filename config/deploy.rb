@@ -89,6 +89,12 @@ namespace :custom do
     run "cd #{current_path} && rake jshub:website"
   end
 
+  desc "Create a CHANGELOG and put it in the public folder"
+  task :archive do
+    puts "Creating CHANGELOG.txt"
+    run "cd #{current_path} && rake jshub:changelog"
+  end
+
 end
 # use our custom tasks at the appropriate time
 # e.g. before :deploy, :my_custom_task
@@ -96,4 +102,4 @@ end
 after "deploy:setup",   "custom:link_webroot"
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
 after "deploy:symlink",   "custom:link_app_config"
-after "deploy:restart", "custom:archive", "custom:website"
+after "deploy:restart", "custom:archive", "custom:website", "custom:changelog"
