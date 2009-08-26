@@ -23,6 +23,14 @@ jsHub.org is a non-profit that is sponsoring several projects to make the deploy
 
 jsHub Core is released under the BSD license and is copyright (c) 2009, jsHub.inc. A copy of the BSD license can be found in the LICENSE file.
 
+## Build status
+
+This application is automatically built and tested when the code changes and its current status is:
+
+<ul class="projects status">
+  <li id="jshub-core-status"><a href="http://github.com/jshub/jshub-core/">jsHub Core</a> jsHub javascript library developer application. </li>
+</ul>
+
 ## Getting the code
 
 Downloads:   
