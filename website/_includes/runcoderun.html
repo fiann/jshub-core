@@ -17,9 +17,9 @@
     <script type="text/javascript" charset="utf-8">
       function generateStatus(project) {
         if(project.status == "success")
-          return "<span class='success'> succeeded </span>" + "<span>" + prettyDate(project.ended_at) + " <a href=" + project.url + ">details</a></span>";
+          return "<span class='success'> succeeded <\/span>" + "<span>" + prettyDate(project.ended_at) + " <a href=" + project.url + ">details<\/a><\/span>";
         else
-          return "<span class='failure'> failed </span>" + "<span>" + prettyDate(project.ended_at) + " <a href=" + project.url + ">details</a></span>";
+          return "<span class='failure'> failed <\/span>" + "<span>" + prettyDate(project.ended_at) + " <a href=" + project.url + ">details<\/a><\/span>";
       }
     
       function parseData(data) {
