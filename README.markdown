@@ -11,7 +11,9 @@
   [mf]: http://github.com/metafeather
   [fo]: http://github.com/fiann
  
-This application is a Ruby on Rails application for development of the jsHub javascript library.
+This repository is for jsHub  developers, not users. This application is a Ruby on Rails application for development of the jsHub javascript library.
+
+All users should download or generate a jsHub release from <http://jshub.org/configurator/>
 
 Application features:
 
