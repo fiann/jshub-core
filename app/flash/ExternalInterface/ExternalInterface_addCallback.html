@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" />
+<title>ExternalInterface_addCallback</title>
+<style type="text/css">
+<!--
+body{
+	font-size:11px;
+	font-family:"Verdana";
+}
+-->
+</style>
+</head>
+<script>
+function callExternalInterface() {
+	getMovieName("myMovie").callPlayBall(inputValue.x.value, inputValue.y.value, inputValue.spd.value); 
+}
+
+function getMovieName(movieName) {
+    if (navigator.appName.indexOf("Microsoft") != -1) {
+        return window[movieName]
+   }
+   else {
+       return document[movieName]
+   }
+}
+</script>
+<body bgcolor="#ffffff">
+<!--url's used in the movie-->
+<!--text used in the movie-->
+<!-- saved from url=(0013)about:internet -->
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="500" height="500" id="myMovie" align="middle">
+<param name="allowScriptAccess" value="always" />
+<param name="movie" value="ExternalInterface_addCallback.swf" />
+<param name="quality" value="high" />
+<param name="bgcolor" value="#ffffff" />
+<embed src="ExternalInterface_addCallback.swf" quality="high" bgcolor="#ffffff" width="500" height="500" name="myMovie" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+</object>
+<form>
+<input type="button" onClick="callExternalInterface()" value="Call Flash Function" />
+</form>
+<form name="inputValue">
+    Positon X <input type="text" name="x" size="10" >
+    Position Y <input type="text" name="y" size="10" >
+    Speed  <input type="text" name="spd" size="10" ><BR/><BR/>
+    Note: (0,0) is at the top left, and choose a value for speed between 0 and 1.
+ </form> 
+</body>
+</html>

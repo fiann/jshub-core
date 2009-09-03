@@ -1,0 +1,40 @@
+<!-- saved from url=(0013)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+<title>fscommand2</title>
+</head>
+<body bgcolor="#ffffff">
+<script language="JavaScript">
+<!--
+var isInternetExplorer = navigator.appName.indexOf("Microsoft") != -1;
+// Handle all the FSCommand messages in a Flash movie.
+function fscommand2_DoFSCommand(command, args) {
+	var fscommand2Obj = isInternetExplorer ? document.all.fscommand2 : document.fscommand2;
+	//
+		if(command=="callJavascript") {
+		arg = args.split("#")
+		alert(arg[0]+'\n'+arg[1])
+	}
+	//
+}
+// Hook for Internet Explorer.
+if (navigator.appName && navigator.appName.indexOf("Microsoft") != -1 && navigator.userAgent.indexOf("Windows") != -1 && navigator.userAgent.indexOf("Windows 3.1") == -1) {
+	document.write('<script language=\"VBScript\"\>\n');
+	document.write('On Error Resume Next\n');
+	document.write('Sub fscommand2_FSCommand(ByVal command, ByVal args)\n');
+	document.write('	Call fscommand2_DoFSCommand(command, args)\n');
+	document.write('End Sub\n');
+	document.write('</script\>\n');
+}
+//-->
+</script>
+<!--url's used in the movie-->
+<!--text used in the movie-->
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" id="fscommand2" width="550" height="400" align="middle">
+<param name="allowScriptAccess" value="always" />
+<param name="movie" value="fscommand2.swf" /><param name="quality" value="high" /><param name="bgcolor" value="#ffffff" /><embed src="fscommand2.swf" quality="high" bgcolor="#ffffff" width="550" height="400" swLiveConnect=true id="fscommand2" name="fscommand2" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+</object>
+</body>
+</html>
