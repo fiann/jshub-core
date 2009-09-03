@@ -5,7 +5,7 @@ module JavascriptUnitTestHelper
   end
   
   def title
-    h "#{@title} < Unit Tests"
+    "#{@title} < Unit Tests"
   end
     
   def internet_explorer?

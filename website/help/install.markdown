@@ -15,13 +15,13 @@ These instructions are intended to enable a developer to set-up a development en
 
 The latest release of the JsHub code is made available for download at:
 
-<http://github.com/jshub/jshub/downloads>
+<http://github.com/jshub/jshub-core/downloads>
 
 ### Git repositories
 
 If you have Git installed (see [below](#environment_for_contributing_to_the_project)) you can clone from the following URLs on Github:
 
-    git://github.com/jshub/jshub.git
+    git://github.com/jshub/jshub-core.git
 
 ## Development environment
 
@@ -157,7 +157,7 @@ Generate the local website with documentation using:
     % rake jshub:website
 </pre>
 
-Please refer to these [local](index.html) help pages.
+Please refer to these [local](../) help pages.
 
 Run `rake -T` to find other tasks in the `jshub` namespace
 

@@ -6,12 +6,12 @@ puts "Deploying to STAGING"
 # The gateway server is accessed before anything else and all ssh commands sent via it so that other servers do not have to be exposed through the firewall
 set :gateway,     "gromit.jshub.org"
 
-set :scm_domain,  "jshub.org"
+set :scm_domain,  "github.com"
 set :domain,      "gromit"
 set :rails_env,   "gromit"
 
 # construct the path to the repository
-set :repository,   "git@#{scm_domain}:jshub-core.git"
+set :repository,   "git@#{scm_domain}:jshub/jshub-core.git"
 
 #If you log into your server with a different user name than you are logged 
 #into your local machine with, youll need to tell Capistrano about that user 

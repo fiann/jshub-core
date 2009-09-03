@@ -4,17 +4,6 @@ layout: homepage
 
 # jsHub Core
 
-* Documentation: <http://jshub.org/core/website/>
-* License: <http://jshub.org/legal/>
-* Latest Stable Release: <http://github.com/jshub/jshub-core/downloads/>
-* Discuss: <http://groups.google.com/group/jshub-users/>
-* Contributor Info: 
-  * [Liam Clancy (metafeather)][mf]
-  * [Fiann O'Hagan (fiann)][fo]
-
-  [mf]: http://github.com/metafeather
-  [fo]: http://github.com/fiann
-
 This application is a Ruby on Rails application for development of the jsHub javascript library.
 
 Application features:
@@ -33,6 +22,14 @@ jsHub.org is a non-profit that is sponsoring several projects to make the deploy
 ## License
 
 jsHub Core is released under the BSD license and is copyright (c) 2009, jsHub.inc. A copy of the BSD license can be found in the LICENSE file.
+
+## Build status
+
+This application is automatically built and tested when the code changes and its current status is:
+
+<ul class="projects status">
+  <li id="jshub-core-status"><a href="http://github.com/jshub/jshub-core/">jsHub Core</a> jsHub javascript library developer application. </li>
+</ul>
 
 ## Getting the code
 

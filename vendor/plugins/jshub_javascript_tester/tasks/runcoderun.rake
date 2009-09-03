@@ -1,28 +1,20 @@
-# This is in a rake file so that the configuration for Hudson is under version control.
-
+# This is in a :default rake task so that the configuration for RunCodeRun is under version control.
 namespace "jshub" do
-  namespace "hudson" do
+  namespace "runcoderun" do
     
-    desc "Run the Continuous Integration build tasks for Hudson"
+    desc "Run the Continuous Integration build tasks for RunCodeRun"
     task :build => [
       "gems:install", 
       # linting is used as an equivilant to a compile failure
       "jshub:javascripts:lint",
       # start a server instance to serve javascript unit tests html pages
-      "jshub:hudson:server:start"] do
+      "jshub:runcoderun:server:start",
+      # run tests
+      "test",
+      # stop server
+      "jshub:runcoderun:server:stop"] do
       
-      puts "Running Hudson build task"
-      
-      # Server specific path removes the need for manual install of ci_reporter and editing of rake files in the app allowing rake gems:install to work for end users. See #773
-      puts "CI Reporter: invoking using 'Advanced Usage' ref: http://caldersphere.rubyforge.org/ci_reporter/"
-      #stub_path = "/Library/Ruby/Gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # osx
-      stub_path = "/usr/local/lib/ruby/gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # gromit
-
-      # invoke the CI task in same process as test to output results in JUnit XML format into the default location (./test/reports)
-      sh "cd '#{RAILS_ROOT}' && rake -f #{stub_path} ci:setup:testunit test" 
-      
-      # stop the server instance
-      sh "cd '#{RAILS_ROOT}' && rake jshub:hudson:server:stop"
+      puts "Finished RunCodeRun build task"
     end
   
     desc "Start the local Rails server"

@@ -72,9 +72,9 @@ namespace :custom do
     run "echo \"r#{real_revision}\" > #{current_path}/app/views/shared/_version.html.erb"
   end  
 
-  desc "Make symlink for server specific app_config yaml" 
+  desc "Make symlink for server specific jshub_javascript_tester yaml" 
   task :link_app_config do
-    run "ln -nfs #{shared_path}/config/app_config.yml #{release_path}/config/app_config.yml" 
+    run "ln -nfs #{shared_path}/config/jshub_javascript_tester.yml #{release_path}/config/jshub_javascript_tester.yml" 
   end
   
   desc "Create an archive of this application and put it in the downloads folder"
@@ -89,6 +89,12 @@ namespace :custom do
     run "cd #{current_path} && rake jshub:website"
   end
 
+  desc "Create a CHANGELOG and put it in the public folder"
+  task :changelog do
+    puts "Creating CHANGELOG.txt"
+    run "cd #{current_path} && rake jshub:changelog"
+  end
+
 end
 # use our custom tasks at the appropriate time
 # e.g. before :deploy, :my_custom_task
@@ -96,4 +102,4 @@ end
 after "deploy:setup",   "custom:link_webroot"
 after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
 after "deploy:symlink",   "custom:link_app_config"
-after "deploy:restart", "custom:archive", "custom:website"
+after "deploy:restart", "custom:archive", "custom:website", "custom:changelog"

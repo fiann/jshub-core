@@ -1,1 +1,4 @@
+auto: true
 destination: ./../public/website/
+exclude:
+ - Rakefile

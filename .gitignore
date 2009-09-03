@@ -26,3 +26,6 @@ public/download/*.zip
 
 # Ignore generated Gem files
 vendor/plugins/jshub_javascript_tester/pkg/*
+
+# Ignore generated CHANGELOG files (simplifies dist scm merging)
+public/CHANGELOG.txt
