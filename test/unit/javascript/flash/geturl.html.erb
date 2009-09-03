@@ -1,0 +1,91 @@
+<% set_title "getURL < External API < Flash" %>
+
+<% content_for :javascripts do %>  
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests <strong><a href="http://www.adobe.com/devnet/flash/articles/external_interface.html" title="Flash External API">Flash External API</a> event listening functionality</strong>.
+</p>
+<p>
+  This page tests that events can be passed from the Flash file to the HTML page and its JavaScript code via <strong>getURL()</strong>.
+</p>
+<% end %>
+
+
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  // Async tests to interact with Flash
+  suite.add(new Y.Test.Case({
+    name: "Flash getURL",
+    
+    "test data sent from flash": function() {
+
+      var test = this;
+      
+      // subscribe to interesting events
+      Y.on('flash:geturl', function (data) {
+        
+        // tell the TestRunner to resume
+        test.resume(function () {
+          Y.Assert.isNotUndefined(data, "No data recieved from Flash via getURL()");
+          Y.Assert.areEqual('Hello. ^^', data, "Unexpected data recieved");
+        });
+        
+      });
+      
+      this.wait(3000);
+
+    }
+  }));
+</script>  
+
+<!-- Any HTML you may require for your tests to work properly -->
+<div id="example1">
+
+  <% 
+    # since paths are duplicated depending on browsers set and use a local variable to avoid bugs
+    path_to_swf = '../../../test_assets/vendor/adobe/flash/getURL.swf' 
+  %>
+
+  <script type="text/javascript">
+    // this function is called from the Flash movie in the page
+    function callJavascript(str){
+      //alert(str);
+      jsHub.logger.warn("Flash getURL(): " +str);
+       
+      // resume Test after a delay
+      setTimeout(function() {Y.fire('flash:geturl', str)}, 1000);
+    }
+  </script>
+
+  <!--url's used in the movie-->
+  <!--text used in the movie-->
+  <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="550" height="400" id="getURL" align="middle">
+    <param name="allowScriptAccess" value="sameDomain" />
+    <param name="movie" value="<%= path_to_swf %>" />
+    <param name="quality" value="high" />
+    <param name="bgcolor" value="#ffffff" />
+    <embed src="<%= path_to_swf %>" quality="high" bgcolor="#ffffff" width="550" height="400" name="getURL" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+  </object>
+</div>
+
