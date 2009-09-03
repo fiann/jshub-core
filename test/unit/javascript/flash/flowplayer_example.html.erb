@@ -1,0 +1,106 @@
+<% set_title "Flowplayer example < Flash" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "../test_assets/vendor/flowplayer/flowplayer-3.1.2.min.js" %>
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests <strong><a href="http://flowplayer.org/" title="Flowplayer">Flowplayer</a> event listening functionality</strong>.
+</p>
+<p>
+  This page tests that events can be passed to/from the Flowplayer Flash Video Player via its <a href="http://flowplayer.org/documentation/api/index.html">Javascript API</a>.
+</p>
+<p>
+  View commented source code to get familiar with Flowplayer installation.
+</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+</script>  
+
+<!-- Any HTML you may require for your tests to work properly -->
+<div id="example1">
+    <!-- this A tag is where your Flowplayer will be placed. it can be anywhere -->
+  <a  
+     href="../../../test_assets/vendor/flowplayer/flowplayer.flv"  
+     style="display:block;width:520px;height:330px"  
+     id="player"> 
+  </a> 
+  
+  <!-- this will install flowplayer inside previous A- tag. -->
+  <script>
+    flowplayer("player", "../../../test_assets/vendor/flowplayer/flowplayer-3.1.2.swf", {
+    
+    // subscribe to FlowPlayer events
+    // ref: http://flowplayer.org/demos/events/google-analytics.html
+    clip: {         
+        // track start event for this clip
+        onStart: function(clip) {
+            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s", "Play", clip.url);
+            //google._trackEvent("Videos", "Play", clip.url);
+        },
+        
+        // track pause event for this clip. time (in seconds) is also tracked
+        onPause: function(clip) {
+            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Pause", clip.url, parseInt(this.getTime()));
+            //google._trackEvent("Videos", "Pause", clip.url, parseInt(this.getTime()));
+        },
+
+        // track stop event for this clip. time is also tracked
+        onStop: function(clip) {
+            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Stop", clip.url, parseInt(this.getTime()));
+            //google._trackEvent("Videos", "Stop", clip.url, parseInt(this.getTime()));
+        },
+
+        // track finish event for this clip
+        onFinish: function(clip) {
+            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s", "Finish", clip.url);
+            //google._trackEvent("Videos", "Finish", clip.url);
+        }
+    },
+
+    // show stop button so we can see stop events too
+    plugins: {
+        controls: {
+            stop: true
+        }
+    }
+});
+  </script>
+  
+  <!-- 
+    after this line is purely informational stuff. 
+    does not affect on Flowplayer functionality 
+  -->
+  
+  <p>		
+    If you are running these examples <strong>locally</strong> and not on some webserver you must edit your 
+    <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">
+      Flash security settings</a>. 
+  </p>
+  
+  <p>
+    Select <code>"Edit locations" &gt; "Add location" &gt; "Browse for files"</code> and select
+    flowplayer-x.x.x.swf you just downloaded.
+  </p>
+</div>
