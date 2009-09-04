@@ -49,43 +49,108 @@
   
   <!-- this will install flowplayer inside previous A- tag. -->
   <script>
-    flowplayer("player", "../../../test_assets/vendor/flowplayer/flowplayer-3.1.2.swf", {
+    var flowplayer1 = $f("player", "../../../test_assets/vendor/flowplayer/flowplayer-3.1.2.swf", {
     
-    // subscribe to FlowPlayer events
-    // ref: http://flowplayer.org/demos/events/google-analytics.html
-    clip: {         
-        // track start event for this clip
-        onStart: function(clip) {
-            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s", "Play", clip.url);
-            //google._trackEvent("Videos", "Play", clip.url);
-        },
-        
-        // track pause event for this clip. time (in seconds) is also tracked
-        onPause: function(clip) {
-            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Pause", clip.url, parseInt(this.getTime()));
-            //google._trackEvent("Videos", "Pause", clip.url, parseInt(this.getTime()));
-        },
+      // subscribe to FlowPlayer events
+      // ref: http://flowplayer.org/demos/events/google-analytics.html
+      clip: {         
+          // track start event for this clip
+          onStart: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s", "Start", clip.url);
+              //google._trackEvent("Videos", "Start", clip.url);
+              jsHub.trigger('flowplayer:start', { 
+                "clip": clip.url
+              });
+          },
+          
+          // track pause event for this clip. time (in seconds) is also tracked
+          onPause: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Pause", clip.url, parseInt(this.getTime()));
+              //google._trackEvent("Videos", "Pause", clip.url, parseInt(this.getTime()));
+              jsHub.trigger('flowplayer:pause', { 
+                "clip": clip.url,
+                "time": parseInt(this.getTime())
+              });
+          },
 
-        // track stop event for this clip. time is also tracked
-        onStop: function(clip) {
-            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Stop", clip.url, parseInt(this.getTime()));
-            //google._trackEvent("Videos", "Stop", clip.url, parseInt(this.getTime()));
-        },
+          // track resume event for this clip. time (in seconds) is also tracked
+          onResume: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Resume", clip.url, parseInt(this.getTime()));
+              //google._trackEvent("Videos", "Resume", clip.url, parseInt(this.getTime()));
+              jsHub.trigger('flowplayer:resume', { 
+                "clip": clip.url,
+                "time": parseInt(this.getTime())
+              });
+          },
+          
+          // track stop event for this clip. time is also tracked
+          onStop: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Stop", clip.url, parseInt(this.getTime()));
+              //google._trackEvent("Videos", "Stop", clip.url, parseInt(this.getTime()));
+              jsHub.trigger('flowplayer:stop', { 
+                "clip": clip.url,
+                "time": parseInt(this.getTime())
+              });
+          },
 
-        // track finish event for this clip
-        onFinish: function(clip) {
-            jsHub.logger.log("Flowplayer: Button: %s, Movie URL: %s", "Finish", clip.url);
-            //google._trackEvent("Videos", "Finish", clip.url);
-        }
-    },
+          // track finish event for this clip.
+          onFinish: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s, Time (secs): %s", "Finish", clip.url, parseInt(this.getTime()));
+              //google._trackEvent("Videos", "Finish", clip.url, parseInt(this.getTime()));
+              jsHub.trigger('flowplayer:finish', { 
+                "clip": clip.url
+              });
+          },
+          
+          // track mute event for this clip
+          onMute: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s", "Mute", clip.url);
+              //google._trackEvent("Videos", "Mute", clip.url);
+              jsHub.trigger('flowplayer:mute', { 
+                "clip": clip.url
+              });
+          },
 
-    // show stop button so we can see stop events too
-    plugins: {
+          // track unmute event for this clip
+          onUnmute: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s", "Unmute", clip.url);
+              //google._trackEvent("Videos", "Unmute", clip.url);
+              jsHub.trigger('flowplayer:unmute', { 
+                "clip": clip.url
+              });
+          },
+          
+          // track fullscreen event for this clip
+          onFullscreen: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s", "Full Screen", clip.url);
+              //google._trackEvent("Videos", "Full Screen", clip.url);
+              jsHub.trigger('flowplayer:fullscreen', { 
+                "clip": clip.url
+              });
+          },
+          
+          // track exit fullscreen event for this clip
+          onFullscreenExit: function(clip) {
+              jsHub.logger.warn("Flowplayer: Button: %s, Movie URL: %s", "Exit Full Screen", clip.url);
+              //google._trackEvent("Videos", "Exit Full Screen", clip.url);
+              jsHub.trigger('flowplayer:fullscreenexit', { 
+                "clip": clip.url
+              });
+          }          
+
+      },
+  
+      // show stop button so we can see stop events too
+      plugins: {
         controls: {
-            stop: true
+          stop: true
         }
-    }
-});
+      }
+    });
+    
+    $f('*').each(function() {
+      jsHub.logger.warn("Flowplayer instance found")
+    });
   </script>
   
   <!-- 
