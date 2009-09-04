@@ -1,6 +1,20 @@
 <% set_title "call < External API < Flash" %>
 
-<% content_for :javascripts do %>  
+<% content_for :javascripts do %>
+  <script language="javascript" type="text/javascript">
+    // mock object to capture events from Flash untill tests can run
+    function MockListener(authToken) {
+      var self = this;
+      self.authToken = authToken;
+      self.events = [];
+      this.eventFired = function(evt) {
+        self.events.push(evt);
+      };
+    }; 
+    // create and bind a listener to flash events
+    var listener1 = new MockListener("listener1");
+    jsHub.bind("flash:event", listener1.authToken, listener1.eventFired);
+  </script>
 <% end %>
 
 <% content_for :intro do %>
@@ -33,12 +47,12 @@
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
-  
+    
   // Async tests to interact with Flash
   suite.add(new Y.Test.Case({
     name: "Flash ExternalInterface call",
     
-    "test data sent from flash": function() {
+    "test data sent directly from flash": function() {
 
       var test = this;
       
@@ -55,7 +69,12 @@
       
       this.wait(3000);
 
+    },
+
+    "test data sent via jsHub from flash": function() {
+      Y.Assert.areEqual(1, listener1.events.length, "Event should be recorded once");
     }
+
   }));  
 </script>  
 
@@ -68,6 +87,7 @@
   %>
 
   <script type="text/javascript">
+    // called directly by Flash
     function callJavascript(str) {
       //alert(str);
       jsHub.logger.warn("Flash ExternalInterface call: " +str);
@@ -89,6 +109,16 @@
     <param name="bgcolor" value="#ffffff" />
     <embed src="<%= path_to_swf %>" quality="high" bgcolor="#ffffff" width="550" height="400" name="ExternalInterface_call" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
   </object>
+
+<p>Actionscript 2.0 source</p>
+<pre class="brush actionscript;">
+// duplicate API for calls from within Flash
+import flash.external.*;
+var jsHub = new Object;
+jsHub.trigger = function (eventName, data) {
+  ExternalInterface.call("jsHub.trigger", eventName, data).toString();
+}
+</pre>
 
 </div>
 
