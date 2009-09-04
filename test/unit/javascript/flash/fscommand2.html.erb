@@ -48,7 +48,8 @@
     }
   }));
 
-  // Async tests to interact with Flash
+  // Async tests to interact with Flash cannot run in Rhino
+  if (!navigator.userAgent.match(/Rhino/)){ 
   suite.add(new Y.Test.Case({
     name: "Flash fscommand2",
     
@@ -76,6 +77,7 @@
     }
     
   }));
+  } // end check for Rhino
 </script>  
 
 <!-- Any HTML you may require for your tests to work properly -->

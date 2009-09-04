@@ -8,7 +8,7 @@
   This file tests <strong><a href="http://www.adobe.com/devnet/flash/articles/external_interface.html" title="Flash External API">Flash External API</a> event listening functionality</strong>.
 </p>
 <p>
-  This page tests that events can be passed from the Flash file to the HTML page and its JavaScript code via an ExternalInterface callback</strong>.
+  This page tests that events can be passed from the Flash file to the HTML page and its JavaScript code via an <strong>ExternalInterface callback</strong>.
 </p>
 <% end %>
 
@@ -33,6 +33,10 @@
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
+  
+  // Async tests to interact with Flash cannot run in Rhino
+  if (!navigator.userAgent.match(/Rhino/)){   
+  } // end check for Rhino
 </script>  
 
 <!-- Any HTML you may require for your tests to work properly -->

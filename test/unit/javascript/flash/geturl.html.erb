@@ -47,7 +47,9 @@
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
-  
+
+  // Async tests to interact with Flash cannot run in Rhino
+  if (!navigator.userAgent.match(/Rhino/)){   
   // Async tests to interact with Flash
   suite.add(new Y.Test.Case({
     name: "Flash getURL",
@@ -76,6 +78,7 @@
     }
     
   }));
+  } // end check for Rhino
 </script>  
 
 <!-- Any HTML you may require for your tests to work properly -->

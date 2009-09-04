@@ -33,6 +33,11 @@
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
+  
+  // Async tests to interact with Flash cannot run in Rhino
+  if (!navigator.userAgent.match(/Rhino/)){   
+  } // end check for Rhino
+  
 </script>  
 
 <!-- Any HTML you may require for your tests to work properly -->
@@ -64,7 +69,7 @@
   <form name="inputValue">
     <p>
       Value <input type="text" name="vars" size="50" value="text for movie" />
-      <input type=button value="Pass the variable to Flash" onClick="callJavascript(); return false;">
+      <input type=button value="Pass the variable to Flash" onClick="callJavascript(); return false;" />
     </p>
   </form>  
 </div>
