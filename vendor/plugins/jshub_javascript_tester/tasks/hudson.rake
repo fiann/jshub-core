@@ -6,6 +6,7 @@ namespace "jshub" do
     desc "Run the Continuous Integration build tasks for Hudson"
     task :build => [
       "gems:install", 
+      "db:migrate",
       # linting is used as an equivilant to a compile failure
       "jshub:javascripts:lint",
       # start a server instance to serve javascript unit tests html pages
