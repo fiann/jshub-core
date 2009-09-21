@@ -18,8 +18,6 @@
     name: 'hProduct Microformat Parser Plugin',
 	id: 'hProduct-plugin',
     version: 0.1,
-    author: 'Liam Clancy',
-    email: 'liamc@jshub.org',
     vendor: 'jsHub.org',
     type: 'microformat'
   };
@@ -62,7 +60,7 @@
     console = jsHub.logger;
     
     /*
-     * Where to start parsing for hAuthentication data
+     * Where to start parsing for microformat data
      */
     if (event && event.data && event.data.context) {
       context = event.data.context;
@@ -70,8 +68,8 @@
     
     /*
      * Extract the hProduct nodes from HTML DOM (not source code), excluding nested hProducts
-     * If a context is provided this is used as a starting point, else the whole
-     * page is parsed to look for elements with a 'hproduct' css class
+     * If there is no '.hproduct' node in the page, then no product view event will be 
+     * generated.
      */
     sources = $('.hproduct', context);
 	sources = sources.not(sources.find('.hproduct'));
@@ -110,6 +108,7 @@
         node = root.find(classname);
 		node = node.not(node.find('.hproduct'));
 		value = node.getMicroformatPropertyValue();
+		console.debug('hProduct value for %s is', node, value);
         if (value !== null) {
           hproduct[name] = value;
         }
@@ -138,13 +137,13 @@
   };
   
   /*
-   * Bind the plugin to the Hub to look for hAuthentication microformats and add the data
-   * to page view events
+   * Bind the plugin to the Hub to look for .hproduct microformats and generate
+   * product view events
    */
   jsHub.bind("page-view", metadata.id, parse);
     
   /*
-   * Last trigger an event to show that the plugin has bene registered
+   * Last trigger an event to show that the plugin has been registered
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   

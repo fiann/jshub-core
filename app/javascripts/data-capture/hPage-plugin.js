@@ -9,7 +9,7 @@
 
 "use strict";
 
-(function() {
+(function () {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -18,8 +18,6 @@
     name: 'hPage Microformat Parser Plugin',
     id: 'hPage-plugin',
     version: 0.1,
-    author: 'Liam Clancy',
-    email: 'liamc@jshub.org',
     vendor: 'jsHub.org',
     type: 'microformat'
   };
@@ -31,8 +29,8 @@
   
   /**
    * Event driven anonymous function bound to 'page-view'
-   * @method hPage-plugin-capture
-   * @param event {Object}    Config object for the plugin.  Currently it is expected to contain a optional "data.context" property
+   * @method parse
+   * @param event {Object}    Config object for the plugin.  Currently it is expected to contain a optional "context" property
    * @property metadata
    * @property propertyNames
    * @event  hpage-parse-start
@@ -62,7 +60,7 @@
     console = jsHub.logger;
     
     /*
-     * Where to start parsing for hPage data
+     * Where to start parsing for microformat data
      */
     if (event && event.data && event.data.context) {
       context = event.data.context;
@@ -206,7 +204,7 @@
   jsHub.bind("content-updated", metadata.id, parse);
   
   /*
-   * Last trigger an event to show that the plugin has bene registered
+   * Last trigger an event to show that the plugin has been registered
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
