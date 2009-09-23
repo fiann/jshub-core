@@ -134,6 +134,7 @@
    */
   function trim(value) {
     if (value !== null) {
+      value = value.replace(/&nbsp;/g, ' ');
       value = jQuery.trim(value);
       value = value.replace(/\s+/g, ' ');
     }

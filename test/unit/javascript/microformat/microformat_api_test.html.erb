@@ -108,6 +108,11 @@
            This value is set to <span class="value">		page referrer	 with tabs		</span>.
          </span>
       </li>
+      <li>type = 
+         <span class="type">
+           This value is set to <span class="value"> &nbsp;  page type with nbsp entities &nbsp;  </span>.
+         </span>
+      </li>
     </ul>
   </div>
 </div>
@@ -124,10 +129,15 @@
       value = $("#example4 .title").getMicroformatPropertyValue();
       Y.Assert.areEqual('page title with spaces', value);
     },
-	  
+
     "test value with tabs": function() {
       value = $("#example4 .referrer").getMicroformatPropertyValue();
       Y.Assert.areEqual('page referrer with tabs', value);
+    },
+
+    "test value with non-breaking space entities": function() {
+      value = $("#example4 .type").getMicroformatPropertyValue();
+      Y.Assert.areEqual('page type with nbsp entities', value);
     }
   }));
 </script>
