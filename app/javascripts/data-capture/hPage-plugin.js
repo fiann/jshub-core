@@ -143,25 +143,26 @@
 	  
 	  // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
 	  // we can have multiple attributes, each one has a type and a value
-	  // output in the data is an array: [ {name:value}, {name:value} ]
+	  // output in the data is an array: {name:[value, value], name:value}
 	  var attributes = $('.attribute', elm);
-	  nodeData.attributes = [];
 	  attributes.each(function () {
-        var attribute = $(this).excerptValueClassData();
+        var attribute = $(this).excerptValueClassData(), type, value, allValues;
         if (attribute !== null) {
-          nodeData.attributes.push(attribute);
-          // the attributes for the overall hPage are the union of what was found previously
-          // and in this node. 
-          hPage.attributes = (hPage.attributes || []);
-          for (var found = false, i = 0; i < hPage.attributes.length; i++) {
-            if (hPage.attributes[i].type == attribute.type && hPage.attributes[i].value == attribute.value) {
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            hPage.attributes.push(attribute);
-          }
+		  type = attribute.type;
+		  value = attribute.value;
+          hPage.attributes = (hPage.attributes || {});
+		  allValues = $.makeArray(hPage.attributes[type]); 
+          $.merge(allValues, $.makeArray(value));
+		  var unique = []; 
+		  for (var i=0; i < allValues.length; i++) {
+		  	if ($.inArray(allValues[i], unique) === -1) {
+              unique.push(allValues[i]);
+			}
+		  }
+		  if (unique.length === 1) {
+		  	unique = allValues[0];
+		  }
+		  hPage.attributes[type] = unique;
         }
       });
       

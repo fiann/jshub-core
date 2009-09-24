@@ -267,7 +267,8 @@
      * Implements value class pattern excepting rules for working out the value of a property
      * @method excerptValueClassData
      * @return a JSON object containing the fields <code>type</code> and <code>value</code> if
-     * present, or null if no data is found
+     * present, or null if no data is found. The <code>value</code> field will be a string if
+     * there is a single value, or an array of strings if there are multiple values found.
      */
     excerptValueClassData: function () {
     
@@ -309,10 +310,12 @@
         valueNodes = valueNodes.not(valueNodes.find('.value'));
         if (valueNodes.length === 0) {
           value = defaultValue;
-        } else {
-          value = "";
+        } else if (valueNodes.length === 1) {
+		  value = jQuery(valueNodes[0]).html();
+	    } else {
+          value = [];
           valueNodes.each(function () {
-            value += jQuery(this).html();
+            value.push(jQuery(this).html());
           });
         }
 

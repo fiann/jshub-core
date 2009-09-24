@@ -102,66 +102,36 @@
     
     "test value class extraction": function() {
       var data = suite.parse("#example1");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
+      Y.Assert.areEqual('10%', data.attributes['discount'], "Attribute value");
     },
 	
     "test value class extraction from html": function() {
       var data = suite.parse("#example2");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
+      Y.Assert.areEqual('10%', data.attributes['discount'], "Attribute value");
     },
 	
     "test value class extracting is order independent": function() {
       var data = suite.parse("#example1");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('10%', data.attributes[0].value, "Attribute value");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
+      Y.Assert.areEqual('10%', data.attributes['discount'], "Attribute value");
     }
   }));
 </script>  
-
-<!-- 
-      Multiple values are concatenated together, without additional whitespace.
-  -->
-<div id="example4">
-  <h2>Example 4: multiple values for one attribute</h2>
-  <div class="hpage">
-    The hPage contains a single attribute, with three values for the attribute:
-    <ul>
-      <li>name: <span class="name">required field</span>.</li>
-      <li class="attribute">Your <span class="type">colours</span> are 
-	    <span class="value">red</span>, <span class="value">white</span>
-		and <span class="value">blue</span>.</li>
-    </ul>
-  </div>
-</div>
-<script type="text/javascript">
-  suite.add(new Y.Test.Case({
-    name: "Multiple values",
-    
-    "test multiple value extraction": function() {
-      var data = suite.parse("#example4");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('colours', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('redwhiteblue', data.attributes[0].value, "Attribute value");
-    }
-  }));
-</script>  
-
 
 <!-- 
       Do not look inside .value nodes, the parser should treat grandchild .value nodes
 	  as opaque html
   -->
-<div id="example5">
-  <h2>Example 5: .value node nested inside value</h2>
+<div id="example4">
+  <h2>Example 4: .value node nested inside value</h2>
   <div class="hpage">
     The hPage contains a single attribute, with a single value. There is a node with class value
 	inside the value node, but this should be treated as html not as a value instance:
@@ -180,12 +150,12 @@
     name: "Nested value classes",
     
     "test nested value classes are ignored": function() {
-      var data = suite.parse("#example5");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
+      var data = suite.parse("#example4");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
 	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
-	  Y.Assert.isTrue(/10 <(SPAN|span)( id=""\s*)? class=(")?value(")?\s*>%<\/(SPAN|span)>/.test(data.attributes[0].value), "Attribute value "+data.attributes[0].value);
+	  Y.Assert.isTrue(/10 <(SPAN|span)( id=""\s*)? class=(")?value(")?\s*>%<\/(SPAN|span)>/.test(data.attributes['discount']), "Attribute value: "+data.attributes['discount']);
     }
   }));
 // ]]>
@@ -194,8 +164,8 @@
 <!-- 
       Implicit values
   -->
-<div id="example6">
-  <h2>Example 6: No type node</h2>
+<div id="example5">
+  <h2>Example 5: No type node</h2>
   <div class="hpage">
     When the attribute does not contain a type, the whole content is considered to be the type
 	and the value is the default of 'true':
@@ -205,8 +175,8 @@
     </ul>
   </div>
 </div>
-<div id="example7">
-  <h2>Example 7: Type node but no value</h2>
+<div id="example6">
+  <h2>Example 6: Type node but no value</h2>
   <div class="hpage">
     The attribute contains a type, but the value is not specified, so it takes the default of 'true':
     <ul>
@@ -220,19 +190,19 @@
     name: "Implicit default value",
     
     "test unspecified type": function() {
-      var data = suite.parse("#example6");
-  	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('true', data.attributes[0].value, "Attribute value");
+      var data = suite.parse("#example5");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
+      Y.Assert.areEqual('true', data.attributes['discount'], "Default attribute value");
     },
 	
     "test unspecified value": function() {
-      var data = suite.parse("#example7");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(1, data.attributes.length, "One attribute specified");
-      Y.Assert.areEqual('discount', data.attributes[0].type, "Attribute type");
-      Y.Assert.areEqual('true', data.attributes[0].value, "Attribute value");
+      var data = suite.parse("#example6");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('discount', data.attributes);
+      Y.Assert.areEqual('true', data.attributes['discount'], "Default attribute value");
     }
   }));
 </script>
@@ -240,15 +210,28 @@
 <!-- 
       Multiple values
   -->
-<div id="example8">
-  <h2>Example 8: Multiple values for an attribute</h2>
+<div id="example7">
+  <h2>Example 7: Multiple attribute declarations</h2>
   <div class="hpage">
     An attribute can have multiple values for the same type.
     <ul>
       <li>name: <span class="name">required field</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">football</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">tennis</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">rugby</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">football</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">tennis</span>.</li>
+    </ul>
+  </div>
+</div>
+<div id="example8">
+  <h2>Example 8: multiple values for nodes attribute</h2>
+  <div class="hpage">
+    An attribute can have multiple value nodes within a single declaration. This format is
+	equivalent to the previous example.
+    <ul>
+      <li>name: <span class="name">required field</span>.</li>
+      <li class="attribute">Your <span class="type">sports</span> are 
+	    <span class="value">rugby</span>, <span class="value">football</span>
+		and <span class="value">tennis</span>.</li>
     </ul>
   </div>
 </div>
@@ -259,9 +242,9 @@
       then the duplicates should be removed to leave the unique set.</p> 
     <ul>
       <li>name: <span class="name">required field</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">football</span>.</li>
-      <li class="attribute"><span class="type">sport</span>: <span class="value">rugby</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">rugby</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">football</span>.</li>
+      <li class="attribute"><span class="type">sports</span>: <span class="value">rugby</span>.</li>
     </ul>
   </div>
 </div>
@@ -270,26 +253,31 @@
   suite.add(new Y.Test.Case({
     name: "Multiple attribute values",
     
-    "test multiple distinct values": function() {
-      var data = suite.parse("#example8");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(3, data.attributes.length, "Three atributes should be found");
-	  var expectedAttributes = [ {type: "sport", value: "rugby"}, 
-	    {type: "sport", value: "football"}, {type: "sport", value: "tennis"} ];
-      Y.ArrayAssert.itemsAreEquivalent(expectedAttributes, data.attributes, function (a, b) {
-	  	return (a.type == b.type && a.value == b.value);
-	  });
+    "test multiple values declared separately": function() {
+      var data = suite.parse("#example7");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('sports', data.attributes);
+	  var expectedValues = [ "rugby", "football", "tennis" ];
+      Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
     },
 	
-    "test unspecified value": function() {
+    "test multiple values in one node": function() {
+      var data = suite.parse("#example8");
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('sports', data.attributes);
+	  var expectedValues = [ "rugby", "football", "tennis" ];
+      Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
+    },
+	
+    "test duplicate values": function() {
       var data = suite.parse("#example9");
-	  Y.Assert.isArray(data.attributes, "No attributes found");
-      Y.Assert.areEqual(2, data.attributes.length, "Only 2 atributes should be found");
-	  var expectedAttributes = [ {type: "sport", value: "rugby"}, 
-	    {type: "sport", value: "football"} ];
-      Y.ArrayAssert.itemsAreEquivalent(expectedAttributes, data.attributes, function (a, b) {
-	  	return (a.type == b.type && a.value == b.value);
-	  });
+	  Y.Assert.isObject(data.attributes, "No attributes found");
+      Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
+      Y.ObjectAssert.ownsKey('sports', data.attributes);
+	  var expectedValues = [ "rugby", "football" ];
+      Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
     }
   }));
 // ]]>
@@ -337,9 +325,3 @@
     }
   }));
 </script>
-
-<pre>
-Attribute value
-Expected: 10 &lt;span class=&quot;value&quot;&gt;%&lt;/span&gt; (string)
-Actual:10 &lt;span class='value' &gt;%&lt;/span&gt; (string)
-</pre>
