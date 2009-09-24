@@ -143,7 +143,7 @@
 
 
   var MicroformatAPI = {
-  	
+    
     /**
      * Implements value excepting rules for working out the value of a property
      * @method getMicroformatPropertyValue
@@ -159,7 +159,7 @@
        * so testing against this is needed to return null
        */
       var value = null, sources;
-	  
+    
       /*
        * <abbr> design pattern (contriversial)
        * ref: http://microformats.org/wiki/abbr-design-pattern
@@ -167,7 +167,7 @@
       if (jQuery(this).find('abbr').length === 1) {
         value = jQuery(this).find('abbr').attr('title');
       }
-	  
+    
       /*
        * get value from explicit 'value' declarations
        */
@@ -232,7 +232,7 @@
        * so testing against this is needed to return null
        */
       var value = [], node = jQuery(this), sources;
-	  
+    
       /*
        * get value from explicit 'value' declarations
        */
@@ -276,8 +276,8 @@
        * Default value if not specified is 'true'
        */
       var type, value, defaultValue = 'true', typeNodes = jQuery(this).find('.type'), valueNodes;
-	  
-	  
+    
+    
       /*
        * If the type is not specified, then the whole content of the attribute node is the
        * type, and the default value is implied. If the whole content is empty, the attribute 
@@ -299,20 +299,20 @@
           value: defaultValue
         };
       }
-	  
-	  /*
-	   * If a single .type node is found, then concatenate .value nodes, or use the default
-	   * value if no .value nodes are found.
-	   */
-	  else if (typeNodes.length === 1) {
+    
+    /*
+     * If a single .type node is found, then concatenate .value nodes, or use the default
+     * value if no .value nodes are found.
+     */
+    else if (typeNodes.length === 1) {
         type = typeNodes.html();
         valueNodes = jQuery(this).find('.value');
         valueNodes = valueNodes.not(valueNodes.find('.value'));
         if (valueNodes.length === 0) {
           value = defaultValue;
         } else if (valueNodes.length === 1) {
-		  value = jQuery(valueNodes[0]).html();
-	    } else {
+          value = jQuery(valueNodes[0]).html();
+        } else {
           value = [];
           valueNodes.each(function () {
             value.push(jQuery(this).html());
