@@ -89,8 +89,8 @@
     
     "test value is the composite of multiple non-conflicting nodes": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('Above the fold', data.name);
-      Y.Assert.areEqual('Page title', data.title);
+      Y.Assert.areEqual('Above the fold', data['page-name']);
+      Y.Assert.areEqual('Page title', data['page-title']);
     }
   }));
 </script>
@@ -121,7 +121,7 @@
     
     "test value is the instance found for singular nodes": function() {
       var data = suite.parse("#example2");
-      Y.Assert.areEqual('Below the fold', data.name);
+      Y.Assert.areEqual('Below the fold', data['page-name']);
     }
   }));
 </script>
@@ -174,12 +174,12 @@
     
     "test value is the union of values for multiple nodes": function() {
       var data = suite.parse("#example3");
-      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data.category);
+      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data['page-category']);
     },
 
     "test value duplicate values are removed": function() {
       var data = suite.parse("#example4");
-      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data.category);
+      Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data['page-category']);
     }
   }));
 </script>

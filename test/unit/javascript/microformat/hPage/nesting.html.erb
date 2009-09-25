@@ -76,7 +76,7 @@
     
     "test last name declared in page should be returned": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('Last name instance', data.name, 'Page name');
+      Y.Assert.areEqual('Last name instance', data['page-name'], 'Page name');
     }
   }));
 </script>
@@ -107,7 +107,7 @@
     
     "test last name should be returned even if nested": function() {
       var data = suite.parse("#example2");
-      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
+      Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
     }
   }));
 </script>	
@@ -137,7 +137,7 @@
     
     "test outer value is declared last": function() {
       var data = suite.parse("#example3");
-      Y.Assert.areEqual('Outer Page name', data.name, 'Wrong page name used');
+      Y.Assert.areEqual('Outer Page name', data['page-name'], 'Wrong page name used');
     }
   }));
 </script>	
@@ -184,14 +184,14 @@
     
     "test non-overlapping values": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
-      Y.Assert.areEqual('Outer Page title', data.title, 'Wrong title used');
+      Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
+      Y.Assert.areEqual('Outer Page title', data['page-title'], 'Wrong title used');
     },
 	
     "test multiple values": function() {
       var data = suite.parse("#example5");
-      Y.Assert.areEqual('Inner Page name', data.name, 'Wrong page name used');
-      Y.ArrayAssert.itemsAreEqual('hpage nested values merge'.split(' '), data.category, 
+      Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
+      Y.ArrayAssert.itemsAreEqual('hpage nested values merge'.split(' '), data['page-category'], 
 	    "Categories are not merged correctly");
     }
 	

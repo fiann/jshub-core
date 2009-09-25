@@ -91,22 +91,22 @@
     
     "test name field": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('page name', data.name);
+      Y.Assert.areEqual('page name', data['page-name']);
     },
 	
     "test title field": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('page title', data.title);
+      Y.Assert.areEqual('page title', data['page-title']);
     },
 	
     "test referrer field": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('referrer URL', data.referrer);
+      Y.Assert.areEqual('referrer URL', data['page-referrer']);
     },
 	
     "test type field": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('Homepage', data.type);
+      Y.Assert.areEqual('Homepage', data['page-type']);
     }
   }));
 </script>  
@@ -180,22 +180,22 @@
     
     "test leading and trailing newlines removed": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('page name with newlines', data.name);
+      Y.Assert.areEqual('page name with newlines', data['page-name']);
 	},
 	
     "test leading and trailing spaces removed": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('page title with spaces', data.title);
+      Y.Assert.areEqual('page title with spaces', data['page-title']);
 	},
 	
     "test leading and trailing tabs removed": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('page referrer with tabs', data.referrer);
+      Y.Assert.areEqual('page referrer with tabs', data['page-referrer']);
 	},
 	
     "test inline whitespace normalized": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('type with inline newlines and spaces', data.type);
+      Y.Assert.areEqual('type with inline newlines and spaces', data['page-type']);
     }
   }));
 </script> 
@@ -229,9 +229,9 @@
     "test inline HTML is preserved": function() {
       var data = suite.parse("#example5");	
 	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
-      Y.Assert.isTrue(/name with an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data.name), "Excerpted page name: " + data.name);
-      Y.Assert.isTrue(/title with whitespace and an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data.title), "Excerpted title: " + data.title);
-      Y.Assert.isTrue(/referrer with a <(SPAN|span)( id=""\s*)?>span nesting more <[Aa]( id=""\s*)? href=(")?#(")?\s*>html<\/[Aa]><\/(SPAN|span)>/.test(data.referrer), "Excerpted referrer: " + data.referrer);
+      Y.Assert.isTrue(/name with an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-name']), "Excerpted page name: " + data['page-name']);
+      Y.Assert.isTrue(/title with whitespace and an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-title']), "Excerpted title: " + data['page-title']);
+      Y.Assert.isTrue(/referrer with a <(SPAN|span)( id=""\s*)?>span nesting more <[Aa]( id=""\s*)? href=(")?#(")?\s*>html<\/[Aa]><\/(SPAN|span)>/.test(data['page-referrer']), "Excerpted referrer: " + data['page-referrer']);
     }
   }));
 // ]]>

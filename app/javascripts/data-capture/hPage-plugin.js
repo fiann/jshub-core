@@ -1,6 +1,20 @@
 /** 
  * A plugin to parse the hPage syntax microformat and pass it to the
  * jsHub event hub for delivery.
+ * 
+ * The input data format is defined by http://jshub.org/hPage microformat
+ * The output is a data object containing the fields listed in the event object
+ * schema.
+ * 
+ * The field name mapping is:
+ * <pre>
+ *   "name" : "page-name"
+ *   "title" : "page-title"
+ *   "referrer" : "page-referrer"
+ *   "type" : "page-type"
+ *   "category" : "page-category"
+ *   "attribute" : attributes object
+ * </pre>
  *
  * @module data-capture
  * @class hPage-plugin
@@ -84,8 +98,13 @@
     /*
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
      */
-    properties = ["version", "name", "title", "referrer", "type", "lifetime", "fragment"];
-    
+    properties = {
+      ".name": "page-name",
+      ".title": "page-title",
+      ".referrer": "page-referrer",
+      ".type": "page-type",
+      ".fragment": "page-fragment"
+    };
     
     sources.each(function(idx, elm) {
     
@@ -105,15 +124,15 @@
        */
       // use the array of class names
       // TODO this can be refactored to the API
-      $.each(properties, function(count, name) {
-        var node, value, classname = '.' + name;
+      $.each(properties, function(classname, fieldname) {
+        var node, value;
         // exclude properties in nested hPages
         node = root.find(classname);
         node = node.not(node.find('.hpage'));
         value = node.getMicroformatPropertyValue(true);
         if (value !== null) {
-          nodeData[name] = value;
-          nodeData[name + "-source"] = metadata.id;
+          nodeData[fieldname] = value;
+          nodeData[fieldname + "-source"] = metadata.id;
         }
       });
 
@@ -129,14 +148,14 @@
       categoryNodes = categoryNodes.not(categoryNodes.find('.hpage .category'));
       categories = categoryNodes.excerptMultipleValues();
       if (categories !== null) {
-        nodeData.category = categories;
-        nodeData['category-source'] = metadata.id;
+        nodeData["page-category"] = categories;
+        nodeData["page-category-source"] = metadata.id;
         // the categories for the overall hPage are the union of what was found previously
         // and in this node. NB $.unique uses identity not value so it doesn't strip duplicate strings
-		hPage.category = (hPage.category || []);
+		hPage["page-category"] = (hPage["page-category"] || []);
 		$.each(categories, function (idx, entry) {
-          if ($(hPage.category).index(entry) === -1) {
-		  	hPage.category.push(entry);
+          if ($(hPage["page-category"]).index(entry) === -1) {
+		  	hPage["page-category"].push(entry);
 		  }
 		});
       }
@@ -178,7 +197,7 @@
 	 * The hPage for the context is only valid if the required fields are all present.
 	 * If not, don't put any of the data into the page view event.
 	 */
-	if (hPage.name) {
+	if (hPage["page-name"]) {
       jsHub.trigger("hpage-found", {
         context: context,
         hpage: hPage
