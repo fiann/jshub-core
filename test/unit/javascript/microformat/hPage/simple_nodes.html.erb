@@ -66,11 +66,6 @@
   <div class="hpage">
     All simple text hPage properties have values. Definitions are from the specification:
     <ul>
-      <li>version <em>(optional, singular)</em>: <span class="version">1.0</span><br/>
-	    Specify a particular version of hPage that their content uses. By omitting this field, 
-		the publisher is stating that implementations may interpret the hPage according to any
-	    version of the hPage specification. 
-	  </li>
       <li>name <em>(<strong>required</strong>, singular)</em>: <span class="name">page name</span>.<br/>
         The page name. 
 	  </li>
@@ -94,11 +89,6 @@
   suite.add(new Y.Test.Case({
     name: "Text field values",
     
-    "test version field": function() {
-      var data = suite.parse("#example1");
-      Y.Assert.areEqual('1.0', data.version);
-    },
-	
     "test name field": function() {
       var data = suite.parse("#example1");
       Y.Assert.areEqual('page name', data.name);
@@ -177,8 +167,8 @@
       <li>referrer = 
          <span class="referrer">		page referrer with tabs		</span>  before and after.
       </li>
-      <li>category = 
-         <span class="version">version with inline
+      <li>type = 
+         <span class="type">type with inline
 		   	newlines and     spaces</span>.
       </li>
     </ul>
@@ -205,7 +195,7 @@
 	
     "test inline whitespace normalized": function() {
       var data = suite.parse("#example4");
-      Y.Assert.areEqual('version with inline newlines and spaces', data.version);
+      Y.Assert.areEqual('type with inline newlines and spaces', data.type);
     }
   }));
 </script> 
