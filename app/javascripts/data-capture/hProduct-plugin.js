@@ -88,7 +88,7 @@
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
      */
     // TODO support currency design pattern
-    var properties = ["brand", "category", "price", "description", "fn", "url"];
+    var properties = ["brand", "category", "price", "description", "fn", "url", "product-id"];
     
     
     sources.each(function (idx, elm) {
@@ -111,6 +111,31 @@
 		console.debug('hProduct value for %s is', node, value);
         if (value !== null) {
           hproduct[name] = value;
+        }
+      });
+      
+	  // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
+	  // we can have multiple attributes, each one has a type and a value
+	  // output in the data is an array: {name:[value, value], name:value}
+	  var attributes = $('.attribute', elm);
+	  attributes.each(function () {
+        var attribute = $(this).excerptValueClassData(), type, value, allValues;
+        if (attribute !== null) {
+		  type = attribute.type;
+		  value = attribute.value;
+          hproduct.attributes = (hproduct.attributes || {});
+		  allValues = $.makeArray(hproduct.attributes[type]); 
+          $.merge(allValues, $.makeArray(value));
+		  var unique = []; 
+		  for (var i=0; i < allValues.length; i++) {
+		  	if ($.inArray(allValues[i], unique) === -1) {
+              unique.push(allValues[i]);
+			}
+		  }
+		  if (unique.length === 1) {
+		  	unique = allValues[0];
+		  }
+		  hproduct.attributes[type] = unique;
         }
       });
       
