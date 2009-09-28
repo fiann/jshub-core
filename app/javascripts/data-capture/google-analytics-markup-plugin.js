@@ -21,8 +21,6 @@ if (window.jQuery && window.jsHub) {
       name: 'Google Analytics Markup Plugin',
 	  id: 'google-analytics-markup',
       version: '0.1 experimental',
-      author: "Fiann O'Hagan",
-      email: 'fiann.ohagan@jshub.org',
       vendor: 'jsHub.org',
       type: 'data-capture'
     };

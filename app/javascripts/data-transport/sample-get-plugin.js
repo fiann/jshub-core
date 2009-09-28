@@ -21,9 +21,7 @@
   	id: 'sample-get-plugin',
     name: 'Sample HTTP GET transport plugin',
     version: 0.1,
-    author: "Fiann O'Hagan",
-    email: 'fiann.ohagan@jshub.org',
-    vendor: 'jsHub'
+    vendor: 'jsHub.org'
   },  
   
   /**

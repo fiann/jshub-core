@@ -25,9 +25,7 @@
   var metadata = {
     name: 'Sample HTTP POST transport plugin',
     version: 0.1,
-    author: "Fiann O'Hagan",
-    email: 'fiann.ohagan@jshub.org',
-    vendor: 'jsHub'
+    vendor: 'jsHub.org'
   },  
   
   /**
