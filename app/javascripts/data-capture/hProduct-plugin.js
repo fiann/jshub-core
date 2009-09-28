@@ -86,10 +86,17 @@
     
     /*
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
+     * This is the mapping of microformat class names to event object field names
      */
     // TODO support currency design pattern
-    var properties = ["brand", "category", "price", "description", "fn", "url", "product-id"];
-    
+    var properties = {
+		".brand" : "product-brand",
+		".category" : "product-category", 
+		".description" : "product-description", 
+		".fn" : "product-name",
+		".product-id" : "product-id", 
+		".price" : "product-price"
+	};
     
     sources.each(function (idx, elm) {
     
@@ -102,18 +109,17 @@
       /*
        * get the property data from class names
        */
-      $.each(properties, function(count, name) {
-        var node, value, classname = '.' + name;
-        // exclude properties in nested microformats
+      $.each(properties, function(classname, fieldname) {
+        var node, value;
+        // exclude properties in nested hPages
         node = root.find(classname);
-		node = node.not(node.find('.hproduct'));
-		value = node.getMicroformatPropertyValue();
-		console.debug('hProduct value for %s is', node, value);
+        node = node.not(node.find('.hproduct'));
+        value = node.getMicroformatPropertyValue(true);
         if (value !== null) {
-          hproduct[name] = value;
+          hproduct[fieldname] = value;
         }
-      });
-      
+      });	  
+	  
 	  // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
 	  // we can have multiple attributes, each one has a type and a value
 	  // output in the data is an array: {name:[value, value], name:value}
@@ -136,6 +142,34 @@
 		  	unique = allValues[0];
 		  }
 		  hproduct.attributes[type] = unique;
+        }
+      });
+	  
+	  /*
+	   * Special processing for fields that don't take the value from the text node
+	   * of the microformat.
+	   */
+	  var photos = $('img.photo', elm);
+	  photos.each(function () {
+        var url = $(this).attr('src');
+        if (url !== null) {
+          hproduct['product-photo'] = $.makeArray(hproduct['product-photo']);
+		  hproduct['product-photo'].push(url);
+		  if (hproduct['product-photo'].length === 1) {
+		  	hproduct['product-photo'] = hproduct['product-photo'][0];
+		  }
+        }
+      });
+	  
+	  var urls = $('a.url', elm);
+	  urls.each(function () {
+        var url = $(this).attr('href');
+        if (url !== null) {
+          hproduct['product-url'] = $.makeArray(hproduct['product-url']);
+		  hproduct['product-url'].push(url);
+		  if (hproduct['product-url'].length === 1) {
+		  	hproduct['product-url'] = hproduct['product-url'][0];
+		  }
         }
       });
       
