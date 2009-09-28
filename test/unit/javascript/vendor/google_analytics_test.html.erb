@@ -91,14 +91,14 @@
     
     "test pagename not specified": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual(window.location.pathname, data.name, 'Page name should default to the window.location.pathname if it is not explicitly stated');
+      Y.Assert.areEqual(window.location.pathname, data['page-name'], 'Page name should default to the window.location.pathname if it is not explicitly stated');
     },
 	
 	// unlike hpage plugin the GA plugin defaults to pathname rather than leaving it blank, so it
 	// should explicitly state the source
     "test source metadata is applied to default fields": function() {
       var data = suite.parse("#example1");
-      Y.Assert.areEqual('location.pathname', data['name-source'], 'name-source is not correct');
+      Y.Assert.areEqual('location.pathname', data['page-name-source'], 'name-source is not correct');
     }
   }));
 </script>  
@@ -121,13 +121,13 @@
     
     "test pagename explicitly specified": function() {
       var data = suite.parse("#example2");
-      Y.Assert.areEqual("Test page", data.name, 'Page name should match the defined value');
+      Y.Assert.areEqual("Test page", data['page-name'], 'Page name should match the defined value');
     },
 	
     "test source metadata is applied to explicit fields": function() {
       var data = suite.parse("#example2");
 	  var pluginId = 'google-analytics-markup';
-      Y.Assert.areEqual(pluginId, data['name-source'], 'name-source is not correct');
+      Y.Assert.areEqual(pluginId, data['page-name-source'], 'name-source is not correct');
     }
   }));
 </script>  
@@ -167,7 +167,7 @@
       Y.Assert.areEqual("hPage-plugin", errorData.fields.name.previous.source, 'Wrong previous plugin source');
       Y.Assert.areEqual("Test page", errorData.fields.name.found, 'Wrong value in error event from GA plugin');
       // and check the real page view event
-	  Y.Assert.areEqual("Test page", data.name, 'Page name should contain the last defined value');
+	  Y.Assert.areEqual("Test page", data['page-name'], 'Page name should contain the last defined value');
     }
   }));
 </script> 
@@ -198,7 +198,7 @@
 	  if (window.domReadyFired) {
         Y.Assert.isTrue(window.clickHandlersTriggered, "The onClick handler was not triggered");
         Y.Assert.areEqual(1, events, 'Click should be recorded');
-        Y.Assert.areEqual("Link click", data.name, 'Wrong page name in event');
+        Y.Assert.areEqual("Link click", data['page-name'], 'Wrong page name in event');
       }
 	  
     }

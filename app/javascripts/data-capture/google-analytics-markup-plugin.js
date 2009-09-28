@@ -57,8 +57,8 @@ if (window.jQuery && window.jsHub) {
 	  
       // we need to know if there is already a value defined
       previous = {
-        "value": data.name,
-        "source": data['name-source']
+        "value": data['page-name'],
+        "source": data['page-name-source']
       };
       
       // note that jsHub is a valid global variable in the plugin
@@ -72,16 +72,16 @@ if (window.jQuery && window.jsHub) {
             if (matches[1].match(/^\s*$/)) {
               // _trackPageview() without args records the page url
 			  pagename = jsHub.safe('document').location.pathname;
-              data['name-source'] = 'location.pathname';
+              data['page-name-source'] = 'location.pathname';
             } else {
               // otherwise it has been explicitly specified
 			  pagename = matches[1].replace(/^\s+/, '').replace(/\s+$/, '');
 	          pagename = pagename.match(/^(['"]|&quot;?)(.+)(\1)$/)[2];
-              data['name-source'] = metadata.id;
+              data['page-name-source'] = metadata.id;
             }
             pagenames.push(pagename);
             // last value specified wins as the output
-            data.name = pagename;
+            data['page-name'] = pagename;
           }
         }
       });
@@ -143,7 +143,7 @@ if (window.jQuery && window.jsHub) {
           proxy._trackPageview = function(pagename) {
             var data = {
 			  "context": "#do-not-drill-down-on-this-event",
-              "name": pagename
+              "page-name": pagename
             };
             jsHub.trigger("page-view", data);
             realPageTracker._trackPageview(pagename);
