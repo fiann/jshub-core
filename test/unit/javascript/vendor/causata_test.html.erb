@@ -1,0 +1,104 @@
+<% set_title "Causata < Data transport" %>
+
+<% content_for :javascripts do %>  
+  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+  <%= javascript_include_tag "/js/src/data-transport/causata-post-plugin.js" %>
+
+  <script language="javascript" type="text/javascript">
+    /* 
+     * Create a mock for the API function
+     */
+    var MockAPI = function() {
+      var self = this;
+      self.count = 0;
+      self.dispatchViaForm = function(method, url, data) {
+        self.count++;
+        self.url = url;
+        self.data = data;
+      };    
+      jsHub.dispatchViaForm = self.dispatchViaForm;
+    };
+  </script>  
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  This file tests <strong><a href="http://www.causata.com/" title="Causata">Causata 
+  data logging plugin</a> functionality to a server via a form POST request</strong>.
+</p>
+<p>
+  This plugin should capture page view and product view events, and ignore other event types.
+</p>
+<p>
+  See the <%= link_to 'Causata wireformat documentation', 'https://intra.causata.com/code/causata/wiki/JavascriptTag/WireFormat' %>
+  for more information	
+</p>
+<% end %>
+
+
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other
+   * supporting functionality to avoid false test failure results due to
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({
+    name: "Environment check",
+    
+    "test required test dependencies": function() {
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+    
+    "test jsHub API dependencies": function() {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+</script>  
+
+<!-- Any HTML you may require for your tests to work properly -->
+<div id="example1">
+</div>
+<script language="javascript" type="text/javascript">
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "Data dispatch",
+    
+    "test page view events are dispatched": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {});
+      Y.Assert.areEqual(1, mock.count, "dispatchViaForm() should be called once");
+    },
+
+    "test event properties are converted to Causata API format": function() {
+      var mock = new MockAPI();
+      jsHub.trigger("page-view", {"page-name" : "homepage"});  
+      var expectedData = {
+        "event-type": "page-view",
+        "attributes": [
+		  { "name" : "page-name", "value" : "homepage" }
+		]
+      };
+	  console.log("event=", mock.data.event);
+	  console.log("expected="+Y.JSON.stringify(expectedData));
+	  var data = Y.JSON.parse(mock.data.event);
+	  for (var field in expectedData) {
+		Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+		if (field !== "attributes") {
+		  Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+		}
+	  }
+	  // get a sensible error message
+	  Object.prototype.toString = function () {
+	  	return Y.JSON.stringify(this);
+	  };
+	  Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, function (one, two) {
+	  	return two.name === one.name && two.value === one.value;
+	  }, "Event attributes are not correct");
+    }
+
+  }));    
+</script>
+
