@@ -210,6 +210,12 @@
   jsHub.bind("page-view", metadata.id, parse);
     
   /*
+   * Bind the plugin to the Hub to look for .hproduct microformats and generate
+   * product view events
+   */
+  jsHub.bind("content-updated", metadata.id, parse);
+    
+  /*
    * Last trigger an event to show that the plugin has been registered
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
