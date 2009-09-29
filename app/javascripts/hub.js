@@ -170,22 +170,22 @@
          * @param listener {Listener} the listener object to call back to
          * @param data {object}
          */        
-        this.dispatch = function (name, listener, data) {
-    		  var evt, filteredData, extraData;
-      
-  	      if (validate(listener.token, data)) {
-  	        // remove private fields from the data for each listener
-      			filteredData = filter(listener.token, data);
-      			// send to the listener
-  	        jsHub.logger.debug("Sending event %s to listener %s with data", name, listener.token, filteredData);
-  	        evt = new Event(name, filteredData);
-  	        extraData = listener.callback(evt);
-      			// merge any additional data found by the listener into the data
-      			if (extraData) {
-    		      $.extend(true, data, extraData);
-    		      jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
-      			}
-  	      }
+        this.dispatch = function (name, listener, data, timestamp) {
+          var evt, filteredData, extraData;
+          
+          if (validate(listener.token, data)) {
+            // remove private fields from the data for each listener
+            filteredData = filter(listener.token, data);
+            // send to the listener
+            jsHub.logger.debug("Sending event %s to listener %s with data", name, listener.token, filteredData);
+            evt = new Event(name, filteredData, timestamp);
+            extraData = listener.callback(evt);
+            // merge any additional data found by the listener into the data
+            if (extraData) {
+              $.extend(true, data, extraData);
+              jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
+            }
+          }
         };
       },
     
@@ -232,9 +232,12 @@
        * @method trigger
        * @for jsHub
        * @param eventName {string}
-       * @param data {object}
+       * @param data {object} a data object containing name=value fields for the event data
+       * @param timestamp {number} a timestamp, which can be used to associate this event
+       * with other events created due to the same user action in the browser. Optional, will
+       * be created automatically if not supplied.
        */
-      this.trigger = function (eventName, data) {
+      this.trigger = function (eventName, data, timestamp) {
         jsHub.logger.group("Event %s triggered with data", eventName, (data || "'none'"));
         // empty object if not defined
         data = data || {};
@@ -254,7 +257,7 @@
           }
         }
         for (var k = 0; k < registered.length; k++) {
-          firewall.dispatch(eventName, registered[k], data);
+          firewall.dispatch(eventName, registered[k], data, timestamp);
         }
         jsHub.logger.groupEnd();
 		// additional special behavior for particular event types

@@ -45,7 +45,7 @@
     /*
      * All local vars set here so nothing is accidentally made global.
      */
-    var $, console, context, sources, data;
+    var $, console, context, sources, data, timestamp;
     
     /*
      * Reference to a 'safe' version of jQuery with restricted access to the DOM (like AdSafe).
@@ -66,6 +66,14 @@
       context = event.data.context;
     }
     
+	/*
+	 * The event timestamp for this object should match the event that generated it, because
+	 * it is not tied to its own specific user action.
+	 */
+    if (event.timestamp) {
+      timestamp = event.timestamp;
+    }
+	
     /*
      * Extract the hProduct nodes from HTML DOM (not source code), excluding nested hProducts
      * If there is no '.hproduct' node in the page, then no product view event will be 
@@ -83,7 +91,7 @@
     data = {
       products : []
 	};
-    
+	
     /*
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
      * This is the mapping of microformat class names to event object field names
@@ -180,7 +188,7 @@
       });
       
       // issue an product view event to be logged
-      jsHub.trigger("product-view", hproduct);
+      jsHub.trigger("product-view", hproduct, timestamp);
       
       /*
        * Append this hProduct object into the data to return

@@ -73,11 +73,12 @@
     },
 
     "test event properties are converted to Causata API format": function() {
-      var mock = new MockAPI();
-      jsHub.trigger("page-view", {"page-name" : "homepage"});  
+      var mock = new MockAPI(), timestamp = new Date().getTime();
+      jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);  
       var expectedData = {
-        "event-type": "page-view",
-        "attributes": [
+        "event-type" : "page-view",
+		"timestamp" : timestamp,
+        "attributes" : [
 		  { "name" : "page-name", "value" : "homepage" }
 		]
       };
