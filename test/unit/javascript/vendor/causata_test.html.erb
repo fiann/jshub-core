@@ -1,6 +1,7 @@
 <% set_title "Causata < Data transport" %>
 
 <% content_for :javascripts do %>  
+  <%= javascript_include_tag "json/json2.js" %>
   <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
   <%= javascript_include_tag "/js/src/data-transport/causata-post-plugin.js" %>
 
@@ -82,8 +83,6 @@
 		  { "name" : "page-name", "value" : "homepage" }
 		]
       };
-	  console.log("event=", mock.data.event);
-	  console.log("expected="+Y.JSON.stringify(expectedData));
 	  var data = Y.JSON.parse(mock.data.event);
 	  for (var field in expectedData) {
 		Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
