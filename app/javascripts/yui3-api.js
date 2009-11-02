@@ -1,13 +1,15 @@
 /**
  * Enhancements to jQuery for common functions 
  * used in plugins
- * @module data-capture
+ * @module api
  * @class PluginAPI
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global jsHub, jQuery, Date */
+/*global YUI, jsHub, jQuery, Date */
 "use strict";
+
+YUI.add('api', function(Y) {
  
 (function () {
  
@@ -338,4 +340,11 @@
    */
   var $ = jsHub.safe('$');
   $.extend($.fn, MicroformatAPI);
+    
 })(jQuery);
+
+  Y.log('api module loaded')
+}, '2.0.0' , {
+  requires:['hub'], 
+  after:['hub']
+});

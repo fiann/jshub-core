@@ -5,8 +5,10 @@
  *//*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global jQuery */
+/*global YUI, jQuery */
 "use strict";
+
+YUI.add('hub', function(Y) {
 
 (function ($) {
   
@@ -15,53 +17,6 @@
 
     // instance of jsHub object
     jsHub,
-
-    /**
-     * Wrap Firebug console for logging.
-     * Set META.DEBUG = false to switch off logging.
-     * @class Logger
-     * @for jsHub
-     */
-    // TODO: Enable sending of logging data to remote servers
-    Logger = function () {
-      var console = global.console;
-      var logging_active = console && true;
-      if (global.META && global.META.DEBUG === false) {
-        logging_active = false;
-      }
-      this.debug = function debug() {
-        if (logging_active && console.debug) {
-          console.debug.apply(console, arguments);
-        }
-      };
-      this.log = function log() {
-        if (logging_active && console.log) {
-          console.log.apply(console, arguments);
-        }
-      };
-      this.warn = function warn() {
-        if (logging_active && console.warn) {
-          console.warn.apply(console, arguments);
-        }
-      };
-      this.error = function error() {
-        if (logging_active && console.error) {
-          console.error.apply(console, arguments);
-        }
-      };
-      this.group = function group() {
-        if (logging_active && console.group) {
-          console.group.apply(console, arguments);
-        } else {
-          this.log.apply(this, arguments);
-        }
-      };
-      this.groupEnd = function groupEnd() {
-        if (logging_active && console.groupEnd) {
-          console.groupEnd.apply(console, arguments);
-        }
-      };
-    },
 
     /**
      * Core event dispatcher functionality of the hub
@@ -464,9 +419,6 @@
 
   // jsHub object in global namespace
   jsHub = global.jsHub = new Hub();
-
-  // Initialise a logger instance  
-  jsHub.logger = new Logger();
   
   // Create an object to return safe instances of important variables
   jsHub.safe = function (obj) {
@@ -512,19 +464,12 @@
   	return JSON.stringify(object, null, 2);
   };
 
-  // Initialise lifecycle triggers
-  jsHub.logger.log("Hub initialized, triggering page lifecycle events");
-  $(document).ready(function () {
-  	// Can be used to pre-configure data at page level if necessary
-  	jsHub.trigger("data-capture-start");
-
-    // Data is ready to be parsed by Data Capture plugins
-    jsHub.trigger("page-view");
-
-  	// Data capture phase is complete
-    jsHub.trigger("data-capture-complete");
-  });
-
   jsHub.dispatchViaForm = (new FormTransport()).dispatch;
   jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
 })(jQuery);
+
+  Y.log('hub module loaded')
+}, '2.0.0' , {
+  requires:['yui'], 
+  after:['yui']
+});

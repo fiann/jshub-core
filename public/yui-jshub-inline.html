@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>YUI3 based jsHub</title>
+
+<script type="text/javascript" src="/core/js/src/yui3-min.js">/* YUI3 seed file */</script>
+<script type="text/javascript" src="/core/js/src/yui3-jshub.js">/* jsHub seed file */</script>
+<script type="text/javascript" src="/core/js/src/yui3-hub.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/yui3-logger.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/yui3-api.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/javascripts/jquery/jquery.js">/* jQuery file deliberately out of order */</script>
+
+<script type="text/javascript">
+  var config = {
+    debug: true, // use browser console for logging
+    base: "/core/js/src/", // File structure matching module-name/module-name.js -min.js -debug.js
+    filter: "RAW" // serve -min.js (default) RAW or DEBUG or use a custom filter
+  };
+
+  YUI(config).use('jshub', function(Y) {
+
+    Y.log(jsHub, 'info');  
+
+  });
+</script>
+
+</head>
+
+<body>
+
+    <div id="main">
+      <div id="content">
+
+<h2>YUI3 based jsHub</h2>
+    
+<p>
+  Using YUI3 to manage jsHub plugins and dependencies. This page inlines all the code but out of order, however YUI uses the metadata to load each module in order.
+</p>
+<p>
+  For more information see the <a href="http://developer.yahoo.com/yui/3/" title="YDN">YUI3 documentation on YDN</a>.
+</p>
+
+<div id="demo">
+  <p>
+    demo div
+  </p>
+</div>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(local)</p>
+
+    </div>
+</body>
+</html>
