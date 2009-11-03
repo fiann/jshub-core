@@ -5,39 +5,26 @@
 <head>
   <title>YUI3 based jsHub</title>
 
-<script type="text/javascript" src="/core/js/src/yui3-min.js">/* YUI3 seed file */</script>
+<script type="text/javascript" src="/core/js/src/modules/yui/yui-min.js">/* YUI3 seed file */</script>
 
 <script type="text/javascript">
   var config = {
     debug: true, // use browser console for logging
-    base: "/core/js/src/", // File structure matching module-name/module-name.js -min.js -debug.js
+    base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
     filter: "RAW", // serve -min.js (default) RAW or DEBUG or use a custom filter
     modules:  { // one or more external modules that can be loaded along side of YUI
-      jquery: {
-        fullpath: "/core/javascripts/jquery/jquery.js",
-        before: ["jshub"]
-      },
       jshub: {
-        fullpath: "/core/js/src/yui3-jshub.js",
         requires: ['jquery', 'hub', 'logger', 'api'],
         after: ["jquery"]
       },
-      hub: {
-        fullpath: "/core/js/src/yui3-hub.js",
-        after: ["jshub"]
-      },
-      logger: {
-        fullpath: "/core/js/src/yui3-logger.js",
-        after: ["hub"]
-      },
-      api: {
-        fullpath: "/core/js/src/yui3-api.js",
-        after: ["hub"]
-      }
+      jquery: {},
+      hub: {},
+      logger: {},
+      api: {}
     }
   };
 
-  YUI(config).use('jshub', function(Y) {
+  YUI(config).use('jshub' , function(Y) {
 
     Y.log(jsHub, 'info');  
 
