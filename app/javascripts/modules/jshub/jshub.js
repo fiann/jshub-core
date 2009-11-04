@@ -22,6 +22,6 @@ YUI.add("jshub",function(Y){
 
   Y.log('jshub module loaded')
 },"2.0.0",{
-  requires:["yui","jquery","hub","logger","api"], 
+  requires:["yui","jquery","hub","logger","utilities","microformats"], 
   after:["jquery"]
 });

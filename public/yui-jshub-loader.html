@@ -14,13 +14,14 @@
     filter: "RAW", // serve -min.js (default) RAW or DEBUG or use a custom filter
     modules:  { // one or more external modules that can be loaded along side of YUI
       jshub: {
-        requires: ['jquery', 'hub', 'logger', 'api'],
+        requires: ['jquery', 'hub', 'logger', 'utilities', 'microformats'],
         after: ["jquery"]
       },
       jquery: {},
       hub: {},
       logger: {},
-      api: {}
+      utilities: {},
+      microformats: {}
     }
   };
 
