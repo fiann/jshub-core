@@ -1,5 +1,5 @@
 /**
- * jsHub tag module dependencies
+ * jsHub tag module dependencies and configuration
  * @module jshub
  *//*--------------------------------------------------------------------------*/
 
@@ -7,7 +7,7 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add("jshub",function(Y){
+YUI.add("jshub", function (Y) {
 
   // Initialise lifecycle triggers
   jsHub.logger.info("Hub initialized, triggering page lifecycle events");
@@ -20,8 +20,8 @@ YUI.add("jshub",function(Y){
   // Data capture phase is complete
   jsHub.trigger("data-capture-complete");
 
-Y.log('jshub module loaded', 'info', 'jsHub')
-},"2.0.0",{
-  requires:["yui","jquery","hub","logger","utilities","microformats"], 
-  after:["jquery"]
+  Y.log('jshub module loaded', 'info', 'jsHub');
+}, "2.0.0", {
+  requires: ["yui", "jquery", "hub", "logger", "utilities", "microformats"], 
+  after: ["jquery"]
 });
