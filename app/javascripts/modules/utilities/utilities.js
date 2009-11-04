@@ -1,12 +1,12 @@
 /**
  * Enhancements to jQuery for common functions 
  * used in plugins
- * @module api
+ * @module utilities
  * @class PluginAPI
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub, jQuery, Date */
+/*global YUI, jsHub */
 "use strict";
 
 YUI.add('utilities', function(Y) {
@@ -116,11 +116,11 @@ YUI.add('utilities', function(Y) {
    * Add the API as global functions on the core jQuery object
    */
   var $ = jsHub.safe('$');
-  $.extend($, PluginAPI);
+  Y.mix($, PluginAPI);
 })();
 
-  Y.log('utilities module loaded')
+Y.log('utilities module loaded', 'info', 'jsHub')
 }, '2.0.0' , {
-  requires:['hub', 'jquery'], 
+  requires:['hub'], 
   after:['hub']
 });

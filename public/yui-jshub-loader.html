@@ -19,16 +19,15 @@
       },
       jquery: {},
       hub: {},
+      debug: {},
       logger: {},
       utilities: {},
       microformats: {}
     }
   };
 
-  YUI(config).use('jshub' , function(Y) {
-
-    Y.log(jsHub, 'info');  
-
+  YUI(config).use('jshub', 'debug', function(Y) {
+    jsHub.logger.log("Core object jsHub: %o", jsHub);  
   });
 </script>
 

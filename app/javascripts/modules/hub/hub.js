@@ -468,7 +468,7 @@ YUI.add('hub', function(Y) {
   jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
 })(jQuery);
 
-  Y.log('hub module loaded')
+Y.log('hub module loaded', 'info', 'jsHub')
 }, '2.0.0' , {
   requires:['yui'], 
   after:['yui']
