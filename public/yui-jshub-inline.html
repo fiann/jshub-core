@@ -18,7 +18,7 @@
   var config = {
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
-    timeout: 10000, // Give up if any single node request takes more than 10 seconds.
+    timeout: 10000 // Give up if any single node request takes more than 10 seconds.
   };
 
   YUI(config).use('jshub', 'debug', function(Y, result) {
