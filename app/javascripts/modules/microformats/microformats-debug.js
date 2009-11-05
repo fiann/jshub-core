@@ -227,6 +227,7 @@ YUI.add('microformats', function (Y) {
       
   })(jQuery);
 
+  Y.log('microformats module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['hub'], 
   after: ['hub']

@@ -6,19 +6,18 @@
   <title>YUI3 based jsHub</title>
 
 <script type="text/javascript" src="/core/js/src/modules/yui/yui-min.js">/* YUI3 seed file */</script>
-<script type="text/javascript" src="/core/js/src/modules/jshub/jshub.js">/* jsHub seed file */</script>
-<script type="text/javascript" src="/core/js/src/modules/hub/hub.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/js/src/modules/debug/debug.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/js/src/modules/logger/logger.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/js/src/modules/utilities/utilities.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/js/src/modules/microformats/microformats.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/javascripts/jquery/jquery.js">/* jQuery file deliberately out of order */</script>
+<script type="text/javascript" src="/core/js/src/modules/jshub/jshub-min.js">/* jsHub seed file */</script>
+<script type="text/javascript" src="/core/js/src/modules/hub/hub-min.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/modules/debug/debug-min.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/modules/logger/logger-min.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/modules/utilities/utilities-min.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/modules/microformats/microformats-min.js">/* jsHub module file */</script>
+<script type="text/javascript" src="/core/js/src/modules/jquery/jquery-min.js">/* jQuery file deliberately out of order */</script>
 
 <script type="text/javascript">
   var config = {
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
-    filter: "RAW" // serve -min.js (default) RAW or DEBUG or use a custom filter
   };
 
   YUI(config).use('jshub', 'debug', function(Y) {

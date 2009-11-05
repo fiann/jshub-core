@@ -11,7 +11,7 @@
 
 YUI.add('logger', function (Y) {
 
-  (function () {
+  (function () {    
     // Initialise a logger instance based on what is available
     if (window.debug && window.debug.log) {
       // Use caching debug console wrapper
@@ -38,6 +38,7 @@ YUI.add('logger', function (Y) {
     }
   })();
 
+  Y.log('logger module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['hub'],
   after: ['debug']

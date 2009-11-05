@@ -132,11 +132,13 @@ YUI.add('hub', function (Y) {
               // remove private fields from the data for each listener
               filteredData = filter(listener.token, data);
               // send to the listener
+              jsHub.logger.debug("Sending event %s to listener %s with data", name, listener.token, filteredData);
               evt = new Event(name, filteredData, timestamp);
               extraData = listener.callback(evt);
               // merge any additional data found by the listener into the data
               if (extraData) {
                 $.extend(true, data, extraData);
+                jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
               }
             }
           };
@@ -191,6 +193,7 @@ YUI.add('hub', function (Y) {
          * be created automatically if not supplied.
          */
         this.trigger = function (eventName, data, timestamp) {
+          jsHub.logger.group("Event %s triggered with data", eventName, (data || "'none'"));
           // empty object if not defined
           data = data || {};
           // find all registered listeners for the specific event, and for "*"
@@ -211,6 +214,7 @@ YUI.add('hub', function (Y) {
           for (var k = 0; k < registered.length; k++) {
             firewall.dispatch(eventName, registered[k], data, timestamp);
           }
+          jsHub.logger.groupEnd();
       // additional special behavior for particular event types
           if (eventName === "plugin-initialization-start") {
             plugins.push(data);
@@ -268,6 +272,7 @@ YUI.add('hub', function (Y) {
          * @return the ID of the iframe that has been created
          */
         this.dispatch = function (method, url, data) {
+          jsHub.logger.group("FormTransport: dispatch(" + url + ") entered");
           var form, appendField, iframe, iframeID, field, array, i;
           
           /*
@@ -275,6 +280,8 @@ YUI.add('hub', function (Y) {
            * TODO: validate url for security reasons, reject javascript: protocol etc
            */
           if (!(/^POST|GET$/i.test(method)) || !url) {
+            jsHub.logger.error("Method (" + method + ") or url (" + url + ") was not defined correctly");
+            jsHub.logger.groupEnd();
             return;
           }
           data = data || {};
@@ -310,6 +317,7 @@ YUI.add('hub', function (Y) {
             }
           }
           $('body').append(form);
+          jsHub.logger.log("Created form:", form[0]);
   
           // Create the iframe from as string via jQuery
           iframeID = "jshub-iframe-" + jsHub.safe.getTimestamp();
@@ -317,15 +325,18 @@ YUI.add('hub', function (Y) {
             + 'style="display: none !important; width: 0px; height: 0px;" class="jshub-iframe"></iframe>');
         
           $('body').append(iframe);
+          jsHub.logger.log("Created iframe:", iframe[0]);
       
           // Set the iframe as the submission target of the form, tied together by a timestamp
           form.attr("target", iframeID);
   
           // And send it ...
           form.submit();
+          jsHub.logger.log("Form submitted");
           jsHub.trigger("form-transport-sent", {
             node: iframeID
           });
+          jsHub.logger.groupEnd();
           return iframeID;
         };
       },
@@ -371,9 +382,12 @@ YUI.add('hub', function (Y) {
          * @return the ID of the iframe that has been created
          */
         this.dispatch = function (url, data) {
+          jsHub.logger.group("ImageTransport: dispatch(" + url + ") entered");
           
       // base url must be defined
           if (typeof url !== 'string' || url.length < 1) {
+            jsHub.logger.error("Base url (" + url + ") was not defined correctly");
+            jsHub.logger.groupEnd();
             return null;
           }
       
@@ -396,6 +410,8 @@ YUI.add('hub', function (Y) {
           var image = $('<img>');
           image.attr('src', url);
   
+          jsHub.logger.log("Dispatched: " + url);
+          jsHub.logger.groupEnd();
           return image[0];
       
         };
@@ -452,6 +468,7 @@ YUI.add('hub', function (Y) {
     jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
   })(jQuery);
 
+  Y.log('hub module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['yui'], 
   after: ['yui']

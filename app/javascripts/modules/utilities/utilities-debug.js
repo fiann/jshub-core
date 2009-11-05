@@ -119,6 +119,7 @@ YUI.add('utilities', function (Y) {
     Y.mix($, PluginAPI);
   })();
 
+  Y.log('utilities module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['hub'], 
   after: ['hub']
