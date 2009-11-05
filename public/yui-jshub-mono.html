@@ -15,7 +15,7 @@
     timeout: 10000, // Give up if any single node request takes more than 10 seconds.
   };
 
-  YUI(config).use('jshub', function(Y) {
+  YUI(config).use('jshub', function(Y, result) {
     // The callback supplied to use() will be executed regardless of
     // whether the operation was successful or not.  The second parameter
     // is a result object that has the status of the operation.  We can
