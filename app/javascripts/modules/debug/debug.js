@@ -261,3 +261,7 @@ window.debug = (function(){
   
   return that;
 })();
+
+YUI.add('debug', function (Y) {
+  // stub so YUI Loader knows the module is present and not load loader-min.js unneccessarily
+}, '0.0.3' , {});

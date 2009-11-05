@@ -11,6 +11,7 @@
   var config = {
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
+    timeout: 10000, // Give up if any single node request takes more than 10 seconds.
     //filter: "RAW", // serve -min.js (default) RAW or DEBUG or use a custom filter
     modules:  { // one or more external modules that can be loaded along side of YUI
       jshub: {
@@ -27,7 +28,15 @@
   };
 
   YUI(config).use('jshub', 'debug', function(Y) {
-    jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    // The callback supplied to use() will be executed regardless of
+    // whether the operation was successful or not.  The second parameter
+    // is a result object that has the status of the operation.  We can
+    // use this to try to recover from failures or timeouts.
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    }
   });
 </script>
 

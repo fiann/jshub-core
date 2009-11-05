@@ -18,10 +18,19 @@
   var config = {
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
+    timeout: 10000, // Give up if any single node request takes more than 10 seconds.
   };
 
   YUI(config).use('jshub', 'debug', function(Y) {
-    jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    // The callback supplied to use() will be executed regardless of
+    // whether the operation was successful or not.  The second parameter
+    // is a result object that has the status of the operation.  We can
+    // use this to try to recover from failures or timeouts.
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    }
   });
 </script>
 
@@ -35,7 +44,7 @@
 <h2>YUI3 based jsHub</h2>
     
 <p>
-  Using YUI3 to manage jsHub plugins and dependencies. This page inlines all the code but out of order, however YUI uses the metadata to load each module in order.
+  Using YUI3 to manage jsHub plugins and dependencies. This page inlines all the code as seperate files, but out of order, however YUI uses the metadata to load each module in order.
 </p>
 <p>
   For more information see the <a href="http://developer.yahoo.com/yui/3/" title="YDN">YUI3 documentation on YDN</a>.
