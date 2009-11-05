@@ -10,7 +10,7 @@
 
 YUI.add('hub', function (Y) {
 
-  (function ($) {
+  (function () {
     
     // global namespace
     var global = this, 
@@ -74,7 +74,7 @@ YUI.add('hub', function (Y) {
           var containsToken = function (string, token) {
             string = string.split(",");
             for (var i = 0; i < string.length; i++) {
-              if (token === $.trim(string[i])) {
+              if (token === Y.Lang.trim(string[i])) {
                 return true;
               }
             }
@@ -88,8 +88,8 @@ YUI.add('hub', function (Y) {
            * @param payload {object}
            */
           validate = function (token, payload) {
-            var who = $.trim(payload.event_visibility);
-            if (who === "" || who === "*") {
+            var who = Y.Lang.trim(payload.event_visibility);
+            if (who === undefined || who === "" || who === "*") {
               return true;
             }
             return containsToken(who, token);
@@ -104,7 +104,7 @@ YUI.add('hub', function (Y) {
           filter = function (token, data) {
             // TODO remove fields from data that do not validate
             var filtered = {};
-            $.each(data, function (key, value) {
+            Y.Object.each(data, function (value, key) {
               if (/_visibility$/.test(key) === false) {
                 var fieldVisibility = data[key + "_visibility"];
                 if (typeof fieldVisibility !== 'string'
@@ -136,7 +136,7 @@ YUI.add('hub', function (Y) {
               extraData = listener.callback(evt);
               // merge any additional data found by the listener into the data
               if (extraData) {
-                $.extend(true, data, extraData);
+                Y.mix(data, extraData);
               }
             }
           };
@@ -261,8 +261,10 @@ YUI.add('hub', function (Y) {
         break;      
       case '$' :
         // TODO this is not safe
-        safeObject = jQuery;
-        break;      
+        if (jQuery) {
+          safeObject = jQuery;
+          break;      
+        }
       default :
         safeObject = null;
       }
@@ -281,10 +283,13 @@ YUI.add('hub', function (Y) {
      * Convert an object to a JSON representation
      */
     jsHub.safe.toJSONString = function (object) {
-      return JSON.stringify(object, null, 2);
+      // JSON only natively supported in some browsers
+      if (JSON) {
+        return JSON.stringify(object, null, 2);
+      }
     };
   
-  })(jQuery);
+  })();
 
 }, '2.0.0' , {
   requires: ['yui'], 
