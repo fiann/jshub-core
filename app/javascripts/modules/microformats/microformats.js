@@ -222,12 +222,11 @@ YUI.add('microformats', function (Y) {
     /*
      * Add the API as object methods on the any jQuery object
      */
-    var $ = jsHub.safe('$');
     Y.mix($.fn, MicroformatAPI);
       
   })(jQuery);
 
 }, '2.0.0' , {
-  requires: ['hub'], 
-  after: ['hub']
+  requires: ['hub', 'jquery'], 
+  after: ['hub', 'jquery']
 });

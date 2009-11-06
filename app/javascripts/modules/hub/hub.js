@@ -258,15 +258,10 @@ YUI.add('hub', function (Y) {
           cookies : document.cookies,
           domain : 'Unsafe property'
         };
-        break;      
-      case '$' :
-        // TODO this is not safe
-        if (jQuery) {
-          safeObject = jQuery;
-          break;      
-        }
+        break;
       default :
-        safeObject = null;
+        // empty object that can be enhanced
+        safeObject = {};
       }
       return safeObject;
     };
@@ -277,16 +272,6 @@ YUI.add('hub', function (Y) {
      */
     jsHub.safe.getTimestamp = function () {
       return new Date().getTime();
-    };
-    
-    /** 
-     * Convert an object to a JSON representation
-     */
-    jsHub.safe.toJSONString = function (object) {
-      // JSON only natively supported in some browsers
-      if (JSON) {
-        return JSON.stringify(object, null, 2);
-      }
     };
   
   })();

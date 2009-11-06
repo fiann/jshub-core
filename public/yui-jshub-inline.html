@@ -14,13 +14,15 @@
 <script type="text/javascript" src="/core/js/src/modules/form-transport/form-transport.js">/* jsHub module file */</script>
 <script type="text/javascript" src="/core/js/src/modules/utilities/utilities-debug.js">/* jsHub module file */</script>
 <script type="text/javascript" src="/core/js/src/modules/microformats/microformats-debug.js">/* jsHub module file */</script>
-<script type="text/javascript" src="/core/js/src/modules/jquery/jquery-min.js">/* jQuery file deliberately out of order */</script>
 
 <script type="text/javascript">
   var config = {
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
-    timeout: 10000 // Give up if any single node request takes more than 10 seconds.
+    timeout: 10000, // Give up if any single node request takes more than 10 seconds.
+    modules:  { // one or more external modules that can be loaded along side of jsHub
+      jquery: {}
+    }
   };
 
   YUI(config).use('jshub', 'debug', function(Y, result) {

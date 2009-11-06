@@ -225,7 +225,7 @@ YUI.add('microformats', function (Y) {
      */
     Y.mix($.fn, MicroformatAPI);
       
-  })(jsHub.safe('$'));
+  })(jQuery);
 
   Y.log('microformats module loaded', 'info', 'jsHub');
 }, '2.0.0' , {

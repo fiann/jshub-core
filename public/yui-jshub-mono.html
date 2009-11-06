@@ -9,13 +9,7 @@
 <script type="text/javascript" src="/core/js/src/modules/jquery/jquery-min.js">/* jQuery file deliberately out of order */</script>
 
 <script type="text/javascript">
-  var config = {
-    debug: true, // use browser console for logging
-    base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
-    timeout: 10000 // Give up if any single node request takes more than 10 seconds.
-  };
-
-  YUI(config).use('jshub', function(Y, result) {
+  YUI().use('jshub', function(Y, result) {
     // The callback supplied to use() will be executed regardless of
     // whether the operation was successful or not.  The second parameter
     // is a result object that has the status of the operation.  We can
