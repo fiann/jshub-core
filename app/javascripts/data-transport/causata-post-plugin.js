@@ -72,6 +72,16 @@
 		});
       }
     }
+
+    /** 
+     * Convert an object to a JSON representation
+     */
+    jsHub.safe.toJSONString = function (object) {
+      // JSON only natively supported in some browsers
+      if (JSON) {
+        return JSON.stringify(object, null, 2);
+      }
+    };
 	
     var outputData = {
       sender: metadata.name + " v" + metadata.version,
