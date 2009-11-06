@@ -13,7 +13,7 @@
 
 YUI.add('form-transport', function (Y) {
 
-  (function ($) {
+  (function () {
 
     FormTransport = function () {
   
@@ -40,7 +40,7 @@ YUI.add('form-transport', function (Y) {
        * @return the ID of the iframe that has been created
        */
       this.dispatch = function (method, url, data) {
-        var form, appendField, iframe, iframeID, field, array, i;
+        var timestamp, form, formID, appendField, iframe, iframeID, field, array, i;
         
         /*
          * This data transport only supports POST or GET
@@ -50,6 +50,7 @@ YUI.add('form-transport', function (Y) {
           return;
         }
         data = data || {};
+        timestamp = jsHub.safe.getTimestamp();
     
         /**
          * Add a hidden field to the form
@@ -59,15 +60,29 @@ YUI.add('form-transport', function (Y) {
          */
         appendField = function (form, name, value) {
           if ("string" === typeof value || "number" === typeof value) {
-            var input = $('<input type="hidden">');
-            input.attr("name", name);
-            input.attr("value", value);
-            form.append(input);            
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
           }
         };
     
-        // Create the form from a string via jQuery
-        form = $('<form action="' + url + '" method="' + method + '"></form>');
+        // Create the form
+        formID = "jshub-form-" + timestamp;        
+        form = document.createElement("form");
+        form.id = formID;
+        form.method = method;
+        form.action = url;
+        form.style.visibility = "hidden";
+        form.style.position = "absolute";
+        form.style.top = 0;
+
+        //remove any existing fields
+        while(form.hasChildNodes()){
+            form.removeChild(form.lastChild);
+        }
+
         for (field in data) {
           if (data[field] instanceof Array) {
             // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
@@ -81,17 +96,30 @@ YUI.add('form-transport', function (Y) {
             appendField(form, field, data[field]);
           }
         }
-        $('body').append(form);
+        document.body.appendChild(form);
 
-        // Create the iframe from as string via jQuery
-        iframeID = "jshub-iframe-" + jsHub.safe.getTimestamp();
-        iframe = $('<iframe src="javascript:void(0)" name="' + iframeID + '" id="' + iframeID + '" '
-          + 'style="display: none !important; width: 0px; height: 0px;" class="jshub-iframe"></iframe>');
-      
-        $('body').append(iframe);
+        // Create the iframe
+        iframeID = "jshub-iframe-" + timestamp;        
+        //IE won't let you assign a name using the DOM, must do it the hacky way
+        if (Y.UA.ie){
+            iframe = document.createElement('<iframe name="' + iframeID + '" />');
+        } else {
+            iframe = document.createElement("iframe");
+            iframe.name = iframeID;
+        }
+
+        iframe.id = iframeID;
+        // TODO avoid IE 'clicks'
+        // ref: http://www.julienlecomte.net/blog/2007/11/30/
+        iframe.src = "javascript:false";
+        iframe.style.visibility = "hidden";
+        iframe.style.position = "absolute";
+        iframe.style.top = 0;
+        iframe.style.cssClass = "jshub-iframe";
+        document.body.appendChild(iframe);
     
         // Set the iframe as the submission target of the form, tied together by a timestamp
-        form.attr("target", iframeID);
+        form.target = iframeID;
 
         // And send it ...
         form.submit();
@@ -103,11 +131,11 @@ YUI.add('form-transport', function (Y) {
     },
     
     jsHub.dispatchViaForm = (new FormTransport()).dispatch;
-  })(jQuery);
+  })();
 
   Y.log('form-transport module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
-  requires: ['hub', 'jquery'], 
+  requires: ['hub'], 
   after: ['hub']
 });
     
