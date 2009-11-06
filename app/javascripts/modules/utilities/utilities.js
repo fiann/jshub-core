@@ -113,10 +113,9 @@ YUI.add('utilities', function (Y) {
       }
     };
     /*
-     * Add the API as global functions on the core jQuery object
+     * Add the API as global functions on the core jsHub object
      */
-    var $ = jsHub.safe('$');
-    Y.mix($, PluginAPI);
+    Y.mix(jsHub, PluginAPI);
   })();
 
 }, '2.0.0' , {
