@@ -15,17 +15,23 @@
     filter: "RAW", // serve -min.js (default) RAW or DEBUG or use a custom filter
     modules:  { // one or more external modules that can be loaded along side of YUI
       jshub: {
-        requires: ['jquery', 'hub', 'logger', 'image-transport', 'form-transport', 'utilities', 'microformats'],
-        after: ["jquery"]
+        requires: ['yui', 'hub', 'logger', 'image-transport', 'form-transport', 'utilities', 'microformats'],
+        after: ["yui"]
       },
       jquery: {},
       hub: {},
       debug: {},
       logger: {},
       'image-transport': {},
-      'form-transport': {},
+      'form-transport': {
+        requires: ['jquery'],
+        after: ["jquery"]
+      },
       utilities: {},
-      microformats: {}
+      microformats: {
+        requires: ['jquery'],
+        after: ["jquery"]
+      }
     }
   };
 

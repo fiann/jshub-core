@@ -15,17 +15,9 @@
 
 YUI.add('image-transport', function (Y) {
 
-  (function ($) {
+  (function () {
 
     ImageTransport = function () {
-      
-      /** 
-       * Append a field to a query string url
-       */
-        var append = function (url, name, value) {
-          return url + (url.indexOf('?') > -1 ? '&' : '?') 
-            + encodeURIComponent(name) + "=" + encodeURIComponent(value);
-        };
   
         /**
          * Send a request to the server as a GET request for an image. 
@@ -51,6 +43,14 @@ YUI.add('image-transport', function (Y) {
          * @return the ID of the iframe that has been created
          */
         this.dispatch = function (url, data) {
+          /** 
+           * Append a field to a query string url
+           */
+          var appendField = function (url, name, value) {
+            return url + (url.indexOf('?') > -1 ? '&' : '?') 
+              + encodeURIComponent(name) + "=" + encodeURIComponent(value);
+          };
+
           jsHub.logger.group("ImageTransport: dispatch(" + url + ") entered");
           
       // base url must be defined
@@ -64,34 +64,34 @@ YUI.add('image-transport', function (Y) {
           if (typeof data === 'object') {
             for (var field in data) {
               if (typeof data[field] === 'string' || typeof data[field] === 'number') {
-                url = append(url, field, data[field]);
+                url = appendField(url, field, data[field]);
               } else if (!! data[field] && data[field].constructor === Array) {
                 var values = data[field];				
                 for (var i = 0; i < values.length; i++) {
                   if (typeof values[i] === 'string' || typeof values[i] === 'number') {
-                    url = append(url, field, values[i]);
+                    url = appendField(url, field, values[i]);
                   }
                 }
               }
             }
           }
       
-          var image = $('<img>');
-          image.attr('src', url);
+          var image = document.createElement("img");;
+          image.src = url;
   
           jsHub.logger.log("Dispatched: " + url);
           jsHub.logger.groupEnd();
-          return image[0];
+          return image;
       
         };
       };
     
     jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
-  })(jQuery);
+  })();
 
   Y.log('image-transport module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
-  requires: ['hub', 'jquery'], 
+  requires: ['hub'], 
   after: ['hub']
 });
     
