@@ -12,7 +12,7 @@
     debug: true, // use browser console for logging
     base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
     timeout: 10000, // Give up if any single node request takes more than 10 seconds.
-    filter: "RAW", // serve -min.js (default) RAW or DEBUG or use a custom filter
+    filter: "MIN", // serve -min.js (default) RAW or DEBUG or use a custom filter
     modules:  { // one or more external modules that can be loaded along side of jsHub
       jshub: {
         requires: ['yui', 'hub', 'logger', 'image-transport', 'form-transport', 'utilities', 'microformats'],
