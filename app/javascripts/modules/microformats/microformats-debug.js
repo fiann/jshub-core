@@ -12,7 +12,7 @@
 
 YUI.add('microformats', function (Y) {
 
-  (function ($) {
+  (function () {
   
     /*
      * trim whitespace at beginning and end of value and
@@ -20,9 +20,8 @@ YUI.add('microformats', function (Y) {
      */
     function trim(value) {
       if (value !== null) {
-        // TODO check for other white-space entities
         value = value.replace(/&nbsp;/g, ' ');
-        value = Y.Lang.trim(value);
+        value = jQuery.trim(value);
         value = value.replace(/\s+/g, ' ');
       }
       return value;
@@ -51,15 +50,15 @@ YUI.add('microformats', function (Y) {
          * <abbr> design pattern (contriversial)
          * ref: http://microformats.org/wiki/abbr-design-pattern
          */
-        if ($(this).find('abbr').length === 1) {
-          value = $(this).find('abbr').attr('title');
+        if (jQuery(this).find('abbr').length === 1) {
+          value = jQuery(this).find('abbr').attr('title');
         }
       
         /*
          * get value from explicit 'value' declarations
          */
         else {
-          sources = $(this).find('.value');
+          sources = jQuery(this).find('.value');
           sources = sources.not(sources.find('.value'));
           if (sources.length === 1) {
             value = sources.html();
@@ -71,9 +70,9 @@ YUI.add('microformats', function (Y) {
            */
           else if (sources.length > 1) {
             value = '';
-            $.each(sources, function (idx, elm) {
+            jQuery.each(sources, function (idx, elm) {
               separator = separator || ' ';
-              value += $(elm).text();
+              value += jQuery(elm).text();
               // if this is the last value we don't want an extra separator
               if (idx !== sources.length - 1) {
                 value += separator;
@@ -85,17 +84,17 @@ YUI.add('microformats', function (Y) {
            * get last value from multiple value elements, e.g. categories or nested formats
            * these are overriden according to source order rules
            */
-          else if ($(this).text() !== '' && this.length > 1 && last === true) {
-            $.each(this, function (idx, elm) {
-              value = $(elm).text();
+          else if (jQuery(this).text() !== '' && this.length > 1 && last === true) {
+            jQuery.each(this, function (idx, elm) {
+              value = jQuery(elm).text();
             });
           }
           
           /*
            * finally use the contained text as the value (removes HTML tags)
            */
-          else if ($(this).html() !== '') {
-            value = $(this).html();
+          else if (jQuery(this).html() !== '') {
+            value = jQuery(this).html();
           }
         }
         
@@ -118,7 +117,7 @@ YUI.add('microformats', function (Y) {
          * Note: jQuery gives an empty string if the element / attribute is not present
          * so testing against this is needed to return null
          */
-        var value = [], node = $(this), sources;
+        var value = [], node = jQuery(this), sources;
       
         /*
          * get value from explicit 'value' declarations
@@ -126,9 +125,9 @@ YUI.add('microformats', function (Y) {
         sources = node.find('.value');
         sources = sources.not(sources.find('.value'));
         if (sources.length >= 1) {
-          $.each(sources, function (idx, elm) {
+          jQuery.each(sources, function (idx, elm) {
             var nodeValue = sources.text().split(/\s+/);
-            $.each(nodeValue, function (entry) {
+            jQuery.each(nodeValue, function (entry) {
               value.push(entry);
             });
           });
@@ -141,7 +140,7 @@ YUI.add('microformats', function (Y) {
          */
         else if (node.text() !== '') {
           node.each(function () {
-            $.each($(this).text().split(/\s+/), function (idx, word) {
+            jQuery.each(jQuery(this).text().split(/\s+/), function (idx, word) {
               value.push(word);
             });
           });
@@ -162,7 +161,7 @@ YUI.add('microformats', function (Y) {
         /*
          * Default value if not specified is 'true'
          */
-        var type, value, defaultValue = 'true', typeNodes = $(this).find('.type'), valueNodes;
+        var type, value, defaultValue = 'true', typeNodes = jQuery(this).find('.type'), valueNodes;
       
       
         /*
@@ -171,7 +170,7 @@ YUI.add('microformats', function (Y) {
          * invalid.
          */
         if (typeNodes.length === 0) {
-          type = $(this).html();
+          type = jQuery(this).html();
           if (type === "") {
             return null;
           }
@@ -193,16 +192,16 @@ YUI.add('microformats', function (Y) {
        */
       else if (typeNodes.length === 1) {
           type = typeNodes.html();
-          valueNodes = $(this).find('.value');
+          valueNodes = jQuery(this).find('.value');
           valueNodes = valueNodes.not(valueNodes.find('.value'));
           if (valueNodes.length === 0) {
             value = defaultValue;
           } else if (valueNodes.length === 1) {
-            value = $(valueNodes[0]).html();
+            value = jQuery(valueNodes[0]).html();
           } else {
             value = [];
             valueNodes.each(function () {
-              value.push($(this).html());
+              value.push(jQuery(this).html());
             });
           }
   
