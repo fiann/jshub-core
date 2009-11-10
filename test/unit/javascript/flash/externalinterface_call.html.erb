@@ -1,20 +1,6 @@
 <% set_title "call < External API < Flash" %>
 
 <% content_for :javascripts do %>
-  <script language="javascript" type="text/javascript">
-    // mock object to capture events from Flash untill tests can run
-    function MockListener(authToken) {
-      var self = this;
-      self.authToken = authToken;
-      self.events = [];
-      this.eventFired = function(evt) {
-        self.events.push(evt);
-      };
-    }; 
-    // create and bind a listener to flash events
-    var listener1 = new MockListener("listener1");
-    jsHub.bind("flash:event", listener1.authToken, listener1.eventFired);
-  </script>
 <% end %>
 
 <% content_for :intro do %>
@@ -26,6 +12,20 @@
 </p>
 <% end %>
 
+<script language="javascript" type="text/javascript">
+  // mock object to capture events from Flash untill tests can run
+  function MockListener(authToken) {
+    var self = this;
+    self.authToken = authToken;
+    self.events = [];
+    this.eventFired = function(evt) {
+      self.events.push(evt);
+    };
+  }; 
+  // create and bind a listener to flash events
+  var listener1 = new MockListener("listener1");
+  jsHub.bind("flash:event", listener1.authToken, listener1.eventFired);
+</script>
 
 <script language="javascript" type="text/javascript">
   /* 
