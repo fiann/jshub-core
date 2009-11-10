@@ -29,7 +29,6 @@ namespace :jshub do
       # remove external libraries we don't control as they probably won't lint
       # and we don't want to fork them
       files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/).)*$/
-      puts files
             
       # lint the files in Rhino
       rhinojs = RhinoJS.new
