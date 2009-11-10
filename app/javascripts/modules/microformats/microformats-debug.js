@@ -12,7 +12,7 @@
 
 YUI.add('microformats', function (Y) {
 
-  (function () {
+  (function ($) {
   
     /*
      * trim whitespace at beginning and end of value and

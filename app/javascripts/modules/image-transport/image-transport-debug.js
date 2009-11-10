@@ -17,7 +17,7 @@ YUI.add('image-transport', function (Y) {
 
   (function () {
 
-    ImageTransport = function () {
+    var ImageTransport = function () {
   
         /**
          * Send a request to the server as a GET request for an image. 
@@ -76,7 +76,7 @@ YUI.add('image-transport', function (Y) {
             }
           }
       
-          var image = document.createElement("img");;
+          var image = document.createElement("img");
           image.src = url;
   
           jsHub.logger.log("Dispatched: " + url);

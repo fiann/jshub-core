@@ -28,8 +28,8 @@ YUI.add('hub', function (Y) {
         // stores functions listening to various events
         var listeners = {},
       
-      /** Plugins that have registered with the hub. */
-      plugins = [],
+        /** Plugins that have registered with the hub. */
+        plugins = [],
   
         /**
          * a listener has an authentication token and a callback
@@ -235,7 +235,7 @@ YUI.add('hub', function (Y) {
           }
           return clone;
         };
-      },
+      };
   
     // jsHub object in global namespace
     jsHub = global.jsHub = new Hub();
@@ -243,8 +243,7 @@ YUI.add('hub', function (Y) {
     // Create an object to return safe instances of important variables
     jsHub.safe = function (obj) {
       var safeObject;
-      switch (obj) {
-      case 'document' : 
+      if ('document' === obj) {
         safeObject = {
           // no document DOM properties are available
           location : { 
@@ -258,8 +257,7 @@ YUI.add('hub', function (Y) {
           cookies : document.cookies,
           domain : 'Unsafe property'
         };
-        break;      
-      default :
+      } else {
         // empty object that can be enhanced
         safeObject = {};
       }

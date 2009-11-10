@@ -15,7 +15,7 @@ YUI.add('form-transport', function (Y) {
 
   (function () {
 
-    FormTransport = function () {
+    var FormTransport = function () {
   
       /**
        * Send a request to the server as a POST or GET method form request. 
@@ -79,8 +79,8 @@ YUI.add('form-transport', function (Y) {
         form.style.top = 0;
 
         //remove any existing fields
-        while(form.hasChildNodes()){
-            form.removeChild(form.lastChild);
+        while (form.hasChildNodes()) {
+          form.removeChild(form.lastChild);
         }
 
         for (field in data) {
@@ -101,17 +101,17 @@ YUI.add('form-transport', function (Y) {
         // Create the iframe
         iframeID = "jshub-iframe-" + timestamp;        
         //IE won't let you assign a name using the DOM, must do it the hacky way
-        if (Y.UA.ie){
-            iframe = document.createElement('<iframe name="' + iframeID + '" />');
+        if (Y.UA.ie) {
+          iframe = document.createElement('<iframe name="' + iframeID + '" />');
         } else {
-            iframe = document.createElement("iframe");
-            iframe.name = iframeID;
+          iframe = document.createElement("iframe");
+          iframe.name = iframeID;
         }
 
         iframe.id = iframeID;
         // TODO avoid IE 'clicks'
         // ref: http://www.julienlecomte.net/blog/2007/11/30/
-        iframe.src = "javascript:false";
+        iframe.src = "#";
         iframe.style.visibility = "hidden";
         iframe.style.position = "absolute";
         iframe.style.top = 0;
@@ -128,7 +128,7 @@ YUI.add('form-transport', function (Y) {
         });
         return iframeID;
       };
-    },
+    };
     
     jsHub.dispatchViaForm = (new FormTransport()).dispatch;
   })();
