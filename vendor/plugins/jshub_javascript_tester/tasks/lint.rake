@@ -23,9 +23,13 @@ namespace :jshub do
       # remove any minimised files as they won't lint
       files = files.grep /^(?:(?!-min).)*$/
 
+      # remove any generated dist files as they won't lint
+      files = files.grep /^(?:(?!-dist).)*$/
+
       # remove external libraries we don't control as they probably won't lint
       # and we don't want to fork them
       files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/).)*$/
+      puts files
             
       # lint the files in Rhino
       rhinojs = RhinoJS.new
