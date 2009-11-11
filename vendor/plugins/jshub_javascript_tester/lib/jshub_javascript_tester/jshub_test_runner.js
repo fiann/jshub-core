@@ -319,21 +319,25 @@
   };  
 
   // Env.js creates a browser environment, including a 'window' object
-  // ref: http://github.com/jeresig/env-js/tree/master
+  // ref: http://github.com/thatcher/env-js
   console.info("Loading Env.js: started");
   load("vendor/plugins/jshub_javascript_tester/lib/env/env.rhino.js");
   console.info("Loading Env.js: finished");
-  
+
   // use the console for output from the HTML page
   window.console = console;  
-
+  
   /*
    * Load the HTML page with the Unit Tests in, catching any errors so we can write a JUnit report if env.js can't read the HTML file
    */
   try {  
     // Load HTML page into the env.js 'browser'
     console.info("Loading HTML test file: " + test_file);
-    window.location = test_file;	
+    // Init Envjs ref: http://env-js.appspot.com/doc/api-1.0.x
+    Envjs(test_file, {
+      logLevel: Envjs.ERROR,
+      scriptTypes: { "text/javascript": true }
+    });
     console.info("File name: " + test_file_name);
   } catch (e) {	  
     var message = e.toString();
@@ -382,5 +386,8 @@
     TestRunner.run();
     console.log("Rhino: TestRunner complete");
   }
+
+  // Stop and allow window events to be handled, e.g. YUI Test Runner subscribers
+  Envjs.wait();
 
 })(arguments);
