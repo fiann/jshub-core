@@ -20,6 +20,6 @@ YUI.add("jshub", function (Y) {
   jsHub.trigger("data-capture-complete");
 
 }, "2.0.0", {
-  requires: ["yui", "hub", "logger", "image-transport", "form-transport", "utilities"], 
+  requires: ["yui", "hub", "logger", "image-transport", "form-transport", "plugins"], 
   after: ["yui"]
 });
