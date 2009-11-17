@@ -9,7 +9,7 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add('utilities', function (Y) {
+YUI.add('plugins', function (Y) {
  
   (function () {
    
@@ -118,7 +118,7 @@ YUI.add('utilities', function (Y) {
     Y.mix(jsHub, PluginAPI);
   })();
 
-  Y.log('utilities module loaded', 'info', 'jsHub');
+  Y.log('plugins module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['hub'], 
   after: ['hub']

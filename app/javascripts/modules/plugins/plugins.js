@@ -9,7 +9,7 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add('utilities', function (Y) {
+YUI.add('plugins', function (Y) {
  
   (function () {
    
