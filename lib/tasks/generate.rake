@@ -24,7 +24,7 @@ namespace :jshub do
 
       # remove external libraries we don't control as they probably won't recompress
       # and we don't want to fork them
-      files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/).)*$/
+      files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/|json\/).)*$/
       puts files
 
       compressor = YUICompressor.new
