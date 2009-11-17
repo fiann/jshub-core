@@ -7,9 +7,10 @@
  */
 /*--------------------------------------------------------------------------*/
 
+/*jslint strict: true */
 "use strict";
 
-(function () {
+(function ($) {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -45,14 +46,7 @@
     /*
      * All local vars set here so nothing is accidentally made global.
      */
-    var $, console, context, sources, data;
-    
-    /*
-     * Reference to a 'safe' version of jQuery with restricted access to the DOM (like AdSafe).
-     * The plugin should only use this API and will be subject to static analysis
-     * to demonstrate this.
-     */
-    $ = jsHub.safe('$');
+    var console, context, sources, data;
     
     /*
      * Pass logging messages via jsHub Hub for remote error reporting, etc
@@ -72,7 +66,7 @@
      * page is parsed as if there were a 'hauthentication' css class on the body element
      */
     sources = $('.hauthentication', context);
-	sources = sources.not(sources.find('.hauthentication'));
+	  sources = sources.not(sources.find('.hauthentication'));
     
     /*
      * The parser will populate an object to represent the data according
@@ -127,7 +121,7 @@
     jsHub.trigger("hauthentication-parse-complete", data);
     
     // don't merge into source event, authentication data is not part of the
-	// page view event, just triggered by it
+	  // page view event, just triggered by it
     return;
   };
   
@@ -143,4 +137,4 @@
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
-})();
+})(jQuery);

@@ -21,9 +21,10 @@
  */
 /*--------------------------------------------------------------------------*/
 
+/*jslint strict: true */
 "use strict";
 
-(function () {
+(function ($) {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -59,14 +60,7 @@
     /*
      * All local vars set here so nothing is accidentally made global.
      */
-    var $, console, context, sources, hPage, properties;
-    
-    /*
-     * Reference to a 'safe' version of jQuery with restricted access to the DOM (like AdSafe).
-     * The plugin should only use this API and will be subject to static analysis
-     * to demonstrate this.
-     */
-    $ = jsHub.safe('$');
+    var console, context, sources, hPage, properties;
     
     /*
      * Pass logging messages via jsHub Hub for remote error reporting, etc
@@ -228,4 +222,4 @@
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
-})();
+})(jQuery);

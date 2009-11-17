@@ -7,9 +7,10 @@
  */
 /*--------------------------------------------------------------------------*/
 
+/*jslint strict: true */
 "use strict";
 
-(function () {
+(function ($) {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -45,14 +46,7 @@
     /*
      * All local vars set here so nothing is accidentally made global.
      */
-    var $, console, context, sources, data, timestamp;
-    
-    /*
-     * Reference to a 'safe' version of jQuery with restricted access to the DOM (like AdSafe).
-     * The plugin should only use this API and will be subject to static analysis
-     * to demonstrate this.
-     */
-    $ = jsHub.safe('$');
+    var console, context, sources, data, timestamp;
     
     /*
      * Pass logging messages via jsHub Hub for remote error reporting, etc
@@ -80,7 +74,7 @@
      * generated.
      */
     sources = $('.hproduct', context);
-	sources = sources.not(sources.find('.hproduct'));
+	  sources = sources.not(sources.find('.hproduct'));
     //console.debug("Found %s .hproduct islands in context %s", sources.length, context);
     
     /*
@@ -90,7 +84,7 @@
      */
     data = {
       products : []
-	};
+	  };
 	
     /*
      * Most classes and their values can be resolved using the Value Excerpting design-pattern
@@ -104,7 +98,7 @@
 		".fn" : "product-name",
 		".product-id" : "product-id", 
 		".price" : "product-price"
-	};
+	  };
     
     sources.each(function (idx, elm) {
     
@@ -220,4 +214,4 @@
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
-})();
+})(jQuery);

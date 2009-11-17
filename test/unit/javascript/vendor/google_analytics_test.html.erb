@@ -1,8 +1,22 @@
 <% set_title "Google Analytics markup < Data capture" %>
 
 <% content_for :javascripts do %>  
-  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
-  <%= javascript_include_tag "/js/src/data-capture/google-analytics-markup-plugin.js" %>
+
+<!-- jsHub tag files -->
+<%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-debug.js&jshub_1.0.0/build/microformats/microformats-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', 'microformats', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
+<%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+<%= javascript_include_tag "/js/src/data-capture/google-analytics-markup-plugin.js" %>
 <% end %>
 
 <% content_for :intro do %>
@@ -41,8 +55,9 @@ $(document).ready(function () {
     name: "Environment check",
     
     "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
     },
     
     "test jsHub API dependencies": function() {

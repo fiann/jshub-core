@@ -246,7 +246,7 @@
     console.info("Loading HTML test file: " + test_file);
     // Init Envjs ref: http://env-js.appspot.com/doc/api-1.0.x
     Envjs(test_file, {
-      logLevel: Envjs.ERROR,
+      logLevel: Envjs.ERROR, // Envjs specific logLevel: DEBUG, INFO, WARN, ERROR, NONE
       scriptTypes: { "text/javascript": true }
     });
     console.info("File name: " + test_file_name);

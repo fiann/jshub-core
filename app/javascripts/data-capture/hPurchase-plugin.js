@@ -7,16 +7,17 @@
  */
 /*--------------------------------------------------------------------------*/
 
+/*jslint strict: true */
 "use strict";
 
-(function() {
+(function($) {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
    */
   var metadata = {
     name: 'hPurchase Microformat Parser Plugin',
-	id: 'hPurchase-plugin',
+	  id: 'hPurchase-plugin',
     version: 0.1,
     vendor: 'jsHub.org',
     type: 'microformat'
@@ -45,14 +46,7 @@
     /*
      * All local vars set here so nothing is accidentally made global.
      */
-    var $, console, context, sources, data;
-    
-    /*
-     * Reference to a 'safe' version of jQuery with restricted access to the DOM (like AdSafe).
-     * The plugin should only use this API and will be subject to static analysis
-     * to demonstrate this.
-     */
-    $ = jsHub.safe('$');
+    var console, context, sources, data;    
     
     /*
      * Pass logging messages via jsHub Hub for remote error reporting, etc
@@ -104,8 +98,8 @@
         var value, visibility, classname = '.' + name;
         // exclude properties in nested microformats
         node = root.find(classname);
-		node = node.not(node.find('.hpurchase'));
-		value = node.getMicroformatPropertyValue();
+		    node = node.not(node.find('.hpurchase'));
+		    value = node.getMicroformatPropertyValue();
         if (value !== null) {
           hpurchase[name] = value;
         }
@@ -142,4 +136,4 @@
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
-})();
+})(jQuery);

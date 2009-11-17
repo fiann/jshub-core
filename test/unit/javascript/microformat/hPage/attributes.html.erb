@@ -1,7 +1,22 @@
 <% set_title "Attributes < hPage value excerpting < Microformat parser" %>
 
 <% content_for :javascripts do %>  
-  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+
+<!-- jsHub tag files -->
+<%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-min.js&jshub_1.0.0/build/microformats/microformats-min.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', 'microformats', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
+<%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -27,8 +42,9 @@
     name: "Environment check",
     
     "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
     },
     
     "test jsHub API dependencies": function() {
@@ -67,7 +83,7 @@
     The hPage contains a single attribute:
     <ul>
       <li>name: <span class="name">required field</span>.</li>
-      <li class="attribute"><span class="type">discount</span><span class="value">10%</span></li>
+      <li class="attribute"><span class="type">discount</span> <span class="value">10%</span></li>
     </ul>
   </div>
 </div>

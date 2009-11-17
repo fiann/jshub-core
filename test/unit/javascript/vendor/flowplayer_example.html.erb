@@ -1,7 +1,21 @@
 <% set_title "Flowplayer example < Flash" %>
 
 <% content_for :javascripts do %>  
-  <%= javascript_include_tag "../test_assets/vendor/flowplayer/flowplayer-3.1.2.min.js" %>
+
+<!-- jsHub tag files -->
+<%= javascript_include_tag "/../phploader/combo?jshub_1.0.0/build/jshub/jshub-min.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
+<%= javascript_include_tag "../test_assets/vendor/flowplayer/flowplayer-3.1.2.min.js" %>
 <% end %>
 
 <% content_for :intro do %>
@@ -25,9 +39,10 @@
   suite.add(new Y.Test.Case({
     name: "Environment check",
     
-    "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isNotUndefined(window.$f, "The Flowplayer API is required");
     },
     
     "test jsHub API dependencies": function() {
