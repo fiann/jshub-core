@@ -12,10 +12,7 @@ namespace :jshub do
       # by default lint the src js files
       if (args.files == nil || args.files=='src')
         files = Dir["#{RAILS_ROOT}/app/javascripts/**/*.js"]
-        # or the src js files
-      elsif (args.files=='dist')
-        files = Dir["#{RAILS_ROOT}/dist/**/*.js"]
-        # or specifically named files
+      # or specifically named files
       else
         files = args.files.split(",")
       end
@@ -24,7 +21,7 @@ namespace :jshub do
       files = files.grep /^(?:(?!-min).)*$/
 
       # remove any generated dist files as they won't lint
-      files = files.grep /^(?:(?!-dist).)*$/
+      files = files.grep /^(?:(?!dist).)*$/
 
       # remove external libraries we don't control as they probably won't lint
       # and we don't want to fork them
