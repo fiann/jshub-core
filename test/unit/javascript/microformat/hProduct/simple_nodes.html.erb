@@ -4,9 +4,10 @@
 
 <!-- jsHub tag files -->
 <%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-min.js&jshub_1.0.0/build/microformats/microformats-min.js" %>
+<%= javascript_include_tag "/js/src/modules/microformats/hproduct-capture-debug.js" %>
 
 <script type="text/javascript">
-  YUI().use('jshub', 'microformats', function(Y, result) {
+  YUI().use('jshub', 'microformats', 'hproduct-capture', function(Y, result) {
     if (!result.success) {
         Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
     } else {
@@ -14,8 +15,6 @@
     }
   });
 </script>
-
-<%= javascript_include_tag "/js/src/data-capture/hProduct-plugin.js" %>
 
 <% end %>
 
