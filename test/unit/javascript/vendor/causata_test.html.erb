@@ -5,8 +5,11 @@
 <!-- jsHub tag files -->
 <%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-min.js" %>
 
+<%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
+<%= javascript_include_tag "/js/src/modules/vendor-causata/causata-transport-debug.js" %>
+
 <script type="text/javascript">
-  YUI().use('jshub', function(Y, result) {
+  YUI().use('jshub', 'causata-transport', function(Y, result) {
     if (!result.success) {
         Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
     } else {
@@ -15,8 +18,6 @@
   });
 </script>
 
-<%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
-<%= javascript_include_tag "/js/src/data-transport/causata-post-plugin.js" %>
 <% end %>
 
 <% content_for :intro do %>
