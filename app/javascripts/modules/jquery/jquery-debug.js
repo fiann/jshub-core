@@ -4520,5 +4520,5 @@ jQuery.each([ "Height", "Width" ], function(i, name){
 })();
 
 YUI.add('jquery', function (Y) {
-  // stub so YUI Loader knows the module is present and not load loader-min.js unneccessarily
+  Y.log('jquery module loaded', 'info', 'jsHub');
 }, '1.3.2' , {});
