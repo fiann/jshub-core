@@ -2,9 +2,8 @@
 
 <% content_for :javascripts do %>  
 
-<!-- jsHub tag files -->
-<%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-min.js" %>
-
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub-min' %>
 <%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
 <%= javascript_include_tag "/js/src/modules/vendor-causata/causata-transport-debug.js" %>
 

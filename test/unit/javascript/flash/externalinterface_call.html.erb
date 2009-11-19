@@ -2,8 +2,8 @@
 
 <% content_for :javascripts do %>
 
-<!-- jsHub tag files -->
-<%= javascript_include_tag "/../phploader/combo?jshub_1.0.0/build/jshub/jshub-min.js" %>
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub-min' %>
 
 <script type="text/javascript">
   YUI().use('jshub', function(Y, result) {

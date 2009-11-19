@@ -2,8 +2,8 @@
 
 <% content_for :javascripts do %>  
 
-<!-- jsHub tag files -->
-<%= javascript_include_tag "/../phploader/combo.php?jshub_1.0.0/build/jshub/jshub-min.js&jshub_1.0.0/build/microformats/microformats-min.js" %>
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub+microformats-min' %>
 
 <script type="text/javascript">
   YUI().use('jshub', 'microformats', function(Y, result) {
