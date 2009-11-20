@@ -16,7 +16,7 @@ Comment kept ?
 "use strict";
 
 YUI.add("causata-transport", function (Y) {
-  (function() {
+  (function () {
   
     /**
      * Metadata about this plug-in for use by UI tools and the Hub
@@ -44,7 +44,7 @@ YUI.add("causata-transport", function (Y) {
      * @param event {Object} the event to serialize and send to the server
      * @property metadata
      */
-    transport = function(event) {
+    transport = function (event) {
     
       jsHub.logger.group("Causata output: sending '%s' event", event.type);
       
@@ -64,12 +64,12 @@ YUI.add("causata-transport", function (Y) {
           attributes: []
         };
     
-    for (field in event.data) {
+      for (var field in event.data) {
         if ("string" === typeof event.data[field] || "number" === typeof event.data[field]) {
-        outputEvent.attributes.push({
-        name : field,
-        value : event.data[field]
-      });
+          outputEvent.attributes.push({
+            name : field,
+            value : event.data[field]
+          });
         }
       }
   
@@ -95,7 +95,7 @@ YUI.add("causata-transport", function (Y) {
     /*
      * Bind the plugin to the Hub so as to run when events we are interested in occur
      */
-    for (i = 0; i < boundEvents.length; i++) {
+    for (var i = 0; i < boundEvents.length; i++) {
       jsHub.bind(boundEvents[i], "causata", transport);
     }
     

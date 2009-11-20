@@ -7,6 +7,8 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jQuery, jsHub */
 /*jslint strict: true */
 "use strict";
 
@@ -90,17 +92,17 @@ YUI.add("hauthentication-capture", function (Y) {
          * Object for this hAuthentication
          */
         var hauthentication = {};
-      var root = $(elm);
+        var root = $(elm);
         
         /*
          * get the property data using class names
          */
-        $.each(properties, function(count, name) {
+        $.each(properties, function (count, name) {
           var node, value, classname = '.' + name;
           // exclude properties in nested microformats
           node = root.find(classname);
-      node = node.not(node.find('.hauthentication'));
-      value = node.getMicroformatPropertyValue();
+          node = node.not(node.find('.hauthentication'));
+          value = node.getMicroformatPropertyValue();
           if (value !== null) {
             hauthentication[name] = value;
           }
@@ -115,8 +117,8 @@ YUI.add("hauthentication-capture", function (Y) {
         // issue an authentication event to be logged
         jsHub.trigger("authentication", hauthentication);
         
-      // append this event to the summary
-      data.authentication.push(hauthentication);
+        // append this event to the summary
+        data.authentication.push(hauthentication);
       });
       
       jsHub.trigger("hauthentication-parse-complete", data);

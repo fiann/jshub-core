@@ -7,11 +7,13 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jQuery, jsHub */
 /*jslint strict: true */
 "use strict";
 
 YUI.add("hpurchase-capture", function (Y) {
-  (function($) {
+  (function ($) {
   
     /*
      * Metadata about this plug-in for use by UI tools and the Hub
@@ -82,7 +84,7 @@ YUI.add("hpurchase-capture", function (Y) {
       var properties = ["product-id", "cart-id", "cart-price", "discount", "shipping-price", "taxes", "net-price", "payment-method", "status"];
       
       
-      sources.each(function(idx, elm) {
+      sources.each(function (idx, elm) {
       
         /*
          * Object for this hPurchase
@@ -95,10 +97,10 @@ YUI.add("hpurchase-capture", function (Y) {
          */
         // use the array of class names 
         // TODO this can be refactored to the API
-        $.each(properties, function(count, name) {
+        $.each(properties, function (count, name) {
           var value, visibility, classname = '.' + name;
           // exclude properties in nested microformats
-          node = root.find(classname);
+          var node = root.find(classname);
           node = node.not(node.find('.hpurchase'));
           value = node.getMicroformatPropertyValue();
           if (value !== null) {

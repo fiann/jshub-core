@@ -21,6 +21,8 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jQuery, jsHub */
 /*jslint strict: true */
 "use strict";
 
@@ -101,7 +103,7 @@ YUI.add("hpage-capture", function (Y) {
         ".fragment": "page-fragment"
       };
       
-      sources.each(function(idx, elm) {
+      sources.each(function (idx, elm) {
       
         /*
          * Object for this hpage
@@ -119,7 +121,7 @@ YUI.add("hpage-capture", function (Y) {
          */
         // use the array of class names
         // TODO this can be refactored to the API
-        $.each(properties, function(classname, fieldname) {
+        $.each(properties, function (classname, fieldname) {
           var node, value;
           // exclude properties in nested hPages
           node = root.find(classname);
@@ -147,36 +149,36 @@ YUI.add("hpage-capture", function (Y) {
           nodeData["page-category-source"] = metadata.id;
           // the categories for the overall hPage are the union of what was found previously
           // and in this node. NB $.unique uses identity not value so it doesn't strip duplicate strings
-      hPage["page-category"] = (hPage["page-category"] || []);
-      $.each(categories, function (idx, entry) {
+          hPage["page-category"] = (hPage["page-category"] || []);
+          $.each(categories, function (idx, entry) {
             if ($(hPage["page-category"]).index(entry) === -1) {
-          hPage["page-category"].push(entry);
-        }
-      });
+              hPage["page-category"].push(entry);
+            }
+          });
         }
       
-      // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
-      // we can have multiple attributes, each one has a type and a value
-      // output in the data is an array: {name:[value, value], name:value}
-      var attributes = $('.attribute', elm);
-      attributes.each(function () {
+        // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
+        // we can have multiple attributes, each one has a type and a value
+        // output in the data is an array: {name:[value, value], name:value}
+        var attributes = $('.attribute', elm);
+        attributes.each(function () {
           var attribute = $(this).excerptValueClassData(), type, value, allValues;
           if (attribute !== null) {
-        type = attribute.type;
-        value = attribute.value;
+            type = attribute.type;
+            value = attribute.value;
             hPage.attributes = (hPage.attributes || {});
-        allValues = $.makeArray(hPage.attributes[type]); 
+            allValues = $.makeArray(hPage.attributes[type]); 
             $.merge(allValues, $.makeArray(value));
-        var unique = []; 
-        for (var i=0; i < allValues.length; i++) {
-          if ($.inArray(allValues[i], unique) === -1) {
+            var unique = []; 
+            for (var i = 0; i < allValues.length; i++) {
+              if ($.inArray(allValues[i], unique) === -1) {
                 unique.push(allValues[i]);
-        }
-        }
-        if (unique.length === 1) {
-          unique = allValues[0];
-        }
-        hPage.attributes[type] = unique;
+              }
+            }
+            if (unique.length === 1) {
+              unique = allValues[0];
+            }
+            hPage.attributes[type] = unique;
           }
         });
         
@@ -188,18 +190,18 @@ YUI.add("hpage-capture", function (Y) {
         
       });
       
-    /*
-     * The hPage for the context is only valid if the required fields are all present.
-     * If not, don't put any of the data into the page view event.
-     */
-    if (hPage["page-name"]) {
+      /*
+       * The hPage for the context is only valid if the required fields are all present.
+       * If not, don't put any of the data into the page view event.
+       */
+      if (hPage["page-name"]) {
         jsHub.trigger("hpage-found", {
           context: context,
           hpage: hPage
         });
       } else {
-      hPage = null;
-    }
+        hPage = null;
+      }
     
       // Fire a debug event
       jsHub.trigger("hpage-parse-complete");

@@ -7,6 +7,8 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jQuery, jsHub */
 /*jslint strict: true */
 "use strict";
 
@@ -18,7 +20,7 @@ YUI.add("hproduct-capture", function (Y) {
      */
     var metadata = {
       name: 'hProduct Microformat Parser Plugin',
-    id: 'hProduct-plugin',
+      id: 'hProduct-plugin',
       version: 0.1,
       vendor: 'jsHub.org',
       type: 'microformat'
@@ -93,12 +95,12 @@ YUI.add("hproduct-capture", function (Y) {
        */
       // TODO support currency design pattern
       var properties = {
-      ".brand" : "product-brand",
-      ".category" : "product-category", 
-      ".description" : "product-description", 
-      ".fn" : "product-name",
-      ".product-id" : "product-id", 
-      ".price" : "product-price"
+        ".brand" : "product-brand",
+        ".category" : "product-category", 
+        ".description" : "product-description", 
+        ".fn" : "product-name",
+        ".product-id" : "product-id", 
+        ".price" : "product-price"
       };
       
       sources.each(function (idx, elm) {
@@ -107,12 +109,12 @@ YUI.add("hproduct-capture", function (Y) {
          * Object for this hProduct
          */
         var hproduct = {};
-      var root = $(elm);
+        var root = $(elm);
         
         /*
          * get the property data from class names
          */
-        $.each(properties, function(classname, fieldname) {
+        $.each(properties, function (classname, fieldname) {
           var node, value;
           // exclude properties in nested hPages
           node = root.find(classname);
@@ -123,56 +125,56 @@ YUI.add("hproduct-capture", function (Y) {
           }
         });	  
       
-      // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
-      // we can have multiple attributes, each one has a type and a value
-      // output in the data is an array: {name:[value, value], name:value}
-      var attributes = $('.attribute', elm);
-      attributes.each(function () {
+        // attributes use value class pattern http://microformats.org/wiki/value-class-pattern
+        // we can have multiple attributes, each one has a type and a value
+        // output in the data is an array: {name:[value, value], name:value}
+        var attributes = $('.attribute', elm);
+        attributes.each(function () {
           var attribute = $(this).excerptValueClassData(), type, value, allValues;
           if (attribute !== null) {
-        type = attribute.type;
-        value = attribute.value;
+            type = attribute.type;
+            value = attribute.value;
             hproduct.attributes = (hproduct.attributes || {});
-        allValues = $.makeArray(hproduct.attributes[type]); 
+            allValues = $.makeArray(hproduct.attributes[type]); 
             $.merge(allValues, $.makeArray(value));
-        var unique = []; 
-        for (var i=0; i < allValues.length; i++) {
-          if ($.inArray(allValues[i], unique) === -1) {
+            var unique = []; 
+            for (var i = 0; i < allValues.length; i++) {
+              if ($.inArray(allValues[i], unique) === -1) {
                 unique.push(allValues[i]);
-        }
-        }
-        if (unique.length === 1) {
-          unique = allValues[0];
-        }
-        hproduct.attributes[type] = unique;
+              }
+            }
+            if (unique.length === 1) {
+              unique = allValues[0];
+            }
+            hproduct.attributes[type] = unique;
           }
         });
       
-      /*
-       * Special processing for fields that don't take the value from the text node
-       * of the microformat.
-       */
-      var photos = $('img.photo', elm);
-      photos.each(function () {
+        /*
+         * Special processing for fields that don't take the value from the text node
+         * of the microformat.
+         */
+        var photos = $('img.photo', elm);
+        photos.each(function () {
           var url = $(this).attr('src');
           if (url !== null) {
             hproduct['product-photo'] = $.makeArray(hproduct['product-photo']);
-        hproduct['product-photo'].push(url);
-        if (hproduct['product-photo'].length === 1) {
-          hproduct['product-photo'] = hproduct['product-photo'][0];
-        }
+            hproduct['product-photo'].push(url);
+            if (hproduct['product-photo'].length === 1) {
+              hproduct['product-photo'] = hproduct['product-photo'][0];
+            }
           }
         });
       
-      var urls = $('a.url', elm);
-      urls.each(function () {
+        var urls = $('a.url', elm);
+        urls.each(function () {
           var url = $(this).attr('href');
           if (url !== null) {
             hproduct['product-url'] = $.makeArray(hproduct['product-url']);
-        hproduct['product-url'].push(url);
-        if (hproduct['product-url'].length === 1) {
-          hproduct['product-url'] = hproduct['product-url'][0];
-        }
+            hproduct['product-url'].push(url);
+            if (hproduct['product-url'].length === 1) {
+              hproduct['product-url'] = hproduct['product-url'][0];
+            }
           }
         });
         
