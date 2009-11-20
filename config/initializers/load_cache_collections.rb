@@ -16,5 +16,11 @@ ActionView::Helpers::AssetTagHelper.register_javascript_expansion :yui3 => [
 ActionView::Helpers::AssetTagHelper.register_stylesheet_expansion :syntaxhighlighter => ["../javascripts/yui3/assets/dpSyntaxHighlighter"]
 ActionView::Helpers::AssetTagHelper.register_javascript_expansion :syntaxhighlighter => ["yui3/assets/dpSyntaxHighlighter"]
 
-# jQuery is used by the jsHub tag code
-ActionView::Helpers::AssetTagHelper.register_javascript_expansion :jquery => ["jquery/jquery.js"]
+# jQuery is used by the jsHub microformats code
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :jquery => ["/js/src/modules/jquery/jquery-min.js"]
+
+# jsHub common core distributions for Unit Testing
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :'jshub-min' => ["/js/src/dist/yui/yui-combo-jshub-min.js"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :'jshub-debug' => ["/js/src/dist/yui/yui-combo-jshub-min.js"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :'jshub+microformats-min' => ["/js/src/dist/yui/yui-combo-jshub+microformats-min.js"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :'jshub+microformats-debug' => ["/js/src/dist/yui/yui-combo-jshub+microformats-debug.js"]
