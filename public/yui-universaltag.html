@@ -20,7 +20,7 @@
       json2_org: {
         fullpath: "http://www.json.org/json2.js"
       },
-      google_analytics: {
+      "google-analytics": {
         fullpath: "http://www.google-analytics.com/ga.js",
         requires: ["json2_org"],
         after: ["webtrends"]
@@ -38,8 +38,8 @@
     console.log("GA pageTracker: %o", pageTracker);
     pageTracker._trackPageview();
   }, '0.1' , {
-    requires:['google_analytics'], 
-    after:['google_analytics'], skinnable:false
+    requires:['google-analytics'], 
+    after:['google-analytics'], skinnable:false
   });
 
   YUI.add('webtrends_config', function(Y) {

@@ -60,7 +60,9 @@
     "test required test dependencies": function() {
       Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
-      Y.Assert.isNotUndefined(window.JSON, "The JSON library is required");
+      YUI().use('json', function(lib, result) {
+        Y.Assert.isNotUndefined(lib.JSON, "The JSON library is required");
+      });
     },
     
     "test jsHub API dependencies": function() {

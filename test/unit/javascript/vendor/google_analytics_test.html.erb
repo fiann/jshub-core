@@ -4,9 +4,11 @@
 
 <!-- jsHub dist file -->
 <%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
+<%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
 
 <script type="text/javascript">
-  YUI().use('jshub', 'microformats', function(Y, result) {
+  YUI().use('jshub', 'microformats', 'hpage-capture', function(Y, result) {
     if (!result.success) {
         Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
     } else {
@@ -15,7 +17,6 @@
   });
 </script>
 
-<%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
 <%= javascript_include_tag "/js/src/data-capture/google-analytics-markup-plugin.js" %>
 <% end %>
 
