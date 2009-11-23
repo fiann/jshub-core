@@ -1,7 +1,21 @@
 <% set_title "Multiple hPage instances < hPage value excerpting < Microformat parser" %>
 
 <% content_for :javascripts do %>  
-  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', 'microformats', 'hpage-capture', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -28,8 +42,9 @@
     name: "Environment check",
     
     "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
     },
     
     "test jsHub API dependencies": function() {

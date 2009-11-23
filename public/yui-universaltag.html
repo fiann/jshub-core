@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>YUI3 based deployment</title>
+  
+<script type="text/javascript" src="/core/js/src/modules/yui/yui-min.js">/* YUI3 seed file */</script>
+<script type="text/javascript">
+  var loaderConfig = {
+    debug: true, // use browser console for logging
+    base: '/core/js/src/modules/', // the base path to the YUI install
+    charset: 'utf-8', // specify a charset for inserted nodes, default is utf-8
+    loadOptional: false, // automatically load optional dependencies, default false
+    combine: false, // use the Yahoo! CDN combo service for YUI resources, default is true unless 'base' has been changed
+    filter: 'raw', // apply a filter to load the raw or debug version of YUI files
+    timeout: 10000, // specify the amount of time to wait for a node to finish loading before aborting
+    //insertBefore: 'customstyles', // The insertion point for new nodes
+    modules:  { // one or more external modules that can be loaded along side of YUI
+      json2_org: {
+        fullpath: "http://www.json.org/json2.js"
+      },
+      "google-analytics": {
+        fullpath: "http://www.google-analytics.com/ga.js",
+        requires: ["json2_org"],
+        after: ["webtrends"]
+      },      
+      webtrends: {
+        fullpath: "/core/javascripts/webtrends/webtrends_basic/webtrends.js"
+      }
+    }
+  };
+
+  // Declare module
+  YUI.add('google_analytics_config', function(Y) {
+    // Google Analytics basic
+    var pageTracker = _gat._getTracker("UA-8152756-3");
+    console.log("GA pageTracker: %o", pageTracker);
+    pageTracker._trackPageview();
+  }, '0.1' , {
+    requires:['google-analytics'], 
+    after:['google-analytics'], skinnable:false
+  });
+
+  YUI.add('webtrends_config', function(Y) {
+    // Webtrends basic
+    var _tag=new WebTrends();
+    console.log("WebTrends _tag: %o", _tag);
+    //_tag.dcsGetId();
+    // Add custom parameters here.
+    //_tag.DCSext.param_name=param_value;
+    _tag.dcsCollect();
+  }, '0.1', {
+    requires:['webtrends'], 
+    after:['json2_org','webtrends']
+  });
+
+
+  YUI(loaderConfig).use('google_analytics_config', 'webtrends_config', function(Y) {
+
+      Y.log('All modules loaded');
+      
+  });
+</script>
+
+</head>
+
+<body>
+
+    <div id="main">
+      <div id="content">
+
+  <h2>YUI3 based deployment</h2>
+
+    
+<p>
+  Using YUI3 to load src and other analytics vendor files via a client side loader. The files can be anywhere and any custom configuration also treated as a module ensuring the necessary analytics files are loaded before use.
+</p>
+<p>
+  For more information see the <a href="http://developer.yahoo.com/yui/3/" title="YDN">YUI3 documentation on YDN</a>.
+</p>
+
+<div id="demo">
+  <p>
+    demo div
+  </p>
+</div>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(local)</p>
+
+    </div>
+</body>
+</html>

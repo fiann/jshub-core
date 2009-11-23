@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>YUI3 based jsHub</title>
+
+<script type="text/javascript" src="/core/js/src/modules/yui/yui-min.js">/* YUI3 seed file */</script>
+
+<script type="text/javascript">
+  var config = {
+    debug: true, // use browser console for logging
+    base: "/core/js/src/modules/", // File structure matching module-name/module-name.js -min.js -debug.js
+    timeout: 10000, // Give up if any single node request takes more than 10 seconds.
+    filter: "MIN", // serve -min.js (default) RAW or DEBUG or use a custom filter
+    modules:  { // one or more external modules that can be loaded along side of jsHub
+      jshub: {
+        requires: ['yui', 'hub', 'logger', 'image-transport', 'form-transport', 'utilities', 'microformats'],
+        after: ["yui"]
+      },
+      jquery: {},
+      hub: {},
+      debug: {},
+      logger: {},
+      'image-transport': {},
+      'form-transport': {
+        requires: ['jquery'],
+        after: ["jquery"]
+      },
+      plugins: {},
+      microformats: {
+        requires: ['jquery'],
+        after: ["jquery"]
+      }
+    }
+  };
+
+  YUI(config).use('jshub', 'debug', function(Y, result) {
+    // The callback supplied to use() will be executed regardless of
+    // whether the operation was successful or not.  The second parameter
+    // is a result object that has the status of the operation.  We can
+    // use this to try to recover from failures or timeouts.
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    }
+  });
+</script>
+
+</head>
+
+<body>
+
+    <div id="main">
+      <div id="content">
+
+<h2>YUI3 based jsHub</h2>
+    
+<p>
+  Using YUI3 to manage jsHub plugins and dependencies. This page uses the client side loader to meet dependencies from custom locations. The module files themselves then declare further dependencies which are resolved as needed.
+</p>
+<p>
+  For more information see the <a href="http://developer.yahoo.com/yui/3/" title="YDN">YUI3 documentation on YDN</a>.
+</p>
+
+<div id="demo">
+  <p>
+    demo div
+  </p>
+</div>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(local)</p>
+
+    </div>
+</body>
+</html>

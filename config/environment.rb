@@ -37,6 +37,7 @@ Rails::Initializer.run do |config|
   config.gem "mojombo-jekyll", :version => '>= 0.5.3', :lib => "jekyll"
   # for publishing docs to Github
   config.gem "grancher", :version => '>= 0.1'
+  config.gem "gash", :version => '>=0.1.3'
 
   # for deployment
   config.gem "capistrano", :version => '>= 2.5.8'

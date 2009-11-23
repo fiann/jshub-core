@@ -1,6 +1,20 @@
 <% set_title "callback < External API < Flash" %>
 
 <% content_for :javascripts do %>  
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub-min' %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -22,8 +36,8 @@
   suite.add(new Y.Test.Case({
     name: "Environment check",
     
-    "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
     },
     

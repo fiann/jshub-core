@@ -1,7 +1,20 @@
 <% set_title "Microformat parser" %>
 
 <% content_for :javascripts do %>  
-  <!-- None required. Functionality under test is in src/api.js -->
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub+microformats-min' %>
+
+<script type="text/javascript">
+  YUI().use('jshub', 'microformats', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -23,9 +36,7 @@
     
     "test Microformat API dependencies": function() {
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
-      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a function");
-      var $ = jsHub.safe('$');
-      Y.Assert.isFunction($, "jsHub.safe('$') did not provide a jQuery instance");
+      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
       Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
     }
   }));

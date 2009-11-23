@@ -120,6 +120,7 @@
         utils.printReport(evt);
         utils.saveJUnitTestReport(evt);
         utils.saveYUITestReport(evt);
+
         // exit status is 0 if no failures, otherwise the Ruby Test Runner captures a fail, e.g. ..F. in the output
         quit(evt.results.failed);
       } 
@@ -190,12 +191,10 @@
         console.log("No YUI Test results collected")
         return
       }
-		  var results = data.results
-
       // Pretty print the JSON for reports
       var jsonStr = "";
       try {
-        jsonStr = Y.JSON.stringify(results,null,2);
+        jsonStr = Y.JSON.stringify(data.results,null,2);
       } catch (e) {
         console.error("json: Invalid or cyclical reference in JSON object")
       }
@@ -216,101 +215,13 @@
         console.log("No YUI Test results collected")
         return
       }
-		  var results = data.results
+      // Use YUI3 Test built in JUnitXML formatter
+      var xml = Y.Test.Format.JUnitXML(data.results);
 
-      // Pretty print the JSON for reports
-      var jsonStr = "";
-      try {
-        jsonStr = Y.JSON.stringify(results,null,2);
-      } catch (e) {
-        console.error("xml: Invalid or cyclical reference in JSON object")
-      }
-		  
-		  // recursively iterate over the object to construct XML using E4X
-      var appendReport = function(currentNode, object) {
-        if (typeof object.type === 'undefined') {
-          console.debug('xml: Undefined object.type')
-          return;
-        }
-        switch (object.type) {
-          case 'testsuite':
-		        // map a YUI suite to a JUnit suite
-            var suite = <testsuite tests={object.total} failures={object.failed} />;
-            // hudson doesn't differentiate suites with the same name from 
-            // different files, so prepend filename to ensure uniqueness
-            console.debug('xml: YUI testsuite => JUnit suite.@name = ' + test_file_name)            
-            suite.@name = test_file_name + ' - ' + object.name;
-            for (prop in object) {
-              if (typeof object[prop] == 'object') {
-                // it's a test result not metadata
-                appendReport(suite, object[prop]);
-              }
-            }
-            currentNode.appendChild(suite);
-            break;
-          case 'testcase':
-		        // map a YUI testcase (a group of tests) to a suite too
-            var suite = <testsuite tests={object.total} failures={object.failed} />;
-            // hudson doesn't differentiate suites with the same name from 
-            // different files, so prepend filename to ensure uniqueness
-            console.debug('xml: YUI testcase => JUnit suite.@name = ' + test_file_name)            
-            suite.@name = test_file_name + '.' + object.name;
-            for (prop in object) {
-              if (typeof object[prop] == 'object') {
-                // it's a test result not metadata
-                appendReport(suite, object[prop]);
-              }
-            }
-            currentNode.appendChild(suite);
-            break;
-          case 'test':
-		        // map a YUI test (a test function) to a JUnit testcase
-            console.debug('xml: YUI test => JUnit testcase.@name = ' + object.name)            
-            var testcase = <testcase name={object.name} />;
-			      if (object.result == "fail") {
-              testcase.failure = "No stack trace available. See http://yuilibrary.com/forum/viewtopic.php?f=92&t=80";
-              if (object.error && object.error.rhinoException) {
-                var stringwriter = new java.io.StringWriter();
-                var catcher = new java.io.PrintWriter(stringwriter);
-                object.error.rhinoException.printStackTrace(catcher);
-                testcase.failure = stringwriter.toString();
-                // testcase.failure = object.error.rhinoException.getScriptStackTrace();
-              }
-              testcase.failure.@message = object.message;
-            }
-            currentNode.appendChild(testcase);
-            break;
-        } // end switch
-      };
-      
-      // JUnit can nest testsuites, but there are not many examples of this
-      // create a fake root element because it's hard to get the real suite 
-      // element from the javascript object
-      var xml = <root />;
-      for (prop in results) {
-        if (typeof results[prop] == 'object') {
-        // it's a test result not metadata
-        appendReport(xml, results[prop]);
-        }
-      }
-      // now get rid of the <root> element and change the root <testsuite> to <testsuites>
-      console.debug("xml: changing <root/> to <testsuites>")
-      if(xml.testsuite[0]){
-        xml = xml.testsuite[0];
-        xml.setName("testsuites");
-        xml.@tests = results.total;
-        xml.@failures = results.failed;
-        xml.@name = test_file_name;
-        xml.@time = results.duration/1000.0;
-      }
-
-      xml["system-out"] = new XML("<text><![CDATA[" + jsonStr + "]]></text>");
-      xml["system-err"] = new XML("<text><![CDATA[]]></text>");
-      
       // where to save (relative to #{RAILS_ROOT}) - this dir is automatically created by CI::Reporter and read by Hudson
       var path = reports_path + 'TEST-' + test_file_name.replace(/\//g, '_') + '.xml';
       // save as file
-      var out = new java.io.FileWriter(new java.io.File(path));
+      var out = new java.io.FileWriter(new java.io.File(path));      
       out.write(xml);
       out.flush();
       out.close();
@@ -319,21 +230,25 @@
   };  
 
   // Env.js creates a browser environment, including a 'window' object
-  // ref: http://github.com/jeresig/env-js/tree/master
+  // ref: http://github.com/thatcher/env-js
   console.info("Loading Env.js: started");
   load("vendor/plugins/jshub_javascript_tester/lib/env/env.rhino.js");
   console.info("Loading Env.js: finished");
-  
+
   // use the console for output from the HTML page
   window.console = console;  
-
+  
   /*
    * Load the HTML page with the Unit Tests in, catching any errors so we can write a JUnit report if env.js can't read the HTML file
    */
   try {  
     // Load HTML page into the env.js 'browser'
     console.info("Loading HTML test file: " + test_file);
-    window.location = test_file;	
+    // Init Envjs ref: http://env-js.appspot.com/doc/api-1.0.x
+    Envjs(test_file, {
+      logLevel: Envjs.ERROR, // Envjs specific logLevel: DEBUG, INFO, WARN, ERROR, NONE
+      scriptTypes: { "text/javascript": true }
+    });
     console.info("File name: " + test_file_name);
   } catch (e) {	  
     var message = e.toString();
@@ -382,5 +297,8 @@
     TestRunner.run();
     console.log("Rhino: TestRunner complete");
   }
+
+  // Stop and allow window events to be handled, e.g. YUI Test Runner subscribers
+  Envjs.wait();
 
 })(arguments);

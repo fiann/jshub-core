@@ -1,7 +1,20 @@
 <% set_title "Image Transport < Data Transport" %>
 
 <% content_for :javascripts do %>  
-  <!-- none required -->
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub-min' %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -39,13 +52,14 @@
     name : "Environment check",
   
     "test required test dependencies" : function () {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
     },
   
     "test jsHub API dependencies" : function () {
       Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
       Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
   

@@ -9,8 +9,9 @@ class RhinoJS
   
   # setup class
   def initialize
-    @rhino_jar = File.expand_path("#{File.dirname(__FILE__)}/js.jar")
-    @rhino_options = ""
+    # use the enhanced js.jar from the env-js project
+    @rhino_jar = File.expand_path("#{File.dirname(__FILE__)}/../env/env-js.jar")
+    @rhino_options = "-opt -1"
     @jslint_src = File.expand_path("#{File.dirname(__FILE__)}/../jslint/fulljslint.js")
     @jslint_runner = File.expand_path("#{File.dirname(__FILE__)}/../jshub_javascript_tester/jshub_jslint_runner.js")
     @log_level = ENV['JSHUB_DEBUG'] == 'true' ? true : false    

@@ -1,24 +1,49 @@
 <% set_title "Date and URI utilities < Libraries" %>
 
 <% content_for :javascripts do %>  
-  <!-- Nothin required, just testing jQuery libraries here -->
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub+microformats-min' %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
-<p>This file tests the date and URI parsing utilities provided by jQuery.</p>
+<p>This file tests the URI parsing utilities provided by jsHub.</p>
 <% end %>
 
-<script language="javascript" type="text/javascript">
-/* <![CDATA[  // */
+<script language="javascript" type="text/javascript">  
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
   
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+
   suite.add(new Y.Test.Case({
     name: "HREF and URI parsing",
-
-    _should: {
-      ignore: {
-		"test qualify HREF": true
-      }
-    },
     
     "test qualify HREF": function() {
     
@@ -34,70 +59,76 @@
       if (document.location.port && document.location.port !== '80') {
         server += ":" + document.location.port;
       }
+
+      /*
+       * Application Prefix expected for relative links.
+       */
+      var appPrefix = "<%= url_for(root_url(:only_path => true)).chomp('/') %>";
       
       /*
        * Base URL expected for relative links. May not be correct if routes.rb changes.
        */
       var baseURL = "/test/unit/";
       
+      // Root relative
       var href = "/index.html";
-      var uri = $.qualifyHREF(href);
+      var uri = jsHub.qualifyHREF(href);
       Y.Assert.areSame(server + "/index.html", uri);
       
       href = "/somewhere/index.html";
-      uri = $.qualifyHREF(href);
+      uri = jsHub.qualifyHREF(href);
       Y.Assert.areSame(server + "/somewhere/index.html", uri);
       
       href = "/somewhere/else/index.html";
-      uri = $.qualifyHREF(href);
+      uri = jsHub.qualifyHREF(href);
       Y.Assert.areSame(server + "/somewhere/else/index.html", uri);
       
+      // Page relative
       href = "index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + baseURL + "index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + baseURL + "index.html", uri);
       
       href = "somewhere/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + baseURL + "somewhere/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/index.html", uri);
       
       href = "somewhere/else/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + baseURL + "somewhere/else/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/else/index.html", uri);
       
       href = "./index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + baseURL + "index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + baseURL + "index.html", uri);
       
       href = "../index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/test/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/test/index.html", uri);
       
       href = "../../index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/index.html", uri);
       
       href = "../somewhere/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/test/somewhere/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/test/somewhere/index.html", uri);
       
       href = "../somewhere/else/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/test/somewhere/else/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/test/somewhere/else/index.html", uri);
       
       href = "../../somewhere/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/somewhere/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/somewhere/index.html", uri);
       
       href = "../../somewhere/else/index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + "/somewhere/else/index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + "/somewhere/else/index.html", uri);
       
       href = "somewhere/else/../../index.html";
-      uri = $.qualifyHREF(href);
-      Y.Assert.areSame(server + baseURL + "somewhere/else/../../index.html", uri);
+      uri = jsHub.qualifyHREF(href);
+      Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/else/../../index.html", uri);
       
     }
   
   }));
-// ]]>
 </script>

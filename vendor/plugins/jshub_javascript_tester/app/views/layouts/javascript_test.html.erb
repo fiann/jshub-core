@@ -7,12 +7,6 @@
     
   <!-- Test pages stylesheet -->
   <%= stylesheet_link_tag :jshub %>
-  
-  <!-- jsHub tag files -->
-  <%= javascript_include_tag :jquery %>
-  <%= javascript_include_tag "/js/src/hub" %>
-  <%= javascript_include_tag "/js/src/api" %>
-
 
   <% # If you need to include a reference to specific Javascript files, either for
      # plugin libraries or for inline test harness code, create a
@@ -26,7 +20,7 @@
   <!-- Create a test suite for the page -->
   <script type="text/javascript">
     // Create new YUI instance, and populate it with the required modules
-    var Y = YUI({useBrowserConsole:true, ignore: "test"}).use("test");
+    var Y = YUI({debug:true}).use("test", "node", "json");
     var suite = new Y.Test.Suite("<%= h title %>");
   </script>
 </head>

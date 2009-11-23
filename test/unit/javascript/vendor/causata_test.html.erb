@@ -1,25 +1,22 @@
 <% set_title "Causata < Data transport" %>
 
 <% content_for :javascripts do %>  
-  <%= javascript_include_tag "json/json2.js" %>
-  <%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
-  <%= javascript_include_tag "/js/src/data-transport/causata-post-plugin.js" %>
 
-  <script language="javascript" type="text/javascript">
-    /* 
-     * Create a mock for the API function
-     */
-    var MockAPI = function() {
-      var self = this;
-      self.count = 0;
-      self.dispatchViaForm = function(method, url, data) {
-        self.count++;
-        self.url = url;
-        self.data = data;
-      };    
-      jsHub.dispatchViaForm = self.dispatchViaForm;
-    };
-  </script>  
+<!-- jsHub dist file -->
+<%= javascript_include_tag :'jshub-min' %>
+<%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
+<%= javascript_include_tag "/js/src/modules/vendor-causata/causata-transport-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', 'causata-transport', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -36,7 +33,21 @@
 </p>
 <% end %>
 
-
+<script language="javascript" type="text/javascript">
+  /* 
+   * Create a mock for the API function
+   */
+  var MockAPI = function() {
+    var self = this;
+    self.count = 0;
+    self.dispatchViaForm = function(method, url, data) {
+      self.count++;
+      self.url = url;
+      self.data = data;
+    };    
+    jsHub.dispatchViaForm = self.dispatchViaForm;
+  };
+</script>  
 <script language="javascript" type="text/javascript">
   /* 
    * Check the browser environment for required JS libraries and other
@@ -47,8 +58,11 @@
     name: "Environment check",
     
     "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      YUI().use('json', function(lib, result) {
+        Y.Assert.isNotUndefined(lib.JSON, "The JSON library is required");
+      });
     },
     
     "test jsHub API dependencies": function() {
