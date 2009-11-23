@@ -51,8 +51,8 @@ YUI.add("causata-transport", function (Y) {
       /**
        * URL to dispatch to the server
        */
-      var url = "<%= server_url %>",
-        account = "<%= account_id %>",
+      var url = "http://test.causata.com/",
+        account = "1234",
       
         /*
          * Serialize data as expected format, see
