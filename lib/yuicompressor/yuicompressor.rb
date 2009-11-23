@@ -25,17 +25,15 @@ class YUICompressor
         # determine filenames: -debug.js -> .js -> -min.js
         debug_file = src_file
         normal_file = src_file.gsub('-debug','') 
-        min_file = src_file.gsub('-debug','-min')
-        output_file = min_file
-        puts "src: #{src_file}, normal: #{normal_file}, min: #{min_file}, out: #{output_file}" if @log_level
+        puts "Strip logging from #{src_file}"
 
-        fh = File.open("#{debug_file}","r");
+        src = File.open("#{debug_file}","r");
         out = File.open("#{normal_file}","w");
-        fh.each { |line|
+        src.each { |line|
           # output each file unless it contains this text
           out.puts line unless line =~ /jsHub\.logger\.|Y\.log\(/
         }
-        fh.close; 
+        src.close; 
         out.close;
       end
     end
@@ -54,12 +52,11 @@ class YUICompressor
         debug_file = src_file
         normal_file = src_file.gsub('-debug','') 
         min_file = src_file.gsub('-debug','-min')
-        output_file = min_file
-        puts "src: #{src_file}, normal: #{normal_file}, min: #{min_file}, out: #{output_file}" if @log_level
+        puts "Compress #{normal_file}"
         
-        sh "cd '#{RAILS_ROOT}' && java -jar '#{yuicompressor_jar}' #{yuicompressor_options} -o '#{output_file}' '#{normal_file}'" do |ok, res|
+        sh "cd '#{RAILS_ROOT}' && java -jar '#{yuicompressor_jar}' #{yuicompressor_options} -o '#{min_file}' '#{normal_file}'" do |ok, res|
           if !ok
-            puts "File: #{src_file} had errors (status = #{res.exitstatus})" if @log_level
+            puts "File: #{src_file} had errors (status = #{res.exitstatus})"
             allok = false
           end
         end

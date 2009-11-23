@@ -1,5 +1,5 @@
 # add our classes from lib/
-require File.expand_path("#{File.dirname(__FILE__)}/../../lib/yuicompressor/yuicompressor")
+require File.expand_path("#{RAILS_ROOT}/lib/yuicompressor/yuicompressor")
 
 # invoke with optional [src] flag or list of files, e.g. files=src/hub.js,src/api.js
 namespace :jshub do 
@@ -25,7 +25,6 @@ namespace :jshub do
       # remove external libraries we don't control as they probably won't recompress
       # and we don't want to fork them
       files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/|json\/).)*$/
-      puts files
 
       compressor = YUICompressor.new
       # remove logging statements
