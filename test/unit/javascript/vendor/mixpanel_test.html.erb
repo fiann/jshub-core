@@ -23,10 +23,15 @@
 
 <% content_for :intro do %>
 <p>
-  This file tests <strong><a href="http://mixpanel.com/api/docs/" title="Mixpanel">Mixpanel data logging plugin</a> functionality to a server via a GET image request</strong>.
+  This file tests <strong><a href="http://mixpanel.com/api/docs/" title="Mixpanel">Mixpanel 
+  data logging plugin</a> functionality to a server via a GET image request</strong>.
 </p>
 <p>
-  This page tests the logic for extracting values from the html of the page, and clicking a button.
+  This plugin should capture page view events, and ignore other event types.
+</p>
+<p>
+  See the <%= link_to "Mixpanel API", "http://mixpanel.com/api/docs/specification/" %>
+  for documentation on the expected data format.
 </p>
 <% end %>
 
@@ -61,29 +66,25 @@
   suite.add(new Y.Test.Case({
     name: "Data dispatch",
     
-    "test interaction events are dispatched": function() {
+    "test page view events are dispatched": function() {
       var mock = new MockAPI();
-      jsHub.trigger("interaction", {});
+      jsHub.trigger("page-view", {});
       Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
     },
 
-    "test interaction event properties is converted to Mixpanel API format": function() {
+    "test event properties are converted to Mixpanel API format": function() {
       var mock = new MockAPI();
-      jsHub.trigger('interaction', {"event": 'test-interaction-event', "property1" : "value1", "property2" : "value2"});  
+      jsHub.trigger("page-view", {"name" : "homepage"});  
       var expectedData = {
-        _: 123456789,
         data: "eyJwcm9wZXJ0aWVzIjogeyJwcm9wZXJ0eTEiOiAidmFsdWUxIiwicHJvcGVydHkyIjogInZhbHVlMiIsInRva2VuIjogIjI5NWViNTRlNThhZDc5MGI0ZjJhM2YzMjg4NDk5NTkxIn0sImV2ZW50IjogInRlc3QtaW50ZXJhY3Rpb24tZXZlbnQifQ==",
         img: 1,
         ip: 1
       };
-      Y.Assert.isNumber(expectedData._, mock.data._, "Timestamp is not a number");
-      Y.Assert.areEqual(expectedData._.length, mock.data._.length, "Timestamp is not the same length");
+	  console.log("Data: "+Y.JSON.stringify(mock.data.data));
       Y.Assert.areEqual(expectedData.data, mock.data.data, "Value is not Base64 encoded correctly");
       Y.Assert.areEqual(expectedData.img, mock.data.img, "Value is not the same");
-      Y.Assert.isNumber(expectedData.img, mock.data.img, "Value is not a number");
       Y.Assert.areEqual(expectedData.ip, mock.data.ip, "Value is not the same");
-      Y.Assert.isNumber(expectedData.img, mock.data.img, "Value is not a number");      
-    },
+    }
 
   }));    
 </script>
