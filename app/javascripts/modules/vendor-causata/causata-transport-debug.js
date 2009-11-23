@@ -60,7 +60,7 @@ YUI.add("causata-transport", function (Y) {
          */
         outputEvent = {
           timestamp: event.timestamp,
-          'event-type': event.type,
+          'eventType': event.type,
           attributes: []
         };
     
