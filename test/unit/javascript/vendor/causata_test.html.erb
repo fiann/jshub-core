@@ -91,7 +91,7 @@
       var mock = new MockAPI(), timestamp = new Date().getTime();
       jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);  
       var expectedData = {
-        "event-type" : "page-view",
+        "eventType" : "page-view",
 		"timestamp" : timestamp,
         "attributes" : [
 		  { "name" : "page-name", "value" : "homepage" }
