@@ -73,7 +73,7 @@
       pagename: event.data.name || event.data.url || "not defined"
     };
 
-    var protocol = (("https:" == jsHub.safe('document').location.protocol) ? "https://" : "http://");
+    var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
 
     // dispatch via API function
     jsHub.dispatchViaImage(protocol + url, data);

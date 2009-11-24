@@ -76,14 +76,14 @@
       sender: metadata.name + " v" + metadata.version
     };
     
-	// Copy all readable data into the output data
-	for (field in event.data) {
+	  // Copy all readable data into the output data
+	  for (field in event.data) {
       if ("string" === typeof event.data[field] || "number" === typeof event.data[field]) {
 	  	data[field] = event.data[field];
       }
     }
 
-    var protocol = (("https:" == jsHub.safe('document').location.protocol) ? "https://" : "http://");
+    var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
 	
     // dispatch via API function
     jsHub.dispatchViaForm("POST", protocol + url, data);
