@@ -239,8 +239,13 @@ YUI.add('hub', function (Y) {
     };
   };
 
+  // clone config if it is set, discard anything else from existing
+  // jsHub global object
+  var config = (global.jsHub && global.jsHub.config) ? global.jsHub.config : {};
+
   // jsHub object in global namespace
   jsHub = global.jsHub = new Hub();
+  jsHub.config = config;
 
   // Create an object to return safe instances of important variables
   jsHub.safe = function(obj) {
