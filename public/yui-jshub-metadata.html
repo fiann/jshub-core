@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>YUI3 based jsHub</title>
+
+<script type="text/javascript" src="/core/js/src/dist/yui/yui-combo-jshub+causata+hpage-debug.js">/* jsHub file */</script>
+
+<script type="text/javascript">
+  YUI().use('*', function(Y, result) {
+    // The callback supplied to use() will be executed regardless of
+    // whether the operation was successful or not.  The second parameter
+    // is a result object that has the status of the operation.  We can
+    // use this to try to recover from failures or timeouts.
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        jsHub.logger.log("Core object jsHub: %o", jsHub);  
+    }
+  });
+</script>
+
+</head>
+
+<body>
+
+    <div id="main">
+      <div id="content">
+
+<h2>YUI3 based jsHub</h2>
+    
+<p>
+  Using YUI3 to manage jsHub plugins and dependencies. 
+  This page demonstrates a metadata configuration block in the script.
+</p>
+
+<p>
+  For more information see the <a href="http://developer.yahoo.com/yui/3/" title="YDN">YUI3 documentation on YDN</a>.
+</p>
+
+<div class="hpage">
+  <p>hPage data:</p>
+  <ul>
+  	<li>Page name: <span class="name">Metadata test page</span></li>
+  </ul>
+</div>
+
+      </div>
+    </div>
+    <div id="footer">
+      <p>(local)</p>
+
+    </div>
+</body>
+</html>
