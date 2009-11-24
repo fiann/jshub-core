@@ -48,14 +48,14 @@
      * Note that the field <code>account_id</code> in the string is replaced
      * when the tag is generated.
      */
-    var account = "<%= account_id %>";
+    var account = "1234";
     
     /**
      * URL to dispatch to the server
      * Note that the field <code>server_url</code> in the string is replaced
      * when the tag is generated.
      */
-    var url = "<%= server_url %>";
+    var url = "test.causata.com";
 
     /**
      * Append account ID if supplied
@@ -82,9 +82,11 @@
 	  	data[field] = event.data[field];
       }
     }
+
+    var protocol = (("https:" == jsHub.safe('document').location.protocol) ? "https://" : "http://");
 	
     // dispatch via API function
-    jsHub.dispatchViaForm("POST", url, data);
+    jsHub.dispatchViaForm("POST", protocol + url, data);
     jsHub.logger.groupEnd();
   };
   

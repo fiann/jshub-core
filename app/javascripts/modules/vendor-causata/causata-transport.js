@@ -50,8 +50,7 @@ YUI.add("causata-transport", function (Y) {
       /**
        * URL to dispatch to the server
        */
-      var url = "http://test.causata.com/",
-        account = "1234",
+      var url = "test.causata.com";
       
         /*
          * Serialize data as expected format, see
@@ -86,8 +85,10 @@ YUI.add("causata-transport", function (Y) {
         event: jsHub.safe.toJSONString(outputEvent)
       };
       
+      var protocol = (("https:" == jsHub.safe('document').location.protocol) ? "https://" : "http://");
+      
       // dispatch via API function
-      jsHub.dispatchViaForm("POST", url, outputData);
+      jsHub.dispatchViaForm("POST", protocol + url, outputData);
     };
     
     /*
