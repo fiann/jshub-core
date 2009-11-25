@@ -15,29 +15,36 @@ namespace :jshub do
       else
         files = args.files.split(",")
       end
-      
-      # only use -debug files
-      files = files.grep /-debug\.js/
 
       # remove any generated dist files as they come from the combo service
       files = files.grep /^(?:(?!dist).)*$/
+      
+      # only use -debug files
+      debug = files.grep /-debug\.js/
 
       # remove external libraries we don't control as they probably won't recompress
       # and we don't want to fork them
-      files = files.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/|json\/).)*$/
-      puts files
+      debug = debug.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/|json\/).)*$/
 
       compressor = YUICompressor.new
       # remove logging statements
-      allok = compressor.strip(files)
+      allok = compressor.strip(debug)
       if !allok
         fail "Logging strip errors"
       end
-
       # run through YUI compressor
-      allok = compressor.compress(files)      
+      allok = compressor.compress(debug)      
       if !allok
         fail "Compression errors"
+      end
+
+      # Remove comments from all -min files including external libraries
+      min = files.grep /-min\.js/
+      compressor = YUICompressor.new
+      compressor.yuicompressor_options = '--nomunge --line-break 6000 --preserve-semi -v'
+      allok = compressor.compress(min)      
+      if !allok
+        fail "Comment strip errors"
       end
 
     end
