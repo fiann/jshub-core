@@ -11,7 +11,7 @@
 YUI.add('hub', function (Y) {
 
   // global namespace
-  var global = this, 
+  var global = window, 
   
   // instance of jsHub object
   jsHub,
