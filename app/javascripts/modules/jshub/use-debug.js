@@ -13,11 +13,11 @@
  * The default '*' (use all modules) token is replaced at runtime by the 
  * requested module list.
  */
-YUI().use('*', function(Y, result) {
+YUI().use('*', function (Y, result) {
   if (!result.success) {
-      Y.log('Module load failure: ' + result.msg, 'warn', 'jsHub');
+    Y.log('Module load failure: ' + result.msg, 'warn', 'jsHub');
   } else {
-      Y.log('Modules loaded', 'info', 'jsHub');
+    Y.log('Modules loaded', 'info', 'jsHub');
   }
 });
   
