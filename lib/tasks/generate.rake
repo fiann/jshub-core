@@ -50,9 +50,43 @@ namespace :jshub do
     end
 
     desc "Generate the default dist files from the src files"
-    task :dist do |task, args|
+    task :dist => :environment do |task, args|
       # TODO hit a Combo service URL and save files locally
-      puts 'The distribution is generated from the YUI phploader application'
+      require 'net/http'
+      require 'uri'
+      
+      # Set Combo server in config/jshub_javascript_tester.yml for now
+      url = URI.parse("#{JSHUB_JAVASCRIPT_TESTER[:combo][:base_url]}")
+      
+      # the default jsHub dist
+      res_min = Net::HTTP.start(url.host, url.port) do |http|
+        http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-min.js')
+      end
+      res_debug = Net::HTTP.start(url.host, url.port) do |http|
+        http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-debug.js')
+      end
+      File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub-min.js", 'w') do |file|
+        file.write res_min.body
+      end      
+      File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub-debug.js", 'w') do |file|
+        file.write res_debug.body
+      end 
+
+      # the default jsHub+microformats dist
+      res_min = Net::HTTP.start(url.host, url.port) do |http|
+        http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-min.js&jshub_2.0.0/build/microformats/micriformats-min.js')
+      end
+      res_debug = Net::HTTP.start(url.host, url.port) do |http|
+        http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-debug.js&jshub_2.0.0/build/microformats/micriformats-min.js')
+      end
+      File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub+microformats-min.js", 'w') do |file|
+        file.write res_min.body
+      end      
+      File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub+microformats-debug.js", 'w') do |file|
+        file.write res_debug.body
+      end 
+      
+      puts "The default distributions have generated from the combo service at: #{url.host}"
     end
     
   end  
