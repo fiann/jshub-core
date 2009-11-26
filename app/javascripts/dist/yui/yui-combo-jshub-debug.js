@@ -1,4 +1,8 @@
 /*
+Copyright (c) 2009 jsHub.org
+see http://github.com/jshub/jshub-core/raw/master/LICENSE.txt 
+*/
+/*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
