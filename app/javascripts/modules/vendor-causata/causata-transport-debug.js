@@ -1,7 +1,3 @@
-/* 
-Comment kept ?
-*/
-
 /** 
  * A plugin to send output to the Causata system, using the POST transport and 
  * in JSON format expected by Causata.
