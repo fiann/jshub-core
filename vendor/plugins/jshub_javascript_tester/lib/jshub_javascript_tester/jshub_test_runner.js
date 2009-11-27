@@ -11,6 +11,7 @@
   if (typeof test_file != 'string') {
     throw new java.lang.IllegalArgumentException("You must specify a HTML test file on the command line");
   }
+  test_file = test_file.replace(".html.erb", "");
 
   // Logging on/off
   var log_level = (args[1] === 'true');
@@ -221,29 +222,13 @@
         if (typeof results.type === 'undefined'){
           console.debug('No more nested results');
           return;
-        }        
+        } 
         switch (results.type) {
-          case "test":
-            //equivalent to testcase in JUnit
-            //results.name = test_file_name + "." + results.name;
-            break;            
           case "testcase":
             //equivalent to testsuite in JUnit
             results.name = test_file_name + " - " + results.name;
-            Y.Object.each(results, function(value, key, object){
-              if (Y.Lang.isObject(value) && !Y.Lang.isArray(value)){
-                prependTestPageName(value);
-              }
-            });
-            break;
+          case "test":
           case "testsuite":
-            //no JUnit equivalent, don't output anything
-            Y.Object.each(results, function(value, key, object){
-              if (Y.Lang.isObject(value) && !Y.Lang.isArray(value)){
-                prependTestPageName(value);
-              }
-            });
-            break;
           case "report":
             // Top level, descend into object and recurse
             Y.Object.each(results, function(value, key, object){
