@@ -225,7 +225,7 @@
         switch (results.type) {
           case "test":
             //equivalent to testcase in JUnit
-            results.name = test_file_name + "." + results.name;
+            //results.name = test_file_name + "." + results.name;
             break;            
           case "testcase":
             //equivalent to testsuite in JUnit
