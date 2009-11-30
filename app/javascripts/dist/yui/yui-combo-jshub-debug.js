@@ -2,7 +2,7 @@
 Copyright (c) 2009 jsHub.org
 see http://github.com/jshub/jshub-core/raw/master/LICENSE.txt 
 */
-/*
+"use strict";/*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
@@ -3109,281 +3109,282 @@ YUI.add('yui', function(Y){}, '3.0.0' ,{use:['yui-base','get','yui-log','yui-lat
 
 YUI.add('hub', function (Y) {
 
-  (function () {
-    
-    // global namespace
-    var global = this, 
+  // global namespace
+  var global = window, 
   
-      // instance of jsHub object
-      jsHub,
-  
-      /**
-       * Core event dispatcher functionality of the hub
-       * @class Hub
-       * @property listeners
-       */
-      Hub = function () {
-  
-        // stores functions listening to various events
-        var listeners = {},
-      
-        /** Plugins that have registered with the hub. */
-        plugins = [],
-  
-        /**
-         * a listener has an authentication token and a callback
-         * @class Listener
-         * @for Hub
-         * @param token {string}
-         * @param callback {function}
-         */
-        Listener = function (token, callback) {
-          this.token = token;
-          this.callback = callback;
-        },
-    
-        /**
-         * A simple event object
-         * @class Event
-         * @for Hub
-         * @param name {string}
-         * @param data {object}
-         * @param timestamp {number} an optional timestamp value. 
-         */
-        Event = function (name, data, timestamp) {
-          this.type = name;
-          this.timestamp = timestamp || jsHub.safe.getTimestamp();
-          this.data = data;
-        },
-    
-        // the firewall filters event data before passing to listeners
-        /**
-         * A simple event object
-         * @class EventDispatcher
-         * @for Hub
-         */
-        EventDispatcher = function () {
-      
-          /**
-           * Locate a token within a comma separate string.
-           * @method containsToken
-           * @param string {string}
-           * @param token {string}
-           */
-          var containsToken = function (string, token) {
-            string = string.split(",");
-            for (var i = 0; i < string.length; i++) {
-              if (token === Y.Lang.trim(string[i])) {
-                return true;
-              }
-            }
-            return false;
-          },
-      
-          /**
-           * TODO: Description
-           * @method validate
-           * @param token {string}
-           * @param payload {object}
-           */
-          validate = function (token, payload) {
-            var who = Y.Lang.trim(payload.event_visibility);
-            if (who === undefined || who === "" || who === "*") {
-              return true;
-            }
-            return containsToken(who, token);
-          },
-      
-          /**
-           * TODO: Description
-           * @method filter
-           * @param token {string}
-           * @param data {object}
-           */
-          filter = function (token, data) {
-            // TODO remove fields from data that do not validate
-            var filtered = {};
-            Y.Object.each(data, function (value, key) {
-              if (/_visibility$/.test(key) === false) {
-                var fieldVisibility = data[key + "_visibility"];
-                if (typeof fieldVisibility !== 'string'
-                    || fieldVisibility === "" 
-                    || fieldVisibility === "*"
-                    || containsToken(fieldVisibility, token)) {
-                  filtered[key] = value;
-                }
-              }
-            });
-            return filtered;
-          };
-  
-          /**
-           * TODO: Description
-           * @method dispatch
-           * @param name {string} the name of the event
-           * @param listener {Listener} the listener object to call back to
-           * @param data {object}
-           */        
-          this.dispatch = function (name, listener, data, timestamp) {
-            var evt, filteredData, extraData;
-            
-            if (validate(listener.token, data)) {
-              // remove private fields from the data for each listener
-              filteredData = filter(listener.token, data);
-              // send to the listener
-              jsHub.logger.debug("Sending event %s to listener %s with data", name, listener.token, filteredData);
-              evt = new Event(name, filteredData, timestamp);
-              extraData = listener.callback(evt);
-              // merge any additional data found by the listener into the data
-              if (extraData) {
-                Y.mix(data, extraData);
-                jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
-              }
-            }
-          };
-        },
-      
-        firewall = new EventDispatcher(); 
-  
-        /**
-         * Bind a listener to a named event.
-         * @method bind
-         * @for jsHub
-         * @param eventName {string} the name of the event to bind.
-         * Note that "*" is a special event name, which is taken to mean that 
-         * the listener wants to be informed of every event that occurs 
-         * (provided it has visibility of that event).
-         * @param token {string} an identifier for the listener, which will
-         * be matched against the value of the <code>data-visibility</code>
-         * attribute of the DOM node containing the event.
-         * @param callback {function} the function to call when an event is 
-         * triggered. The function will be called with a single parameter containing
-         * the event object.
-         */
-        this.bind = function (eventName, token, callback) {
-          // TODO validate input data
-          var list = listeners[eventName], found, i;
-          if ('undefined' === typeof list) {
-            list = [];
-          }
-          // if already present, then replace the callback function
-          for (found = false, i = 0; i < list.length; i++) {
-            if (list[i].token === token) {
-              list[i].callback = callback;
-              found = true;
-              break;
-            } 
-          }
-          // otherwise add it
-          if (! found) {
-            list.push(new Listener(token, callback));
-          }
-          listeners[eventName] = list;
-        };
-  
-        /**
-         * Fire a named event, and inform all listeners
-         * @method trigger
-         * @for jsHub
-         * @param eventName {string}
-         * @param data {object} a data object containing name=value fields for the event data
-         * @param timestamp {number} a timestamp, which can be used to associate this event
-         * with other events created due to the same user action in the browser. Optional, will
-         * be created automatically if not supplied.
-         */
-        this.trigger = function (eventName, data, timestamp) {
-          jsHub.logger.group("Event %s triggered with data", eventName, (data || "'none'"));
-          // empty object if not defined
-          data = data || {};
-          // find all registered listeners for the specific event, and for "*"
-          var registered = (listeners[eventName] || []);
-          var found, listener, listeners_all = (listeners["*"] || []), i, j;
-          for (i = 0; i < listeners_all.length; i++) {
-            listener = listeners_all[i];
-            found = false;
-            for (j = 0; j < registered.length; j++) {
-              if (registered[j].token === listener.token) {
-                found = true;
-              }
-            }
-            if (!found) {
-              registered.push(listener);
-            }
-          }
-          for (var k = 0; k < registered.length; k++) {
-            firewall.dispatch(eventName, registered[k], data, timestamp);
-          }
-          jsHub.logger.groupEnd();
-      // additional special behavior for particular event types
-          if (eventName === "plugin-initialization-start") {
-            plugins.push(data);
-          }
-        };
-      
-      /**
-       * Get information about plugins that have registered with
-       * the hub using trigger("plugin-initialization-start").
-       */
-        this.getPluginInfo = function () {
-          // take a deep copy to prevent the data being tampered with 
-          var clone = [], i;
-          for (i = 0; i < plugins.length; i++) {
-            var plugin = plugins[i], plugin_clone = {};
-            for (var field in plugin) {
-              if (typeof plugin[field] === 'string' || typeof plugin[field] === 'number') {
-                plugin_clone[field] = plugin[field];
-              }
-            }
-            clone.push(plugin_clone);
-          }
-          return clone;
-        };
-      };
-  
-    // jsHub object in global namespace
-    jsHub = global.jsHub = new Hub();
-    
-    // Create an object to return safe instances of important variables
-    jsHub.safe = function (obj) {
-      var safeObject;
-      if ('document' === obj) {
-        safeObject = {
-          // no document DOM properties are available
-          location : { 
-            hash : document.location.hash,
-            // includes the port if present, e.g. localhost:8080
-            host : document.location.host,
-            // only the domain name, e.g. localhost
-            hostname : document.location.hostname,
-            href : document.location.href,
-            pathname : document.location.pathname,
-            port : document.location.port,
-            protocol : document.location.protocol,
-            // includes the query string if present, e.g. ?foo=bar
-            search : document.location.search
-          },
-          title : document.title,
-          referrer : (document.referrer === null) ? "" : document.referrer,
-          cookies : document.cookies,
-          domain : 'Unsafe property'
-        };
-      } else {
-        // empty object that can be enhanced
-        safeObject = {};
-      }
-      return safeObject;
-    };
-      
-    /**
-     * Get a timestamp for an event.
-     * TODO add sequence / random component
-     */
-    jsHub.safe.getTimestamp = function () {
-      return new Date().getTime();
-    };
-  
-  })();
+  // instance of jsHub object
+  jsHub,
 
+  /**
+   * Core event dispatcher functionality of the hub
+   * @class Hub
+   * @property listeners
+   */
+  Hub = function () {
+
+    /** Stores functions listening to various events */
+    var listeners = {},
+  
+    /** Plugins that have registered with the hub. */
+    plugins = [],
+
+    /**
+     * a listener has an authentication token and a callback
+     * @class Listener
+     * @for Hub
+     * @param token {string}
+     * @param callback {function}
+     */
+    Listener = function (token, callback) {
+      this.token = token;
+      this.callback = callback;
+    },
+
+    /**
+     * A simple event object
+     * @class Event
+     * @for Hub
+     * @param name {string}
+     * @param data {object}
+     * @param timestamp {number} an optional timestamp value. 
+     */
+    Event = function (name, data, timestamp) {
+      this.type = name;
+      this.timestamp = timestamp || jsHub.safe.getTimestamp();
+      this.data = data;
+    },
+
+    /**
+     * The event dispatcher filters event data before passing to listeners
+     * @class EventDispatcher
+     * @for Hub
+     */
+    EventDispatcher = function () {
+  
+      /**
+       * Locate a token within a comma separate string.
+       * @method containsToken
+       * @param string {string}
+       * @param token {string}
+       */
+      var containsToken = function (string, token) {
+        string = string.split(",");
+        for (var i = 0; i < string.length; i++) {
+          if (token === Y.Lang.trim(string[i])) {
+            return true;
+          }
+        }
+        return false;
+      },
+  
+      /**
+       * TODO: Description
+       * @method validate
+       * @param token {string}
+       * @param payload {object}
+       */
+      validate = function (token, payload) {
+        var who = Y.Lang.trim(payload.event_visibility);
+        if (who === undefined || who === "" || who === "*") {
+          return true;
+        }
+        return containsToken(who, token);
+      },
+  
+      /**
+       * TODO: Description
+       * @method filter
+       * @param token {string}
+       * @param data {object}
+       */
+      filter = function (token, data) {
+        // TODO remove fields from data that do not validate
+        var filtered = {};
+        Y.Object.each(data, function (value, key) {
+          if (/_visibility$/.test(key) === false) {
+            var fieldVisibility = data[key + "_visibility"];
+            if (typeof fieldVisibility !== 'string'
+                || fieldVisibility === "" 
+                || fieldVisibility === "*"
+                || containsToken(fieldVisibility, token)) {
+              filtered[key] = value;
+            }
+          }
+        });
+        return filtered;
+      };
+
+      /**
+       * TODO: Description
+       * @method dispatch
+       * @param name {string} the name of the event
+       * @param listener {Listener} the listener object to call back to
+       * @param data {object}
+       */        
+      this.dispatch = function (name, listener, data, timestamp) {
+        var evt, filteredData, extraData;
+        
+        if (validate(listener.token, data)) {
+          // remove private fields from the data for each listener
+          filteredData = filter(listener.token, data);
+          // send to the listener
+          jsHub.logger.debug("Sending event %s to listener %s with data", name, listener.token, filteredData);
+          evt = new Event(name, filteredData, timestamp);
+          extraData = listener.callback(evt);
+          // merge any additional data found by the listener into the data
+          if (extraData) {
+            Y.mix(data, extraData);
+            jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
+          }
+        }
+      };
+    },
+  
+    firewall = new EventDispatcher(); 
+
+    /**
+     * Bind a listener to a named event.
+     * @method bind
+     * @for jsHub
+     * @param eventName {string} the name of the event to bind.
+     * Note that "*" is a special event name, which is taken to mean that 
+     * the listener wants to be informed of every event that occurs 
+     * (provided it has visibility of that event).
+     * @param token {string} an identifier for the listener, which will
+     * be matched against the value of the <code>data-visibility</code>
+     * attribute of the DOM node containing the event.
+     * @param callback {function} the function to call when an event is 
+     * triggered. The function will be called with a single parameter containing
+     * the event object.
+     */
+    this.bind = function (eventName, token, callback) {
+      // TODO validate input data
+      var list = listeners[eventName], found, i;
+      if ('undefined' === typeof list) {
+        list = [];
+      }
+      // if already present, then replace the callback function
+      for (found = false, i = 0; i < list.length; i++) {
+        if (list[i].token === token) {
+          list[i].callback = callback;
+          found = true;
+          break;
+        } 
+      }
+      // otherwise add it
+      if (! found) {
+        list.push(new Listener(token, callback));
+      }
+      listeners[eventName] = list;
+    };
+
+    /**
+     * Fire a named event, and inform all listeners
+     * @method trigger
+     * @for jsHub
+     * @param eventName {string}
+     * @param data {object} a data object containing name=value fields for the event data
+     * @param timestamp {number} a timestamp, which can be used to associate this event
+     * with other events created due to the same user action in the browser. Optional, will
+     * be created automatically if not supplied.
+     */
+    this.trigger = function (eventName, data, timestamp) {
+      jsHub.logger.group("Event %s triggered with data", eventName, (data || "'none'"));
+      // empty object if not defined
+      data = data || {};
+      // find all registered listeners for the specific event, and for "*"
+      var registered = (listeners[eventName] || []);
+      var found, listener, listeners_all = (listeners["*"] || []), i, j;
+      for (i = 0; i < listeners_all.length; i++) {
+        listener = listeners_all[i];
+        found = false;
+        for (j = 0; j < registered.length; j++) {
+          if (registered[j].token === listener.token) {
+            found = true;
+          }
+        }
+        if (!found) {
+          registered.push(listener);
+        }
+      }
+      for (var k = 0; k < registered.length; k++) {
+        firewall.dispatch(eventName, registered[k], data, timestamp);
+      }
+      jsHub.logger.groupEnd();
+
+      // additional special behavior for particular event types
+      if (eventName === "plugin-initialization-start") {
+        plugins.push(data);
+      }
+    };
+  
+    /**
+     * Get information about plugins that have registered with
+     * the hub using trigger("plugin-initialization-start").
+     */
+    this.getPluginInfo = function () {
+      // take a deep copy to prevent the data being tampered with 
+      var clone = [], i;
+      for (i = 0; i < plugins.length; i++) {
+        var plugin = plugins[i], plugin_clone = {};
+        for (var field in plugin) {
+          if (typeof plugin[field] === 'string' || typeof plugin[field] === 'number') {
+            plugin_clone[field] = plugin[field];
+          }
+        }
+        clone.push(plugin_clone);
+      }
+      return clone;
+    };
+  };
+
+  // clone config if it is set, discard anything else from existing
+  // jsHub global object
+  var config = (global.jsHub && global.jsHub.config) ? global.jsHub.config : {};
+
+  // jsHub object in global namespace
+  jsHub = global.jsHub = new Hub();
+  jsHub.config = config;
+
+  // Create an object to return safe instances of important variables
+  jsHub.safe = function (obj) {
+    var safeObject;
+    if ('document' === obj) {
+      safeObject = {
+        // no document DOM properties are available
+        location: {
+          hash : document.location.hash,
+          // includes the port if present, e.g. localhost:8080
+          host : document.location.host,
+          // only the domain name, e.g. localhost
+          hostname : document.location.hostname,
+          href: document.location.href,
+          pathname : document.location.pathname,
+          port : document.location.port,
+          protocol: document.location.protocol,
+          // includes the query string if present, e.g. ?foo=bar
+          search : document.location.search
+        },
+        title: document.title,
+        referrer: (document.referrer === null) ? "" : document.referrer,
+        cookies: document.cookies,
+        domain: 'Unsafe property'
+      };
+    } else {
+      // empty object that can be enhanced
+      safeObject = {};
+    }
+    return safeObject;
+  };
+  
+  /**
+   * Get a timestamp for an event.
+   * TODO add sequence / random component
+   */
+  jsHub.safe.getTimestamp = function () {
+    return new Date().getTime();
+  };
+  
   Y.log('hub module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
   requires: ['yui'], 
@@ -3403,32 +3404,30 @@ YUI.add('hub', function (Y) {
 
 YUI.add('logger', function (Y) {
 
-  (function () {    
-    // Initialise a logger instance based on what is available
-    if (window.debug && window.debug.log) {
-      // Use caching debug console wrapper
-      jsHub.logger = window.debug;
-    } else {
-      // firebugx based stub functions
-      // ref: http://getfirebug.com/firebug/firebugx.js
-      if (!window.console || !console.firebug) {
-        var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
-        "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];      
-        window.console = {};
-        for (var i = 0; i < names.length; ++i) {
-          window.console[names[i]] = function () {
-            // Closure to keep 'i' correct if we use it in the function
-            // http://groups.google.com/group/comp.lang.javascript/browse_thread/thread/54ab90e2d778dc14
-            return function () {
-              /* do nothing */
-            }; 
-          }(i);
-        }
+  // Initialise a logger instance based on what is available
+  if (window.debug && window.debug.log) {
+    // Use caching debug console wrapper
+    jsHub.logger = window.debug;
+  } else {
+    // firebugx based stub functions
+    // ref: http://getfirebug.com/firebug/firebugx.js
+    if (!window.console || !console.firebug) {
+      var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+      "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];      
+      window.console = {};
+      for (var i = 0; i < names.length; ++i) {
+        window.console[names[i]] = function () {
+          // Closure to keep 'i' correct if we use it in the function
+          // http://groups.google.com/group/comp.lang.javascript/browse_thread/thread/54ab90e2d778dc14
+          return function () {
+            /* do nothing */
+          }; 
+        }(i);
       }
-      // Use whatever window.console is now available
-      jsHub.logger = window.console;
     }
-  })();
+    // Use whatever window.console is now available
+    jsHub.logger = window.console;
+  }
 
   Y.log('logger module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
@@ -3453,79 +3452,76 @@ YUI.add('logger', function (Y) {
 
 YUI.add('image-transport', function (Y) {
 
-  (function () {
+  var ImageTransport = function () {
 
-    var ImageTransport = function () {
-  
-        /**
-         * Send a request to the server as a GET request for an image. 
-         * <p>Plugins can call this function to create an image object to send data to the
-         * server. Data can be supplied in two locations: in a URL string which can be in
-         * any format required by the server, and a data object.
-         * <p>All text and numeric fields in the data object are URL encoded and used to build
-         * a query string which is appended to the URL. 
-         * @method dispatch
-         * @for ImageTransport
-         * @param url {string} a URL for the endpoint to send the data to. The URL is 
-         * processed by the browser, and so it may be fully qualified or relative to the
-         * page, as per a normal link. 
-         * The URL may contain all the information required by the server, in any format
-         * as specified by the plugin calling this function. Plugins must ensure that they
-         * have correctly URL encoded any data fields in the URL.
-         * If the url is not specified the method will return without taking any action.
-         * @param data {object} an object containing name=value pairs that will be sent as 
-         * query string data. The name of each field in the object will be used as the form 
-         * field name. The value must be either a string, a number, or an array of strings 
-         * and numbers, in which case multiple query string fields with the same name will 
-         * be created. Any parameters which do not match this expected format will be ignored.
-         * @return the ID of the iframe that has been created
+      /**
+       * Send a request to the server as a GET request for an image. 
+       * <p>Plugins can call this function to create an image object to send data to the
+       * server. Data can be supplied in two locations: in a URL string which can be in
+       * any format required by the server, and a data object.
+       * <p>All text and numeric fields in the data object are URL encoded and used to build
+       * a query string which is appended to the URL. 
+       * @method dispatch
+       * @for ImageTransport
+       * @param url {string} a URL for the endpoint to send the data to. The URL is 
+       * processed by the browser, and so it may be fully qualified or relative to the
+       * page, as per a normal link. 
+       * The URL may contain all the information required by the server, in any format
+       * as specified by the plugin calling this function. Plugins must ensure that they
+       * have correctly URL encoded any data fields in the URL.
+       * If the url is not specified the method will return without taking any action.
+       * @param data {object} an object containing name=value pairs that will be sent as 
+       * query string data. The name of each field in the object will be used as the form 
+       * field name. The value must be either a string, a number, or an array of strings 
+       * and numbers, in which case multiple query string fields with the same name will 
+       * be created. Any parameters which do not match this expected format will be ignored.
+       * @return the ID of the iframe that has been created
+       */
+      this.dispatch = function (url, data) {
+        /** 
+         * Append a field to a query string url
          */
-        this.dispatch = function (url, data) {
-          /** 
-           * Append a field to a query string url
-           */
-          var appendField = function (url, name, value) {
-            return url + (url.indexOf('?') > -1 ? '&' : '?') 
-              + encodeURIComponent(name) + "=" + encodeURIComponent(value);
-          };
+        var appendField = function (url, name, value) {
+          return url + (url.indexOf('?') > -1 ? '&' : '?') 
+            + encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        };
 
-          jsHub.logger.group("ImageTransport: dispatch(" + url + ") entered");
-          
-      // base url must be defined
-          if (typeof url !== 'string' || url.length < 1) {
-            jsHub.logger.error("Base url (" + url + ") was not defined correctly");
-            jsHub.logger.groupEnd();
-            return null;
-          }
-      
-      // add data to url if it is defined
-          if (typeof data === 'object') {
-            for (var field in data) {
-              if (typeof data[field] === 'string' || typeof data[field] === 'number') {
-                url = appendField(url, field, data[field]);
-              } else if (!! data[field] && data[field].constructor === Array) {
-                var values = data[field];				
-                for (var i = 0; i < values.length; i++) {
-                  if (typeof values[i] === 'string' || typeof values[i] === 'number') {
-                    url = appendField(url, field, values[i]);
-                  }
+        jsHub.logger.group("ImageTransport: dispatch(" + url + ") entered");
+        
+    // base url must be defined
+        if (typeof url !== 'string' || url.length < 1) {
+          jsHub.logger.error("Base url (" + url + ") was not defined correctly");
+          jsHub.logger.groupEnd();
+          return null;
+        }
+    
+    // add data to url if it is defined
+        if (typeof data === 'object') {
+          for (var field in data) {
+            if (typeof data[field] === 'string' || typeof data[field] === 'number') {
+              url = appendField(url, field, data[field]);
+            } else if (!! data[field] && data[field].constructor === Array) {
+              var values = data[field];				
+              for (var i = 0; i < values.length; i++) {
+                if (typeof values[i] === 'string' || typeof values[i] === 'number') {
+                  url = appendField(url, field, values[i]);
                 }
               }
             }
           }
-      
-          var image = document.createElement("img");
-          image.src = url;
-  
-          jsHub.logger.log("Dispatched: " + url);
-          jsHub.logger.groupEnd();
-          return image;
-      
-        };
-      };
+        }
     
-    jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
-  })();
+        var image = document.createElement("img");
+        image.src = url;
+
+        jsHub.logger.log("Dispatched: " + url);
+        jsHub.logger.groupEnd();
+        return image;
+    
+      };
+    };
+  
+  jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
 
   Y.log('image-transport module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
@@ -3548,125 +3544,122 @@ YUI.add('image-transport', function (Y) {
 
 YUI.add('form-transport', function (Y) {
 
-  (function () {
+  var FormTransport = function () {
 
-    var FormTransport = function () {
+    /**
+     * Send a request to the server as a POST or GET method form request. 
+     * <p>The data is sent via a hidden iframe which is dynamically created in the page, so that the
+     * form submission does not interfere with the history and behaviour of the back button in 
+     * the browser.
+     * <p>This function does not perform any serialization. It is the responsibility of the data
+     * output plugins to prepare the data in the format required by their server.
+     * @method dispatch
+     * @for FormTransport
+     * @param method {string} one of "GET" or "POST", not case sensitive. If the method is not
+     * supplied or does not match on of these values, then the submission will be rejected and
+     * the function will return without taking any action.
+     * @param url {string} a URL for the endpoint to send the data to. The URL is processed by
+     * the browser, and so it may be fully qualified or relative to the page, as per a normal 
+     * link. If the url is not specified the method will return without taking any action.
+     * @param data {object} an object containing name=value pairs that will be sent as form data.
+     * The name of each field in the object will be used as the form field name. The value must
+     * be either a string, a number, or an array of strings / numbers, in which case multiple
+     * form fields with the same name will be created. Any parameters which do not match this
+     * expected format will be ignored.
+     * @return the ID of the iframe that has been created
+     */
+    this.dispatch = function (method, url, data) {
+      var timestamp, form, formID, appendField, iframe, iframeID, field, array, i;
+      
+      /*
+       * This data transport only supports POST or GET
+       * TODO: validate url for security reasons, reject javascript: protocol etc
+       */
+      if (!(/^POST|GET$/i.test(method)) || !url) {
+        return;
+      }
+      data = data || {};
+      timestamp = jsHub.safe.getTimestamp();
   
       /**
-       * Send a request to the server as a POST or GET method form request. 
-       * <p>The data is sent via a hidden iframe which is dynamically created in the page, so that the
-       * form submission does not interfere with the history and behaviour of the back button in 
-       * the browser.
-       * <p>This function does not perform any serialization. It is the responsibility of the data
-       * output plugins to prepare the data in the format required by their server.
-       * @method dispatch
-       * @for FormTransport
-       * @param method {string} one of "GET" or "POST", not case sensitive. If the method is not
-       * supplied or does not match on of these values, then the submission will be rejected and
-       * the function will return without taking any action.
-       * @param url {string} a URL for the endpoint to send the data to. The URL is processed by
-       * the browser, and so it may be fully qualified or relative to the page, as per a normal 
-       * link. If the url is not specified the method will return without taking any action.
-       * @param data {object} an object containing name=value pairs that will be sent as form data.
-       * The name of each field in the object will be used as the form field name. The value must
-       * be either a string, a number, or an array of strings / numbers, in which case multiple
-       * form fields with the same name will be created. Any parameters which do not match this
-       * expected format will be ignored.
-       * @return the ID of the iframe that has been created
+       * Add a hidden field to the form
+       * @param {Object} form
+       * @param {Object} name
+       * @param {Object} value
        */
-      this.dispatch = function (method, url, data) {
-        var timestamp, form, formID, appendField, iframe, iframeID, field, array, i;
-        
-        /*
-         * This data transport only supports POST or GET
-         * TODO: validate url for security reasons, reject javascript: protocol etc
-         */
-        if (!(/^POST|GET$/i.test(method)) || !url) {
-          return;
+      appendField = function (form, name, value) {
+        if ("string" === typeof value || "number" === typeof value) {
+          var input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
         }
-        data = data || {};
-        timestamp = jsHub.safe.getTimestamp();
-    
-        /**
-         * Add a hidden field to the form
-         * @param {Object} form
-         * @param {Object} name
-         * @param {Object} value
-         */
-        appendField = function (form, name, value) {
-          if ("string" === typeof value || "number" === typeof value) {
-            var input = document.createElement("input");
-            input.type = "hidden";
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-          }
-        };
-    
-        // Create the form
-        formID = "jshub-form-" + timestamp;        
-        form = document.createElement("form");
-        form.id = formID;
-        form.method = method;
-        form.action = url;
-        form.style.visibility = "hidden";
-        form.style.position = "absolute";
-        form.style.top = 0;
-
-        //remove any existing fields
-        while (form.hasChildNodes()) {
-          form.removeChild(form.lastChild);
-        }
-
-        for (field in data) {
-          if (data[field] instanceof Array) {
-            // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
-            array = data[field];
-            for (i = 0; i < array.length; i++) {
-              if ("string" === typeof array[i] || "number" === typeof array[i]) {
-                appendField(form, field, array[i]);
-              }
-            }
-          } else {
-            appendField(form, field, data[field]);
-          }
-        }
-        document.body.appendChild(form);
-
-        // Create the iframe
-        iframeID = "jshub-iframe-" + timestamp;        
-        //IE won't let you assign a name using the DOM, must do it the hacky way
-        if (Y.UA.ie) {
-          iframe = document.createElement('<iframe name="' + iframeID + '" />');
-        } else {
-          iframe = document.createElement("iframe");
-          iframe.name = iframeID;
-        }
-
-        iframe.id = iframeID;
-        // TODO avoid IE 'clicks'
-        // ref: http://www.julienlecomte.net/blog/2007/11/30/
-        iframe.src = "#";
-        iframe.style.visibility = "hidden";
-        iframe.style.position = "absolute";
-        iframe.style.top = 0;
-        iframe.style.cssClass = "jshub-iframe";
-        document.body.appendChild(iframe);
-    
-        // Set the iframe as the submission target of the form, tied together by a timestamp
-        form.target = iframeID;
-
-        // And send it ...
-        form.submit();
-        jsHub.trigger("form-transport-sent", {
-          node: iframeID
-        });
-        return iframeID;
       };
+  
+      // Create the form
+      formID = "jshub-form-" + timestamp;        
+      form = document.createElement("form");
+      form.id = formID;
+      form.method = method;
+      form.action = url;
+      form.style.visibility = "hidden";
+      form.style.position = "absolute";
+      form.style.top = 0;
+
+      //remove any existing fields
+      while (form.hasChildNodes()) {
+        form.removeChild(form.lastChild);
+      }
+
+      for (field in data) {
+        if (data[field] instanceof Array) {
+          // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
+          array = data[field];
+          for (i = 0; i < array.length; i++) {
+            if ("string" === typeof array[i] || "number" === typeof array[i]) {
+              appendField(form, field, array[i]);
+            }
+          }
+        } else {
+          appendField(form, field, data[field]);
+        }
+      }
+      document.body.appendChild(form);
+
+      // Create the iframe
+      iframeID = "jshub-iframe-" + timestamp;        
+      //IE won't let you assign a name using the DOM, must do it the hacky way
+      if (Y.UA.ie) {
+        iframe = document.createElement('<iframe name="' + iframeID + '" />');
+      } else {
+        iframe = document.createElement("iframe");
+        iframe.name = iframeID;
+      }
+
+      iframe.id = iframeID;
+      // TODO avoid IE 'clicks'
+      // ref: http://www.julienlecomte.net/blog/2007/11/30/
+      iframe.src = "#";
+      iframe.style.visibility = "hidden";
+      iframe.style.position = "absolute";
+      iframe.style.top = 0;
+      iframe.style.cssClass = "jshub-iframe";
+      document.body.appendChild(iframe);
+  
+      // Set the iframe as the submission target of the form, tied together by a timestamp
+      form.target = iframeID;
+
+      // And send it ...
+      form.submit();
+      jsHub.trigger("form-transport-sent", {
+        node: iframeID
+      });
+      return iframeID;
     };
-    
-    jsHub.dispatchViaForm = (new FormTransport()).dispatch;
-  })();
+  };
+  
+  jsHub.dispatchViaForm = (new FormTransport()).dispatch;
 
   Y.log('form-transport module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
@@ -3686,113 +3679,110 @@ YUI.add('form-transport', function (Y) {
 "use strict";
 
 YUI.add('plugins', function (Y) {
- 
-  (function () {
-   
-    var PluginAPI = {
-  
-      /** 
-       * Fix relative pathed URLs
-       * ref: http://www.sitepoint.com/blogs/2007/08/10/dealing-with-unqualified-href-values/
-       * TODO: pass in context to account for BASE or IFRAME variations
-       * @method qualifyHREF
-       * @param href {string} The href to qualify, e.g. page.html, ../page.html, /page.html
-       * @return {string}     Full qualified URI
-       */
-      qualifyHREF: function (href) {
-        //get the current safe document location object 
-        var loc = jsHub.safe('document').location; 
-  
-        //build a base URI from the protocol plus host (which includes port if applicable) 
-        var uri = loc.protocol + '//' + loc.host; 
-  
-        //if the input path is relative-from-here 
-        //just delete the ./ token to make it relative 
-        if (/^(\.\/)([^\/]?)/.test(href)) 
-        { 
-          href = href.replace(/^(\.\/)([^\/]?)/, '$2'); 
-        } 
-  
-        //if the input href is already qualified, copy it unchanged 
-        if (/^([a-z]+)\:\/\//.test(href)) 
-        { 
-          uri = href; 
-        } 
-  
-        //or if the input href begins with a leading slash, then it's base relative 
-        //so just add the input href to the base URI 
-        else if (href.substr(0, 1) === '/') 
-        { 
-          uri += href; 
-        } 
-  
-        //or if it's an up-reference we need to compute the path 
-        else if (/^((\.\.\/)+)([^\/].*$)/.test(href)) 
-        { 
-          //get the last part of the path, minus up-references 
-          var lastpath = href.match(/^((\.\.\/)+)([^\/].*$)/); 
-          lastpath = lastpath[lastpath.length - 1]; 
-  
-          //count the number of up-references 
-          var references = href.split('../').length - 1; 
-  
-          //get the path parts and delete the last one (this page or directory) 
-          var parts = loc.pathname.split('/'); 
-          parts = parts.splice(0, parts.length - 1); 
-  
-          //for each of the up-references, delete the last part of the path 
-          for (var i = 0; i < references; i++) 
-          { 
-            parts = parts.splice(0, parts.length - 1); 
-          } 
-  
-          //now rebuild the path 
-          var path = ''; 
-          for (var j = 0; j < parts.length; j++) 
-          { 
-            if (parts[j] !== '') 
-            { 
-              path += '/' + parts[j]; 
-            } 
-          } 
-          path += '/'; 
-  
-          //and add the last part of the path 
-          path += lastpath; 
-  
-          //then add the path and input href to the base URI 
-          uri += path; 
-        } 
-  
-        //otherwise it's a relative path, 
-        else 
-        { 
-          //calculate the path to this directory 
-          path = ''; 
-          parts = loc.pathname.split('/'); 
-          parts = parts.splice(0, parts.length - 1); 
-          for (var k = 0; k < parts.length; k++) 
-          { 
-            if (parts[k] !== '') 
-            { 
-              path += '/' + parts[k]; 
-            } 
-          } 
-          path += '/'; 
-  
-          //then add the path and input href to the base URI 
-          uri += path + href; 
-        } 
-  
-        //return the final uri 
-        return uri; 
-      }
-    };
-    /*
-     * Add the API as global functions on the core jsHub object
+    
+  var PluginAPI = {
+
+    /** 
+     * Fix relative pathed URLs
+     * ref: http://www.sitepoint.com/blogs/2007/08/10/dealing-with-unqualified-href-values/
+     * TODO: pass in context to account for BASE or IFRAME variations
+     * @method qualifyHREF
+     * @param href {string} The href to qualify, e.g. page.html, ../page.html, /page.html
+     * @return {string}     Full qualified URI
      */
-    Y.mix(jsHub, PluginAPI);
-  })();
+    qualifyHREF: function (href) {
+      //get the current safe document location object 
+      var loc = jsHub.safe('document').location; 
+
+      //build a base URI from the protocol plus host (which includes port if applicable) 
+      var uri = loc.protocol + '//' + loc.host; 
+
+      //if the input path is relative-from-here 
+      //just delete the ./ token to make it relative 
+      if (/^(\.\/)([^\/]?)/.test(href)) 
+      { 
+        href = href.replace(/^(\.\/)([^\/]?)/, '$2'); 
+      } 
+
+      //if the input href is already qualified, copy it unchanged 
+      if (/^([a-z]+)\:\/\//.test(href)) 
+      { 
+        uri = href; 
+      } 
+
+      //or if the input href begins with a leading slash, then it's base relative 
+      //so just add the input href to the base URI 
+      else if (href.substr(0, 1) === '/') 
+      { 
+        uri += href; 
+      } 
+
+      //or if it's an up-reference we need to compute the path 
+      else if (/^((\.\.\/)+)([^\/].*$)/.test(href)) 
+      { 
+        //get the last part of the path, minus up-references 
+        var lastpath = href.match(/^((\.\.\/)+)([^\/].*$)/); 
+        lastpath = lastpath[lastpath.length - 1]; 
+
+        //count the number of up-references 
+        var references = href.split('../').length - 1; 
+
+        //get the path parts and delete the last one (this page or directory) 
+        var parts = loc.pathname.split('/'); 
+        parts = parts.splice(0, parts.length - 1); 
+
+        //for each of the up-references, delete the last part of the path 
+        for (var i = 0; i < references; i++) 
+        { 
+          parts = parts.splice(0, parts.length - 1); 
+        } 
+
+        //now rebuild the path 
+        var path = ''; 
+        for (var j = 0; j < parts.length; j++) 
+        { 
+          if (parts[j] !== '') 
+          { 
+            path += '/' + parts[j]; 
+          } 
+        } 
+        path += '/'; 
+
+        //and add the last part of the path 
+        path += lastpath; 
+
+        //then add the path and input href to the base URI 
+        uri += path; 
+      } 
+
+      //otherwise it's a relative path, 
+      else 
+      { 
+        //calculate the path to this directory 
+        path = ''; 
+        parts = loc.pathname.split('/'); 
+        parts = parts.splice(0, parts.length - 1); 
+        for (var k = 0; k < parts.length; k++) 
+        { 
+          if (parts[k] !== '') 
+          { 
+            path += '/' + parts[k]; 
+          } 
+        } 
+        path += '/'; 
+
+        //then add the path and input href to the base URI 
+        uri += path + href; 
+      } 
+
+      //return the final uri 
+      return uri; 
+    }
+  };
+  /*
+   * Add the API as global functions on the core jsHub object
+   */
+  Y.mix(jsHub, PluginAPI);
 
   Y.log('plugins module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
