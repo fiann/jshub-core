@@ -1,5 +1,5 @@
 # add our classes from lib/
-require File.expand_path("#{File.dirname(__FILE__)}/../../lib/yuicompressor/yuicompressor")
+require File.expand_path("#{RAILS_ROOT}/lib/yuicompressor/yuicompressor")
 
 # invoke with optional [src] flag or list of files, e.g. files=src/hub.js,src/api.js
 namespace :jshub do 
@@ -15,10 +15,10 @@ namespace :jshub do
       else
         files = args.files.split(",")
       end
-
+      
       # remove any generated dist files as they come from the combo service
       files = files.grep /^(?:(?!dist).)*$/
-      
+
       # only use -debug files
       debug = files.grep /-debug\.js/
 
@@ -45,7 +45,7 @@ namespace :jshub do
       allok = compressor.compress(min)      
       if !allok
         fail "Comment strip errors"
-      end
+    end
 
     end
 
@@ -61,7 +61,7 @@ namespace :jshub do
       # the default jsHub dist
       res_min = Net::HTTP.start(url.host, url.port) do |http|
         http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-min.js')
-      end
+    end
       res_debug = Net::HTTP.start(url.host, url.port) do |http|
         http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-debug.js')
       end
@@ -71,14 +71,14 @@ namespace :jshub do
       File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub-debug.js", 'w') do |file|
         file.write res_debug.body
       end 
-
+    
       # the default jsHub+microformats dist
       res_min = Net::HTTP.start(url.host, url.port) do |http|
         http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-min.js&jshub_2.0.0/build/microformats/micriformats-min.js')
-      end
+  end  
       res_debug = Net::HTTP.start(url.host, url.port) do |http|
         http.get('/phploader/combo.php?jshub_2.0.0/build/jshub/jshub-debug.js&jshub_2.0.0/build/microformats/micriformats-min.js')
-      end
+end
       File.open("#{RAILS_ROOT}/app/javascripts/dist/yui/yui-combo-jshub+microformats-min.js", 'w') do |file|
         file.write res_min.body
       end      
