@@ -260,9 +260,8 @@ YUI.add('hub', function (Y) {
         obj[name] = conf;
       } else if (confType === 'object') {
         for (var field in conf) {
-          // jslint requires this but actually because its recursive we don't need
-          // to check the time
-          if (field) {
+          // we don't want inherited values
+          if (conf.hasOwnProperty(field)) {
             this.configure(key + "." + field, conf[field]);
           }
         }
