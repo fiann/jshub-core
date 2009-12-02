@@ -28,7 +28,7 @@ YUI.add('hub', function (Y) {
   
     /** Plugins that have registered with the hub. */
     plugins = [],
-
+	
     /**
      * a listener has an authentication token and a callback
      * @class Listener
@@ -237,18 +237,46 @@ YUI.add('hub', function (Y) {
       }
       return clone;
     };
-  };
+	
+	/**
+	 * Configure a value for the hub or a plugin.
+	 */
+    this.configure = function (key, conf) {
+      if (typeof key !== 'string') {
+        throw new Error('Invalid configuration key');
+      }
 
-  // clone config if it is set, discard anything else from existing
-  // jsHub global object
-  var config = (global.jsHub && global.jsHub.config) ? global.jsHub.config : {};
+      var name, base, obj, confType = typeof conf;
+
+      // the part after the final dot is the object key
+      name = key.match(/[^.]+$/)[0];
+
+      // the part up to the final dot is the namespace object
+      base = (key.indexOf('.') !== -1 ? key.match(/.+\./) : "");
+      base = ("Env.jsHub.config." + base).replace(/\.+/g, '.').replace(/\.$/, '');
+      obj = YUI.namespace(base);
+	  
+      if (confType === 'string' || confType === 'number' || confType === 'boolean') {
+        obj[name] = conf;
+      } else if (confType === 'object') {
+        for (var field in conf) {
+          // jslint requires this but actually because its recursive we don't need
+          // to check the time
+          if (field) {
+            this.configure(key + "." + field, conf[field]);
+          }
+        }
+      } else {
+        return obj[name];
+      }
+    };
+  };
 
   // jsHub object in global namespace
   jsHub = global.jsHub = new Hub();
-  jsHub.config = config;
 
   // Create an object to return safe instances of important variables
-  jsHub.safe = function(obj) {
+  jsHub.safe = function (obj) {
     var safeObject;
     if ('document' === obj) {
       safeObject = {
@@ -275,12 +303,13 @@ YUI.add('hub', function (Y) {
    * Get a timestamp for an event.
    * TODO add sequence / random component
    */
-  jsHub.safe.getTimestamp = function() {
+  jsHub.safe.getTimestamp = function () {
     return new Date().getTime();
   };
   
   Y.log('hub module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['yui'], 
+	
+}, '2.0.0', {
+  requires: ['yui'],
   after: ['yui']
 });

@@ -3,7 +3,11 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jquery/jquery-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
 
 <script type="text/javascript">
@@ -46,9 +50,10 @@
     }
   }));
   
-  // tests for hub events
+  // tests for jsHub.getPluginInfo(), which reads the metadata about installed
+  // plugins for the Inspector
   suite.add(new Y.Test.Case({
-    name: "jsHub plugin configuration",
+    name: "jsHub plugins installed",
     
     "test plugins are read correctly": function() {
       Y.Assert.isFunction(jsHub.getPluginInfo, "jsHub.getPluginInfo() is not a Function");
@@ -70,6 +75,39 @@
       Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name, 
 	    "Plugin metadata should not be changed from outside");
     }	
+  }));
+  
+  // tests for jsHub.getPluginInfo(), which reads the metadata about installed
+  // plugins for the Inspector
+  suite.add(new Y.Test.Case({
+    name: "jsHub configuration",
+    
+    "test configuration value can be set": function() {
+      Y.Assert.isFunction(jsHub.configure, "jsHub.configure() is not a Function");
+	  jsHub.configure("test", true);
+	  Y.Assert.areSame(true, jsHub.configure("test"), "Cannot retrieve boolean value");
+	  jsHub.configure("test", "one");
+	  Y.Assert.areSame("one", jsHub.configure("test"), "Cannot retrieve string value");
+	  jsHub.configure("test", 1);
+	  Y.Assert.areSame(1, jsHub.configure("test"), "Cannot retrieve integer value");
+    },
+	
+    "test namespaced configuration value can be set": function() {
+      Y.Assert.isFunction(jsHub.configure, "jsHub.configure() is not a Function");
+	  var key = "logger.level";
+	  jsHub.configure(key, true);
+	  Y.Assert.areSame(true, jsHub.configure(key), "Cannot retrieve boolean value");
+	  jsHub.configure(key, "one");
+	  Y.Assert.areSame("one", jsHub.configure(key), "Cannot retrieve string value");
+	  jsHub.configure(key, 1);
+	  Y.Assert.areSame(1, jsHub.configure(key), "Cannot retrieve integer value");
+	  // config should now be { "level" : 1 };
+	  var config = jsHub.configure("logger");
+	  Y.Assert.isObject(config, "Namespaced config should be an object");
+	  Y.ObjectAssert.hasKey("level", config, "Level property not present in config");
+	  Y.Assert.areSame(1, config.level, "Level property value is not correct"); 
+    }	
+		
   }));
 })();
 
