@@ -252,8 +252,11 @@ YUI.add('hub', function (Y) {
       base = ("Env.jsHub.config." + base).replace(/\.+/g, '.').replace(/\.$/, '');
       obj = YUI.namespace(base);
 	  
+      
       if (confType === 'string' || confType === 'number' || confType === 'boolean') {
         obj[name] = conf;
+      } else if (conf === null) {
+	  	delete obj[name];
       } else if (confType === 'object') {
         for (var field in conf) {
           // we don't want inherited values

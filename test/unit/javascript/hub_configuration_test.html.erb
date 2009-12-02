@@ -106,6 +106,19 @@
 	  Y.Assert.isObject(config, "Namespaced config should be an object");
 	  Y.ObjectAssert.hasKey("level", config, "Level property not present in config");
 	  Y.Assert.areSame(1, config.level, "Level property value is not correct"); 
+    },
+	
+    "test configuration value can be removed": function() {
+      Y.Assert.isFunction(jsHub.configure, "jsHub.configure() is not a Function");
+	  var key = "logger.level";
+	  jsHub.configure(key, "one");
+	  Y.Assert.areSame("one", jsHub.configure(key), "Cannot retrieve string value");
+	  jsHub.configure(key, null);
+	  Y.Assert.isUndefined(jsHub.configure(key), "Setting null should remove value");
+	  // config should now be { };
+	  var config = jsHub.configure("logger");
+	  Y.Assert.isObject(config, "Namespaced config should be an object");
+	  Y.Assert.isFalse(config.hasOwnProperty("length"), "Config should be empty");
     }	
 		
   }));
