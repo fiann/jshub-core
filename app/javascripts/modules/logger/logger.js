@@ -25,12 +25,8 @@ YUI.add('logger', function (Y) {
         window.console = {};
         for (var i = 0; i < names.length; ++i) {
           window.console[names[i]] = function () {
-            // Closure to keep 'i' correct if we use it in the function
-            // http://groups.google.com/group/comp.lang.javascript/browse_thread/thread/54ab90e2d778dc14
-            return function () {
               /* do nothing */
-            }; 
-          }(i);
+          };
         }
       }
       // Use whatever window.console is now available
