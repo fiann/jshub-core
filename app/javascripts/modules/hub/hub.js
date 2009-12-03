@@ -234,38 +234,55 @@ YUI.add('hub', function (Y) {
       return clone;
     };
 	
-	/**
-	 * Configure a value for the hub or a plugin.
-	 */
+  	/**
+  	 * Configure a value for the hub or a plugin.
+  	 * @param {String} key the name of the plugin. The first component is the name of the plugin
+  	 *        which the configuration is intended for, such as "logger". The key may also contain 
+  	 *        a dotted path to a specific configuration property, such as "logger.level".
+  	 */
     this.configure = function (key, conf) {
       if (typeof key !== 'string') {
         throw new Error('Invalid configuration key');
       }
+      
+      function notifyPlugin() {
+        var i, field = keys.slice(1, keys.length).join('.');
+        for (i = 0; i < plugins.length; i++) {
+          if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
+            plugins[i].configure(field, conf);
+            return;
+          }
+        }
+      };
 
-      var name, base, obj, confType = typeof conf;
-
-      // the part after the final dot is the object key
-      name = key.match(/[^.]+$/)[0];
+      var plugin, path, field, obj, keys = key.split('.'), confType = typeof conf;
+      
+      // the first component of the key is the plugin name
+      plugin = keys[0];
 
       // the part up to the final dot is the namespace object
-      base = (key.indexOf('.') !== -1 ? key.match(/.+\./) : "");
-      base = ("Env.jsHub.config." + base).replace(/\.+/g, '.').replace(/\.$/, '');
-      obj = YUI.namespace(base);
-	  
+      path = (keys.length < 3 ? "" : keys.slice(0, keys.length - 1).join('.'));
+      path = ("Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
+      obj = YUI.namespace(path);
       
+      // the part after the final dot is the object key
+      field = keys[keys.length - 1];
+
       if (confType === 'string' || confType === 'number' || confType === 'boolean') {
-        obj[name] = conf;
+        obj[field] = conf;
+        notifyPlugin();
       } else if (conf === null) {
-	  	delete obj[name];
+  	  	delete obj[field];
+        notifyPlugin();
       } else if (confType === 'object') {
-        for (var field in conf) {
+        for (var name in conf) {
           // we don't want inherited values
-          if (conf.hasOwnProperty(field)) {
-            this.configure(key + "." + field, conf[field]);
+          if (conf.hasOwnProperty(name)) {
+            this.configure(key + "." + name, conf[name]);
           }
         }
       } else {
-        return obj[name];
+        return obj[field];
       }
     };
   };
