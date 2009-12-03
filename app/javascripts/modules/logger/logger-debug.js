@@ -11,31 +11,24 @@
 
 YUI.add('logger', function (Y) {
 
-  (function () {    
-    // Initialise a logger instance based on what is available
-    if (window.debug && window.debug.log) {
-      // Use caching debug console wrapper
-      jsHub.logger = window.debug;
+  jsHub.logger = (function () {
+    var level = 9; // jsHub.configure('logger.level');
+    if (level && level >= 1) {
+      return window.debug;
     } else {
-      // firebugx based stub functions
-      // ref: http://getfirebug.com/firebug/firebugx.js
-      if (!window.console || !console.firebug) {
-        var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
-        "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];      
-        window.console = {};
-        for (var i = 0; i < names.length; ++i) {
-          window.console[names[i]] = function () {
-              /* do nothing */
-          };
-        }
+      var i, nullLogger = {},  
+        names = ["log", "debug", "info", "warn", "error", "assert", "dir", 
+		  "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace", 
+		  "profile", "profileEnd"];
+      for (i = 0; i < names.length; ++i) {
+        nullLogger[names[i]] = function () {};
       }
-      // Use whatever window.console is now available
-      jsHub.logger = window.console;
+	  return nullLogger;
     }
   })();
 
   Y.log('logger module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
-  requires: ['hub'],
-  after: ['debug']
+  requires: ['debug', 'hub'],
+  after: ['debug', 'hub']
 });
