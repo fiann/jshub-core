@@ -4,6 +4,7 @@
 
 <!-- jsHub dist file -->
 <%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
 
 <script type="text/javascript">
   YUI().use('jshub', 'microformats', function(Y, result) {
@@ -15,21 +16,15 @@
   });
 </script>
 
-<%= javascript_include_tag "/js/src/data-capture/hPage-plugin.js" %>
 <%= javascript_include_tag "/js/src/data-transport/mixpanel-get-plugin.js" %>
 <% end %>
 
 <% content_for :intro do %>
 <p>
-  This file tests <strong><a href="http://mixpanel.com/api/docs/" title="Mixpanel">Mixpanel 
-  data logging plugin</a> functionality to a server via a GET image request</strong>.
+  This file tests <strong><a href="http://mixpanel.com/api/docs/" title="Mixpanel">Mixpanel data logging plugin</a> functionality to a server via a GET image request</strong>.
 </p>
 <p>
-  This plugin should capture page view events, and ignore other event types.
-</p>
-<p>
-  See the <%= link_to "Mixpanel API", "http://mixpanel.com/api/docs/specification/" %>
-  for documentation on the expected data format.
+  This page tests the logic for extracting values from the html of the page, and clicking a button.
 </p>
 <% end %>
 
@@ -79,24 +74,28 @@
   suite.add(new Y.Test.Case({
     name: "Data dispatch",
     
-    "test page view events are dispatched": function() {
+    "test interaction events are dispatched": function() {
       var mock = new MockAPI();
-      jsHub.trigger("page-view", {});
+      jsHub.trigger("interaction", {});
       Y.Assert.areEqual(1, mock.count, "dispatchViaImage() should be called once");
     },
 
-    "test event properties are converted to Mixpanel API format": function() {
+    "test interaction event properties is converted to Mixpanel API format": function() {
       var mock = new MockAPI();
-      jsHub.trigger("page-view", {"name" : "homepage"});  
+      jsHub.trigger('interaction', {"event": 'test-interaction-event', "property1" : "value1", "property2" : "value2"});  
       var expectedData = {
+        _: 123456789,
         data: "eyJwcm9wZXJ0aWVzIjogeyJwcm9wZXJ0eTEiOiAidmFsdWUxIiwicHJvcGVydHkyIjogInZhbHVlMiIsInRva2VuIjogIjI5NWViNTRlNThhZDc5MGI0ZjJhM2YzMjg4NDk5NTkxIn0sImV2ZW50IjogInRlc3QtaW50ZXJhY3Rpb24tZXZlbnQifQ==",
         img: 1,
         ip: 1
       };
-	  console.log("Data: "+Y.JSON.stringify(mock.data.data));
+      Y.Assert.isNumber(expectedData._, mock.data._, "Timestamp is not a number");
+      Y.Assert.areEqual(expectedData._.length, mock.data._.length, "Timestamp is not the same length");
       Y.Assert.areEqual(expectedData.data, mock.data.data, "Value is not Base64 encoded correctly");
       Y.Assert.areEqual(expectedData.img, mock.data.img, "Value is not the same");
+      Y.Assert.isNumber(expectedData.img, mock.data.img, "Value is not a number");
       Y.Assert.areEqual(expectedData.ip, mock.data.ip, "Value is not the same");
+      Y.Assert.isNumber(expectedData.img, mock.data.img, "Value is not a number");      
     }
 
   }));    

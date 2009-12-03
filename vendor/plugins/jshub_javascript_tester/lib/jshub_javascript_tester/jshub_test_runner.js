@@ -11,6 +11,7 @@
   if (typeof test_file != 'string') {
     throw new java.lang.IllegalArgumentException("You must specify a HTML test file on the command line");
   }
+  test_file = test_file.replace(".html.erb", "");
 
   // Logging on/off
   var log_level = (args[1] === 'true');
@@ -215,6 +216,32 @@
         console.log("No YUI Test results collected")
         return
       }
+      
+      // Prepend filename to ensure unique names for reporting in Hudson when output with YUI JUnitXML format
+      function prependTestPageName (results) {
+        if (typeof results.type === 'undefined'){
+          console.debug('No more nested results');
+          return;
+        } 
+        switch (results.type) {
+          case "testcase":
+            //equivalent to testsuite in JUnit
+            results.name = test_file_name + " - " + results.name;
+          case "test":
+          case "testsuite":
+          case "report":
+            // Top level, descend into object and recurse
+            Y.Object.each(results, function(value, key, object){
+              if (Y.Lang.isObject(value) && !Y.Lang.isArray(value)){
+                prependTestPageName(value);
+              }
+            });
+            break;
+        }
+        return results;
+      }      
+      data.results = prependTestPageName(data.results);
+      
       // Use YUI3 Test built in JUnitXML formatter
       var xml = Y.Test.Format.JUnitXML(data.results);
 

@@ -20,7 +20,7 @@
   <!-- Create a test suite for the page -->
   <script type="text/javascript">
     // Create new YUI instance, and populate it with the required modules
-    var Y = YUI({debug:true}).use("test", "node", "json");
+    var Y = YUI({debug:true}).use("*");
     var suite = new Y.Test.Suite("<%= h title %>");
   </script>
 </head>

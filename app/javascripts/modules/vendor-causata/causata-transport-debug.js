@@ -42,7 +42,7 @@ YUI.add("causata-transport", function (Y) {
      * @param event {Object} the event to serialize and send to the server
      * @property metadata
      */
-    transport = function(event) {
+    transport = function (event) {
     
       jsHub.logger.group("Causata output: sending '%s' event", event.type);
       
@@ -78,7 +78,7 @@ YUI.add("causata-transport", function (Y) {
       /** 
        * Convert an object to a JSON representation
        */
-      jsHub.safe.toJSONString = function(object) {
+      jsHub.safe.toJSONString = function (object) {
         if (Y.JSON) {
           return Y.JSON.stringify(object, null, 2);
         }
@@ -89,6 +89,8 @@ YUI.add("causata-transport", function (Y) {
         event: jsHub.safe.toJSONString(outputEvent)
       };
       
+      var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
+    
       // dispatch via API function
       jsHub.dispatchViaForm("POST", config.server_url, outputData);
       jsHub.logger.groupEnd();

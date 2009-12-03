@@ -4,7 +4,6 @@
 
 <!-- jsHub dist file -->
 <%= javascript_include_tag :'jshub+microformats-min' %>
-<%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
 <%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
 
 <script type="text/javascript">
@@ -16,8 +15,8 @@
     }
   });
 </script>
-
 <%= javascript_include_tag "/js/src/data-capture/google-analytics-markup-plugin.js" %>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -91,11 +90,7 @@ $(document).ready(function () {
   <h3>Example 1: no	explicit page name</h3>
   <p>The google tag will record the page URL</p>
   <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
+    var pageTracker = _gat._getTracker("UA-XXXXXXX-1");
     pageTracker._trackPageview();
   </script>
 </div>
@@ -108,8 +103,8 @@ $(document).ready(function () {
       Y.Assert.areEqual(window.location.pathname, data['page-name'], 'Page name should default to the window.location.pathname if it is not explicitly stated');
     },
 	
-	// unlike hpage plugin the GA plugin defaults to pathname rather than leaving it blank, so it
-	// should explicitly state the source
+	  // unlike hpage plugin the GA plugin defaults to pathname rather than leaving it blank, so it
+	  // should explicitly state the source
     "test source metadata is applied to default fields": function() {
       var data = suite.parse("#example1");
       Y.Assert.areEqual('location.pathname', data['page-name-source'], 'name-source is not correct');
@@ -121,11 +116,7 @@ $(document).ready(function () {
   <h3>Example 2: explicit page name</h3>
   <p>The google tag will record the name "Test page"</p>
   <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
+    var pageTracker = _gat._getTracker("UA-XXXXXXX-1");
     pageTracker._trackPageview("Test page");
   </script>
 </div>
@@ -140,7 +131,7 @@ $(document).ready(function () {
 	
     "test source metadata is applied to explicit fields": function() {
       var data = suite.parse("#example2");
-	  var pluginId = 'google-analytics-markup';
+	    var pluginId = 'google-analytics-markup';
       Y.Assert.areEqual(pluginId, data['page-name-source'], 'name-source is not correct');
     }
   }));
@@ -156,17 +147,19 @@ $(document).ready(function () {
     This should throw a warning event that the inspector can detect.
   </p>
   <script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    // document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-    var pageTracker = _gat._getTracker("UA-8152756-1");
+    var pageTracker = _gat._getTracker("UA-XXXXXXX-1");
     pageTracker._trackPageview("Test page");
   </script>
 </div>
 <script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Check error messages",
+
+    _should: {
+      ignore: {
+        "test error thrown for duplicate values": true
+      }
+    },
     
     "test error thrown for duplicate values": function() {
       var errorData = null, errors = 0;
@@ -181,7 +174,7 @@ $(document).ready(function () {
       Y.Assert.areEqual("hPage-plugin", errorData.fields.name.previous.source, 'Wrong previous plugin source');
       Y.Assert.areEqual("Test page", errorData.fields.name.found, 'Wrong value in error event from GA plugin');
       // and check the real page view event
-	  Y.Assert.areEqual("Test page", data['page-name'], 'Page name should contain the last defined value');
+	    Y.Assert.areEqual("Test page", data['page-name'], 'Page name should contain the last defined value');
     }
   }));
 </script> 
@@ -189,32 +182,36 @@ $(document).ready(function () {
 <div id="example4">
   <h3>Example 4: javascript mediated event</h3>
   <p>
-  	The text contains a <a href="#" onclick="clickHandlersTriggered=true; pageTracker._trackPageview('Link click');">link
-	with tracking</a>, when it is clicked it should be recorded by GA.
+  	The text contains a <a href="#" onclick="pageTracker._trackPageview('Link click'); window.clickHandlersTriggered=true;">link
+	  with tracking</a>, when it is clicked it should be recorded by GA.
   </p>
 </div>
+<script type="text/javascript">
+  var pageTracker = _gat._getTracker("UA-XXXXXXX-1");
+</script>
 <script type="text/javascript">
   suite.add(new Y.Test.Case({
     name: "Check post-load events",
     
+    _should: {
+      ignore: {
+        "test instrumented links": true
+      }
+    },
+    
     "test instrumented links": function() {
       window.clickHandlersTriggered = false;
-	  var data, events = 0;
+	    var data, events = 0;
       jsHub.bind("page-view", "unittest", function(evt) {
         data = evt.data;
         events++;
       });
       
       $('#example4 a').click();
-	  
-      // see Ticket #411
-	  // can't run this test in Rhino as $(document).ready() has not fired
-	  if (window.domReadyFired) {
-        Y.Assert.isTrue(window.clickHandlersTriggered, "The onClick handler was not triggered");
-        Y.Assert.areEqual(1, events, 'Click should be recorded');
-        Y.Assert.areEqual("Link click", data['page-name'], 'Wrong page name in event');
-      }
-	  
+  
+      Y.Assert.isTrue(window.clickHandlersTriggered, "The onClick handler was not triggered");
+      Y.Assert.areEqual(1, events, 'Click should be recorded');
+      Y.Assert.areEqual("Link click", data['page-name'], 'Wrong page name in event');	  
     }
   }));
   

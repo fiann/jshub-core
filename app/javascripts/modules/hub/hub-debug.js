@@ -301,10 +301,17 @@ YUI.add('hub', function (Y) {
       safeObject = {
         // no document DOM properties are available
         location: {
+          hash : document.location.hash,
+          // includes the port if present, e.g. localhost:8080
+          host : document.location.host,
+          // only the domain name, e.g. localhost
+          hostname : document.location.hostname,
           href: document.location.href,
-          host: document.location.host,
+          pathname : document.location.pathname,
+          port : document.location.port,
           protocol: document.location.protocol,
-          pathname: document.location.pathname
+          // includes the query string if present, e.g. ?foo=bar
+          search : document.location.search
         },
         title: document.title,
         referrer: (document.referrer === null) ? "" : document.referrer,

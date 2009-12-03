@@ -16,6 +16,9 @@ development: &non_production_settings
     :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
     :base_url: http://localhost:3000/
+  :combo:
+    # URL prefix to the combo/CDN/api server, e.g. http://apis.jshub.org/
+    :base_url: http://localhost/phploader/
       
 test:
   <<: *non_production_settings

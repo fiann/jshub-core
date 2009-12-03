@@ -54,9 +54,10 @@ end
 
 # additional custom tasks viewable with 'cap -T'
 namespace :custom do
-  desc 'Lint the initial dist JS files. If they do not pass then the whole application is rolled back.'
+  desc 'Generate and Lint the initial dist JS files. If they do not pass then the whole application is rolled back.'
   task :dist, :roles => [:app] do
     transaction do
+      run "cd #{current_path} && rake jshub:javascripts:generate"
       run "cd #{current_path} && rake jshub:javascripts:lint"
     end
   end
