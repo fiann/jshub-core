@@ -1,44 +1,36 @@
 <% set_title "Causata < Data transport" %>
 
-<% content_for :javascripts do %>  
-
-<!-- jsHub config block -->
-<script type="text/javascript">
-(function() {
-  var global = this;
-  global.jsHub = { config : {} };
-  
-  // Configuration for Causata transport plugin
-  global.jsHub.config['causata-transport'] = {
-    url: "test.causata.com",
-    account: "1234"
-  };
-})();
-</script>
+<% content_for :javascripts do %>
 
 <!-- jsHub dist file -->
 <%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/json/json-stringify.js" %>
 <%= javascript_include_tag "/js/src/modules/vendor-causata/causata-transport-debug.js" %>
 
+<!-- jsHub config block -->
 <script type="text/javascript">
-  YUI().use('jshub', 'causata-transport', function(Y, result) {
-    if (!result.success) {
-        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
-    } else {
-        Y.log('Loaded: jsHub', 'info', 'jsHub');
-    }
+
+YUI().use('jshub', 'causata-transport', function(Y) {
+
+  // Configuration for Causata transport plugin
+  jsHub.configure('causata-transport', {
+    server_url: "test.causata.com",
+    account_id: "1234"
   });
+
+});
 </script>
+
 
 <% end %>
 
 <% content_for :intro do %>
 <p>
-  This file tests <strong><a href="http://www.causata.com/" title="Causata">Causata 
+  This file tests <strong><a href="http://www.causata.com/" title="Causata">Causata
   data logging plugin</a> functionality to a server via a form POST request</strong>.
 </p>
 <p>
@@ -46,12 +38,12 @@
 </p>
 <p>
   See the <%= link_to 'Causata wireformat documentation', 'https://intra.causata.com/code/causata/wiki/JavascriptTag/WireFormat' %>
-  for more information	
+  for more information
 </p>
 <% end %>
 
 <script language="javascript" type="text/javascript">
-  /* 
+  /*
    * Create a mock for the API function
    */
   var MockAPI = function() {
@@ -61,19 +53,19 @@
       self.count++;
       self.url = url;
       self.data = data;
-    };    
+    };
     jsHub.dispatchViaForm = self.dispatchViaForm;
   };
-</script>  
+</script>
 <script language="javascript" type="text/javascript">
-  /* 
+  /*
    * Check the browser environment for required JS libraries and other
    * supporting functionality to avoid false test failure results due to
    * mis-configuration, etc
    */
   suite.add(new Y.Test.Case({
     name: "Environment check",
-    
+
     "test required test dependencies": function() {
       Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
@@ -81,14 +73,14 @@
         Y.Assert.isNotUndefined(lib.JSON, "The JSON library is required");
       });
     },
-    
+
     "test jsHub API dependencies": function() {
       Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
       Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
-</script>  
+</script>
 
 <!-- Any HTML you may require for your tests to work properly -->
 <div id="example1">
@@ -97,39 +89,67 @@
   // tests for hub events
   suite.add(new Y.Test.Case({
     name: "Data dispatch",
-    
+
     "test page view events are dispatched": function() {
-      var mock = new MockAPI();
+      // override the default method with a Mock implementation
+      Y.Mock.expect(jsHub, {
+        method : "dispatchViaForm",
+        args : [ Y.Mock.Value.String, Y.Mock.Value.String, Y.Mock.Value.Object ]
+      })
       jsHub.trigger("page-view", {});
-      Y.Assert.areEqual(1, mock.count, "dispatchViaForm() should be called once");
+      Y.Mock.verify(jsHub);
+    },
+
+    "test http method": function() {
+      // override the default method with a Mock implementation
+      Y.Mock.expect(jsHub, {
+        method : "dispatchViaForm",
+        args : [ "POST", Y.Mock.Value.String, Y.Mock.Value.Object ]
+      })
+      jsHub.trigger("page-view", {});
+      Y.Mock.verify(jsHub);
+    },
+
+    "test server url is correctly configured": function() {
+      // override the default method with a Mock implementation
+      Y.Mock.expect(jsHub, {
+        method : "dispatchViaForm",
+        args : [ Y.Mock.Value.String, "test.causata.com", Y.Mock.Value.Object ]
+      })
+      jsHub.trigger("page-view", {});
+      Y.Mock.verify(jsHub);
     },
 
     "test event properties are converted to Causata API format": function() {
-      var mock = new MockAPI(), timestamp = new Date().getTime();
-      jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);  
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      }
+      jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
       var expectedData = {
         "eventType" : "page-view",
-		"timestamp" : timestamp,
+        "timestamp" : timestamp,
         "attributes" : [
-		  { "name" : "page-name", "value" : "homepage" }
-		]
+          { "name" : "page-name", "value" : "homepage" }
+        ]
       };
-	  var data = Y.JSON.parse(mock.data.event);
-	  for (var field in expectedData) {
-		Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-		if (field !== "attributes") {
-		  Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-		}
-	  }
-	  // get a sensible error message
-	  Object.prototype.toString = function () {
-	  	return Y.JSON.stringify(this);
-	  };
-	  Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, function (one, two) {
-	  	return two.name === one.name && two.value === one.value;
-	  }, "Event attributes are not correct");
-    }
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+        if (field !== "attributes") {
+          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+        }
+      }
+      // get a sensible error message
+      Object.prototype.toString = function () {
+        return Y.JSON.stringify(this);
+      };
+      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, function (one, two) {
+          return two.name === one.name && two.value === one.value;
+        }, "Event attributes are not correct");
+      }
 
-  }));    
+  }));
 </script>
 

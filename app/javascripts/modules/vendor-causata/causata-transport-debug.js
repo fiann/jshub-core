@@ -1,7 +1,3 @@
-/* 
-Comment kept ?
-*/
-
 /** 
  * A plugin to send output to the Causata system, using the POST transport and 
  * in JSON format expected by Causata.
@@ -16,13 +12,12 @@ Comment kept ?
 "use strict";
 
 YUI.add("causata-transport", function (Y) {
-  
-  try {
-  
+	
     /**
      * Metadata about this plug-in for use by UI tools and the Hub
      */
     var metadata = {
+      id: 'causata-transport',
       name: 'Causata Transport Plugin',
       version: 0.1,
       vendor: 'Causata Inc'
@@ -34,46 +29,13 @@ YUI.add("causata-transport", function (Y) {
     boundEvents = ['page-view', 'product-view', 'authentication', 'checkout'],  
 
     /**
-     * The authentication token for the plugin, which must exactly match the
-     * data-visibility configured in the html page.
-     */
-    token = "causata",  
-	
-    /**
      * The config object for this plugin
      */
-    config = (function() {
-      if (jsHub && jsHub.config && jsHub.config['causata-transport']) {
-        return jsHub.config['causata-transport'];
-      } else {
-        throw new Error("Missing configuration object");
-      }
-    })(),
-
-    /**
-     * The URL of the server to send data to.
-     * @required
-     */
-    server_url = (function() {
-      if (config.url) {
-        return config.url;
-      } else {
-        throw new Error("Missing server URL");
-      }
-    })(),  
-
-    /**
-     * The customer's account ID to send data to.
-     * @required
-     */
-    account_id = (function() {
-      if (config.account) {
-        return config.account;
-      } else {
-        throw new Error("Missing account ID");
-      }
-    })(),  
-
+    config = {
+      server_url : null,
+      account_id : null
+    },
+    
     /**
      * Event driven anonymous function bound to 'page-view'
      * @method transport
@@ -83,6 +45,16 @@ YUI.add("causata-transport", function (Y) {
     transport = function(event) {
     
       jsHub.logger.group("Causata output: sending '%s' event", event.type);
+      
+      // cannot send message if server_url is not configured
+      if (typeof config.server_url !== 'string') {
+        jsHub.trigger('plugin-error', {
+          message : "Server url not specified",
+          source : metadata.id
+        });
+        jsHub.logger.groupEnd();
+        return;
+      }
       
       /*
        * Serialize data as expected format, see
@@ -118,29 +90,35 @@ YUI.add("causata-transport", function (Y) {
       };
       
       // dispatch via API function
-      jsHub.dispatchViaForm("POST", server_url, outputData);
+      jsHub.dispatchViaForm("POST", config.server_url, outputData);
       jsHub.logger.groupEnd();
+    },
+    
+    /**
+     * Receive a configuration update
+     */
+    configure = function (key, value) {
+      config[key] = value;
     };
     
+    /*
+     * First trigger an event to show that the plugin is being registered
+     */
+    metadata.configure = configure;
+    jsHub.trigger("plugin-initialization-start", metadata);
+
     /*
      * Bind the plugin to the Hub so as to run when events we are interested in occur
      */
     for (var i = 0; i < boundEvents.length; i++) {
-      jsHub.bind(boundEvents[i], "causata", transport);
+      jsHub.bind(boundEvents[i], metadata.id, transport);
     }
     
     // lifecycle notification
     jsHub.trigger("plugin-initialization-complete", metadata);
     
-  } catch (e) {
-    jsHub.logger.warn("Causata plugin failed to initialize", e);
-    
-    // lifecycle notification
-    metadata.error = e;
-    jsHub.trigger("plugin-initialization-failed", metadata);
-  }
 
 }, "2.0.0", {
-  requires: ["hub", "form-transport", "json-stringify"], 
-  after: ["hub", "form-transport", "json-stringify"]
+  requires: ["hub", "logger", "form-transport", "json-stringify"], 
+  after: ["hub", "logger", "form-transport", "json-stringify"]
 });
