@@ -86,6 +86,7 @@ YUI.add('form-transport', function (Y) {
       formID = "jshub-form-" + timestamp;        
       form = document.createElement("form");
       form.id = formID;
+      // FIXME form.method doesn't seem to work in our Envjs - need to update to 1.1?
       form.method = method;
       form.action = url;
       form.style.visibility = "hidden";
