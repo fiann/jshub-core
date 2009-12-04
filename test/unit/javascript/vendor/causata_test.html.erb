@@ -44,21 +44,6 @@ YUI().use('jshub', 'causata-transport', function(Y) {
 
 <script language="javascript" type="text/javascript">
   /*
-   * Create a mock for the API function
-   */
-  var MockAPI = function() {
-    var self = this;
-    self.count = 0;
-    self.dispatchViaForm = function(method, url, data) {
-      self.count++;
-      self.url = url;
-      self.data = data;
-    };
-    jsHub.dispatchViaForm = self.dispatchViaForm;
-  };
-</script>
-<script language="javascript" type="text/javascript">
-  /*
    * Check the browser environment for required JS libraries and other
    * supporting functionality to avoid false test failure results due to
    * mis-configuration, etc
