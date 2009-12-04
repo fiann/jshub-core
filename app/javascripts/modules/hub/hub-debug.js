@@ -250,13 +250,15 @@ YUI.add('hub', function (Y) {
       }
       
       function notifyPlugin() {
-        var i, field = keys.slice(1, keys.length).join('.');
-        for (i = 0; i < plugins.length; i++) {
-          if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
-            plugins[i].configure(field, conf);
-            return;
+        Y.use(plugin, function () {
+          var i, field = keys.slice(1, keys.length).join('.');
+          for (i = 0; i < plugins.length; i++) {
+            if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
+              plugins[i].configure(field, conf);
+              return;
+            }
           }
-        }
+        });
       };
 
       var plugin, path, field, obj, keys = key.split('.'), confType = typeof conf;

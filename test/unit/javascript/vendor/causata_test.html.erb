@@ -14,7 +14,7 @@
 <!-- jsHub config block -->
 <script type="text/javascript">
 
-YUI().use('jshub', 'causata-transport', function(Y) {
+YUI().use('jshub', function(Y) {
 
   // Configuration for Causata transport plugin
   jsHub.configure('causata-transport', {
@@ -63,6 +63,17 @@ YUI().use('jshub', 'causata-transport', function(Y) {
       Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
       Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    },
+
+    "test Causata plugin initialized": function() {
+      var found = false, i, plugins = jsHub.getPluginInfo();
+      for (i = 0; i < plugins.length; i++) {
+        if (plugins[i].id === 'causata-transport' && /Causata/.test(plugins[i].name)) {
+          found = true;
+          break;
+        }
+      }
+      Y.Assert.isTrue(found, "Causata plugin has not been registered");
     }
   }));
 </script>
