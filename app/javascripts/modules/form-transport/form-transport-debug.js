@@ -8,7 +8,7 @@
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub */
+/*global YUI, jsHub, ActiveXObject */
 "use strict";
 
 YUI.add('form-transport', function (Y) {
@@ -54,7 +54,7 @@ YUI.add('form-transport', function (Y) {
       /*
        * This data transport only supports POST or GET
        */
-      if (!(/^POST|GET$/i.test(method)) || !url || (/^javascript:|file:/i.test(url)) ) {
+      if (!(/^POST|GET$/i.test(method)) || !url || (/^javascript:|file:/i.test(url))) {
         return false;
       }
       data = data || {};
@@ -140,16 +140,16 @@ YUI.add('form-transport', function (Y) {
         jsHub.logger.log('IE specific branch to avoid navigational clicks');
         try {
           if ("ActiveXObject" in window) {
-              doc = new ActiveXObject("htmlfile");
-              doc.open();
-              doc.write('<html><head><\/head><body><\/body><\/html>');
-              doc.body.innerHTML = form.outerHTML + iframe.outerHTML;
-              doc.close();
-              // get new references to the elements for binding events too, etc
-              form = doc.getElementById(form.id);
-              iframe = doc.getElementById(iframe.id);
+            doc = new ActiveXObject("htmlfile");
+            doc.open();
+            doc.write('<html><head><\/head><body><\/body><\/html>');
+            doc.body.innerHTML = form.outerHTML + iframe.outerHTML;
+            doc.close();
+            // get new references to the elements for binding events too, etc
+            form = doc.getElementById(form.id);
+            iframe = doc.getElementById(iframe.id);
 
-              jsHub.logger.log('IE ActiveXObject("htmlfile") created: %o', doc);
+            jsHub.logger.log('IE ActiveXObject("htmlfile") created: %o', doc);
           }
         } catch (e) {
           jsHub.logger.error('IE ActiveXObject("htmlfile") error: %o', e.message);
@@ -162,12 +162,12 @@ YUI.add('form-transport', function (Y) {
       }                         
 
       // store references
-      htmlelements = {"doc": doc , "form": form, "iframe": iframe}
+      htmlelements = {"doc": doc, "form": form, "iframe": iframe};
 
       // give us an opportunity to know when the transport is complete 
       iframe.transportState = 0;
       // onload does not mean the iframe page itself has loaded
-      iframe.onload = function(){ 
+      iframe.onload = function () { 
         jsHub.trigger("form-transport-complete", htmlelements);
       };
   
