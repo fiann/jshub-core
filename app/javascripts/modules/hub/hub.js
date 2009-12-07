@@ -264,7 +264,7 @@ YUI.add('hub', function (Y) {
 
       // the part up to the final dot is the namespace object
       path = (keys.length < 3 ? "" : keys.slice(0, keys.length - 1).join('.'));
-      path = ("Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
+      path = ("YUI.Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
       obj = YUI.namespace(path);
       
       // the part after the final dot is the object key
