@@ -67,7 +67,7 @@
 
     "test return is an object": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
@@ -76,7 +76,7 @@
 
     "test return contains references to generated elements": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isTrue(/^jshub-form-/i.test(result.form.id), "jsHub.dispatchViaForm() form.id is not correct");
@@ -86,7 +86,7 @@
     "test form contains fields": function() {
       // IE6 can loose input names when in an ActiveXObject('htmlfile');
       var method = 'POST',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
@@ -95,7 +95,7 @@
 
     "test iframe has a transportState": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isNumber(result.iframe.transportState, "jsHub.dispatchViaForm() iframe.transportState is not a number");
@@ -104,7 +104,7 @@
     /* Error conditions */
     "test reject unsafe methods": function() {
       var method = 'PUT',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject PUT method");
@@ -133,7 +133,7 @@
 
     "test skip functions in the data object": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/',
+        url = 'http://test.causata.com/rtw',
         data = { field1 : "value1", field2 : "value2", funct: function () { doStuff() } };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isUndefined(result.form.funct, "jsHub.dispatchViaForm() should skip functions");
