@@ -8,7 +8,7 @@
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub */
+/*global YUI, jsHub, ActiveXObject */
 "use strict";
 
 YUI.add('form-transport', function (Y) {
@@ -35,17 +35,27 @@ YUI.add('form-transport', function (Y) {
      * be either a string, a number, or an array of strings / numbers, in which case multiple
      * form fields with the same name will be created. Any parameters which do not match this
      * expected format will be ignored.
-     * @return the ID of the iframe that has been created
+     * @return Object with references to the document, form and iframe that has been created
      */
     this.dispatch = function (method, url, data) {
-      var timestamp, form, formID, appendField, iframe, iframeID, field, array, i;
+      var timestamp, 
+        doc, 
+        form, 
+        formID, 
+        appendField,
+        input,
+        iframe, 
+        iframeID, 
+        field, 
+        array, 
+        i,
+        htmlelements;
       
       /*
        * This data transport only supports POST or GET
-       * TODO: validate url for security reasons, reject javascript: protocol etc
        */
-      if (!(/^POST|GET$/i.test(method)) || !url) {
-        return;
+      if (!(/^POST|GET$/i.test(method)) || !url || (/^javascript:|file:/i.test(url))) {
+        return false;
       }
       data = data || {};
       timestamp = jsHub.safe.getTimestamp();
@@ -56,11 +66,17 @@ YUI.add('form-transport', function (Y) {
        * @param {Object} name
        * @param {Object} value
        */
-      appendField = function (form, name, value) {
+      appendField = function (form, prop, value) {
+        var input;
         if ("string" === typeof value || "number" === typeof value) {
-          var input = document.createElement("input");
+          //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
+          if (Y.UA.ie) {
+            input = document.createElement('<input name="' + prop + '" />');
+          } else {          
+            input = document.createElement("input");
+            input.name = prop;
+          }
           input.type = "hidden";
-          input.name = name;
           input.value = value;
           form.appendChild(input);
         }
@@ -70,13 +86,14 @@ YUI.add('form-transport', function (Y) {
       formID = "jshub-form-" + timestamp;        
       form = document.createElement("form");
       form.id = formID;
+      // FIXME form.method doesn't seem to work in our Envjs - need to update to 1.1?
       form.method = method;
       form.action = url;
       form.style.visibility = "hidden";
       form.style.position = "absolute";
       form.style.top = 0;
 
-      //remove any existing fields
+      // remove any existing fields
       while (form.hasChildNodes()) {
         form.removeChild(form.lastChild);
       }
@@ -94,7 +111,6 @@ YUI.add('form-transport', function (Y) {
           appendField(form, field, data[field]);
         }
       }
-      document.body.appendChild(form);
 
       // Create the iframe
       iframeID = "jshub-iframe-" + timestamp;        
@@ -107,24 +123,62 @@ YUI.add('form-transport', function (Y) {
       }
 
       iframe.id = iframeID;
-      // TODO avoid IE 'clicks'
-      // ref: http://www.julienlecomte.net/blog/2007/11/30/
       iframe.src = "#";
       iframe.style.visibility = "hidden";
       iframe.style.position = "absolute";
       iframe.style.top = 0;
       iframe.style.cssClass = "jshub-iframe";
-      document.body.appendChild(iframe);
+ 
+      /*
+        add the generated elements to the document, or htmlfile object for IE to stop navigation clicks    
+        NOTE: htmlfile wont work in IE Server 2003 see slides  http://www.slideshare.net/joewalker/comet-making-the-web-a-2way-medium
+        ref: http://www.julienlecomte.net/blog/2007/11/30/
+        ref: http://cometdaily.com/2007/11/18/ie-activexhtmlfile-transport-part-ii/      
+        ref: http://grack.com/blog/2009/07/28/a-quieter-window-name-transport-for-ie/
+        TODO: may need CollectGarbage(); see thread http://groups.google.com/group/orbited-users/browse_thread/thread/e337ac03d0c9f13f
+      */
+      if (Y.UA.ie) {
+        jsHub.logger.log('IE specific branch to avoid navigational clicks');
+        try {
+          if ("ActiveXObject" in window) {
+            doc = new ActiveXObject("htmlfile");
+            doc.open();
+            doc.write('<html><head><\/head><body><\/body><\/html>');
+            doc.body.innerHTML = form.outerHTML + iframe.outerHTML;
+            doc.close();
+            // get new references to the elements for binding events too, etc
+            form = doc.getElementById(form.id);
+            iframe = doc.getElementById(iframe.id);
+
+            jsHub.logger.log('IE ActiveXObject("htmlfile") created: %o', doc);
+          }
+        } catch (e) {
+          jsHub.logger.error('IE ActiveXObject("htmlfile") error: %o', e.message);
+        }
+        
+      } else {
+        doc = document;
+        doc.body.appendChild(form);
+        doc.body.appendChild(iframe);
+      }                         
+
+      // store references
+      htmlelements = {"doc": doc, "form": form, "iframe": iframe};
+
+      // give us an opportunity to know when the transport is complete 
+      iframe.transportState = 0;
+      // onload does not mean the iframe page itself has loaded
+      iframe.onload = function () { 
+        jsHub.trigger("form-transport-complete", htmlelements);
+      };
   
       // Set the iframe as the submission target of the form, tied together by a timestamp
-      form.target = iframeID;
-
-      // And send it ...
-      form.submit();
-      jsHub.trigger("form-transport-sent", {
-        node: iframeID
-      });
-      return iframeID;
+      form.target = iframe.id;
+      // Submit the form, sent via the iframe
+      form.submit();            
+      jsHub.trigger("form-transport-sent", htmlelements);
+            
+      return htmlelements;
     };
   };
   

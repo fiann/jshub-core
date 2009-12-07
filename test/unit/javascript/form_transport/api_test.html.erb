@@ -1,0 +1,148 @@
+<% set_title "Activexobject < Data transport" %>
+<% content_for :javascripts do %>
+
+<!-- jsHub dist file -->
+<!-- jsHub dist file -->
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/form-transport/form-transport-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');
+    }
+  });
+</script>
+
+<% end %>
+<% content_for :intro do %>
+<p>
+  This page tests methods for cross-domain data transport via form submission to an iframe.
+</p>
+<p>
+  Due to the Same-Origin Policy a visual check on the Request and Response body using tools such as Firbug, IEWatch, an HTTP proxy or browser developer tools is recommended.
+</p>
+
+<% end %>
+<!-- Any HTML you may require for your tests to work properly -->
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /*
+   * Form Transport uses different methods for IE vs other browsers to avoid navigational clicks
+   */
+  suite.add(new Y.Test.Case({
+    name: "Form Transport",
+    
+    "test method exists": function() {
+      Y.Assert.isFunction(jsHub.dispatchViaForm, "jsHub.dispatchViaForm() is not a Function");
+    },
+
+    "test return is an object": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
+      Y.Assert.isObject(result, "jsHub.dispatchViaForm() return value is not an Object");
+    },
+
+    "test return contains references to generated elements": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isTrue(/^jshub-form-/i.test(result.form.id), "jsHub.dispatchViaForm() form.id is not correct");
+      Y.Assert.isTrue(/^jshub-iframe-/i.test(result.iframe.id), "jsHub.dispatchViaForm() iframe.id is not correct");
+    },
+
+    "test form contains fields": function() {
+      // IE6 can loose input names when in an ActiveXObject('htmlfile');
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+    },
+
+    "test iframe has a transportState": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isNumber(result.iframe.transportState, "jsHub.dispatchViaForm() iframe.transportState is not a number");
+    },
+    
+    /* Error conditions */
+    "test reject unsafe methods": function() {
+      var method = 'PUT',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject PUT method");
+
+      method = 'DELETE',
+      result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject DELETE method");
+
+      method = 'CUSTOM',
+      result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject CUSTOM method");
+
+    },
+    
+    "test reject unsafe protocols in urls": function() {
+      var method = 'POST',
+        url = 'file:///C:/some/path',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject file:/// protocols");
+
+      url = 'javascript:alert("unsafe")',
+      result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject javascript: protocol");
+    },
+
+    "test skip functions in the data object": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2", funct: function () { doStuff() } };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isUndefined(result.form.funct, "jsHub.dispatchViaForm() should skip functions");
+    }
+
+
+
+  }));
+})();
+
+  
+</script> 
