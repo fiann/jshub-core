@@ -61,6 +61,12 @@
   
   suite.add(new Y.Test.Case({
     name: "Form Transport",
+
+    _should: {
+      ignore: {
+        "test create rapid clicks": (navigator.userAgent.match(/Rhino/))
+      }
+    },
     
     "test method exists": function() {
       Y.Assert.isFunction(jsHub.dispatchViaForm, "jsHub.dispatchViaForm() is not a Function");
