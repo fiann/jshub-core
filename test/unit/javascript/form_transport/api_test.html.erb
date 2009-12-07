@@ -26,7 +26,7 @@
   This page tests methods for cross-domain data transport via form submission to an iframe.
 </p>
 <p>
-  Due to the Same-Origin Policy a visual check on the Request and Response body using tools such as Firbug, IEWatch, an HTTP proxy or browser developer tools is recommended.
+  Due to the Same-Origin Policy a visual check on the Request and Response body using tools such as Firebug, IEWatch, an HTTP proxy or browser developer tools is recommended.
 </p>
 
 <% end %>
@@ -60,6 +60,18 @@
    */
   suite.add(new Y.Test.Case({
     name: "Form Transport",
+    
+    _should: {
+      ignore: {
+        // FIXME Envjs has a problem with form.method
+        "test return is an object": (navigator.userAgent.match(/Rhino/)),
+        "test return contains references to generated elements": (navigator.userAgent.match(/Rhino/)),
+        "test form contains fields": (navigator.userAgent.match(/Rhino/)),
+        "test iframe has a transportState": (navigator.userAgent.match(/Rhino/)),
+        "test rapid creation of multiple events are unique": (navigator.userAgent.match(/Rhino/)),
+        "test skip functions in the data object": (navigator.userAgent.match(/Rhino/))
+      }
+    },
     
     "test method exists": function() {
       Y.Assert.isFunction(jsHub.dispatchViaForm, "jsHub.dispatchViaForm() is not a Function");

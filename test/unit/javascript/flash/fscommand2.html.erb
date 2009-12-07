@@ -62,10 +62,16 @@
     }
   }));
 
-  // Async tests to interact with Flash cannot run in Rhino
-  if (!navigator.userAgent.match(/Rhino/)){ 
   suite.add(new Y.Test.Case({
     name: "Flash fscommand2",
+
+    _should: {
+      ignore: {
+        // Flash cannot run in Rhino
+        "test data sent directly from flash": (navigator.userAgent.match(/Rhino/)),
+        "test data sent via jsHub from flash": (navigator.userAgent.match(/Rhino/))
+      }
+    },
     
     "test data sent directly from flash": function() {
 
@@ -91,7 +97,6 @@
     }
     
   }));
-  } // end check for Rhino
 </script>  
 
 <!-- Any HTML you may require for your tests to work properly -->
