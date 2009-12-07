@@ -6679,7 +6679,7 @@ var Anchor = function(ownerDocument) {
 			this.href = this.protocol + this.host + this.pathname + this.search + _hash;
 		},
 		get host(){
-			return this.hostname + (this.port !== "")?":"+this.port:"";
+			return this.hostname + ((this.port==="")?"":(":"+this.port));
 		},
 		set host(_host){
 			this.href = this.protocol + _host + this.pathname + this.search + this.hash;
@@ -9020,7 +9020,7 @@ $w.__defineGetter__("location", function(url){
 			setHistory(_hash, "hash");
 		},
 		get host(){
-			return this.hostname + (this.port !== "")?":"+this.port:"";
+			return this.hostname + ((this.port==="")?"":(":"+this.port));
 		},
 		set host(_host){
 			$w.location = this.protocol + _host + this.pathname + 
