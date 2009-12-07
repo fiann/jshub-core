@@ -18,8 +18,8 @@ YUI().use('jshub', function(Y) {
 
   // Configuration for Causata transport plugin
   jsHub.configure('causata-transport', {
-    server_url: "test.causata.com",
-    account_id: "1234"
+    server: "test.causata.com",
+    account: "1234"
   });
 
 });
@@ -110,7 +110,7 @@ YUI().use('jshub', function(Y) {
       // override the default method with a Mock implementation
       Y.Mock.expect(jsHub, {
         method : "dispatchViaForm",
-        args : [ Y.Mock.Value.String, "test.causata.com", Y.Mock.Value.Object ]
+        args : [ Y.Mock.Value.String, "http://test.causata.com", Y.Mock.Value.Object ]
       })
       jsHub.trigger("page-view", {});
       Y.Mock.verify(jsHub);

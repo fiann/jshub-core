@@ -32,8 +32,8 @@ YUI.add("causata-transport", function (Y) {
      * The config object for this plugin
      */
     config = {
-      server_url : null,
-      account_id : null
+      server : null,
+      account : null
     },
     
     /**
@@ -46,10 +46,10 @@ YUI.add("causata-transport", function (Y) {
     
       jsHub.logger.group("Causata output: sending '%s' event", event.type);
       
-      // cannot send message if server_url is not configured
-      if (typeof config.server_url !== 'string') {
+      // cannot send message if server is not configured
+      if (typeof config.server !== 'string') {
         jsHub.trigger('plugin-error', {
-          message : "Server url not specified",
+          message : "Server hostname not specified",
           source : metadata.id
         });
         jsHub.logger.groupEnd();
@@ -92,7 +92,7 @@ YUI.add("causata-transport", function (Y) {
       var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
     
       // dispatch via API function
-      jsHub.dispatchViaForm("POST", config.server_url, outputData);
+      jsHub.dispatchViaForm("POST", protocol + config.server, outputData);
       jsHub.logger.groupEnd();
     },
     
