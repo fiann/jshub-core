@@ -16,14 +16,18 @@ YUI.add('logger', function (Y) {
     if (level && level >= 1) {
       return window.debug;
     } else {
-      var i, nullLogger = {},  
+      var i, nullLogger = {}, doNothing = function () {},
         names = ["log", "debug", "info", "warn", "error", "assert", "dir", 
 		  "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace", 
 		  "profile", "profileEnd"];
       for (i = 0; i < names.length; ++i) {
-        nullLogger[names[i]] = function () {};
+        nullLogger[names[i]] = function () {
+          // logger just swallows output
+          // we don't really need this closure but jslint insists on it
+          return doNothing;
+        }(i);
       }
-	  return nullLogger;
+  	  return nullLogger;
     }
   })();
 

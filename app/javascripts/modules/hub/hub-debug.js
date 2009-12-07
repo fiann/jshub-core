@@ -249,7 +249,9 @@ YUI.add('hub', function (Y) {
         throw new Error('Invalid configuration key');
       }
       
-      function notifyPlugin() {
+      var plugin, notify, path, field, obj, keys = key.split('.'), confType = typeof conf;
+      
+      notify = function () {
         Y.use(plugin, function () {
           var i, field = keys.slice(1, keys.length).join('.');
           for (i = 0; i < plugins.length; i++) {
@@ -261,8 +263,6 @@ YUI.add('hub', function (Y) {
         });
       };
 
-      var plugin, path, field, obj, keys = key.split('.'), confType = typeof conf;
-      
       // the first component of the key is the plugin name
       plugin = keys[0];
 
@@ -276,10 +276,10 @@ YUI.add('hub', function (Y) {
 
       if (confType === 'string' || confType === 'number' || confType === 'boolean') {
         obj[field] = conf;
-        notifyPlugin();
+        notify();
       } else if (conf === null) {
   	  	delete obj[field];
-        notifyPlugin();
+        notify();
       } else if (confType === 'object') {
         for (var name in conf) {
           // we don't want inherited values

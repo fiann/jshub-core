@@ -1,5 +1,5 @@
-/** 
- * A plugin to send output to the Causata system, using the POST transport and 
+/**
+ * A plugin to send output to the Causata system, using the POST transport and
  * in JSON format expected by Causata.
  *
  * @module data-transport
@@ -12,7 +12,7 @@
 "use strict";
 
 YUI.add("causata-transport", function (Y) {
-	
+
     /**
      * Metadata about this plug-in for use by UI tools and the Hub
      */
@@ -26,7 +26,7 @@ YUI.add("causata-transport", function (Y) {
     /**
      * The events that will be captured and sent to the Causata servers
      */
-    boundEvents = ['page-view', 'product-view', 'authentication', 'checkout'],  
+    boundEvents = ['page-view', 'product-view', 'authentication', 'checkout'],
 
     /**
      * The config object for this plugin
@@ -35,7 +35,7 @@ YUI.add("causata-transport", function (Y) {
       server : null,
       account : null
     },
-    
+
     /**
      * Event driven anonymous function bound to 'page-view'
      * @method transport
@@ -43,8 +43,8 @@ YUI.add("causata-transport", function (Y) {
      * @property metadata
      */
     transport = function (event) {
-    
-      
+
+
       // cannot send message if server is not configured
       if (typeof config.server !== 'string') {
         jsHub.trigger('plugin-error', {
@@ -53,7 +53,7 @@ YUI.add("causata-transport", function (Y) {
         });
         return;
       }
-      
+
       /*
        * Serialize data as expected format, see
        * https://intra.causata.com/code/causata/wiki/JavascriptTag/WireFormat
@@ -63,7 +63,7 @@ YUI.add("causata-transport", function (Y) {
         eventType: event.type,
         attributes: []
       };
-      
+
       for (var field in event.data) {
         if ("string" === typeof event.data[field] || "number" === typeof event.data[field]) {
           outputEvent.attributes.push({
@@ -72,8 +72,8 @@ YUI.add("causata-transport", function (Y) {
           });
         }
       }
-      
-      /** 
+
+      /**
        * Convert an object to a JSON representation
        */
       jsHub.safe.toJSONString = function (object) {
@@ -81,25 +81,25 @@ YUI.add("causata-transport", function (Y) {
           return Y.JSON.stringify(object, null, 2);
         }
       };
-      
+
       var outputData = {
         sender: metadata.name + " v" + metadata.version,
         event: jsHub.safe.toJSONString(outputEvent)
       };
-      
+
       var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
-    
+
       // dispatch via API function
       jsHub.dispatchViaForm("POST", protocol + config.server, outputData);
     },
-    
+
     /**
      * Receive a configuration update
      */
     configure = function (key, value) {
       config[key] = value;
     };
-    
+
     /*
      * First trigger an event to show that the plugin is being registered
      */
@@ -112,12 +112,11 @@ YUI.add("causata-transport", function (Y) {
     for (var i = 0; i < boundEvents.length; i++) {
       jsHub.bind(boundEvents[i], metadata.id, transport);
     }
-    
+
     // lifecycle notification
     jsHub.trigger("plugin-initialization-complete", metadata);
-    
 
-}, "2.0.0", {
-  requires: ["hub", "logger", "form-transport", "json-stringify"], 
-  after: ["hub", "logger", "form-transport", "json-stringify"]
-});
+  }, "2.0.0", {
+    requires: ["hub", "logger", "form-transport", "json-stringify"],
+    after: ["hub", "logger", "form-transport", "json-stringify"]
+  });
