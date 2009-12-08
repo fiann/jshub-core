@@ -6,15 +6,21 @@ namespace "jshub" do
     task :build => [
       "gems:install", 
       # linting is used as an equivilant to a compile failure
-      "jshub:javascripts:lint",
-      # start a server instance to serve javascript unit tests html pages
-      "jshub:runcoderun:server:start",
-      # run tests
-      "test",
-      # stop server
-      "jshub:runcoderun:server:stop"] do
-      
-      puts "Finished RunCodeRun build task"
+      "jshub:javascripts:lint"] do
+
+    
+      # Behave nice on RunCodeRun servers
+      # ref: http://support.runcoderun.com/discussions/builds-open-source/72-server-500-error-on-localhost
+      begin
+        # start a server instance to serve javascript unit tests html pages
+        Rake::Task["jshub:runcoderun:server:start"].execute []
+        # run tests
+        Rake::Task["test"].execute []
+      ensure
+        # stop server
+        Rake::Task["jshub:runcoderun:server:stop"].execute []
+        puts "Finished RunCodeRun build task"
+      end
     end
   
     desc "Start the local Rails server"
@@ -22,7 +28,10 @@ namespace "jshub" do
       if FileTest.exists? "tmp/pids/server.pid"
         puts "Server is already running and pid file exists"        
       elsif
-        port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        # Behave nice on RunCodeRun servers
+        # ref: http://support.runcoderun.com/discussions/builds-open-source/72-server-500-error-on-localhost
+        #port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        port = 81664
         # start the local server so tests can be requested directly from the app
         puts "Starting local server on port #{port}"
         FileUtils.mkpath "tmp/pids"  
