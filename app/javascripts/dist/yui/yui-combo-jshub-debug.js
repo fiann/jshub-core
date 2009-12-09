@@ -1,10 +1,6 @@
-/* 
-jsHub open source tagging
+/*
 Copyright (c) 2009 jsHub.org
-Released under the BSD license, see http://github.com/jshub/jshub-core/raw/master/LICENSE.txt 
-
-This file also contains code supplied by and Copyright (c) 2009, Yahoo! Inc. under the BSD License: http://developer.yahoo.net/yui/license.txt
-This file also contains code supplied by and Copyright (c) 2009 John Resig under the MIT License http://docs.jquery.com/License 
+see http://github.com/jshub/jshub-core/raw/master/LICENSE.txt 
 */
 "use strict";/*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
@@ -3131,7 +3127,7 @@ YUI.add('hub', function (Y) {
   
     /** Plugins that have registered with the hub. */
     plugins = [],
-	
+
     /**
      * a listener has an authentication token and a callback
      * @class Listener
@@ -3340,64 +3336,15 @@ YUI.add('hub', function (Y) {
       }
       return clone;
     };
-	
-  	/**
-  	 * Configure a value for the hub or a plugin.
-  	 * @param {String} key the name of the plugin. The first component is the name of the plugin
-  	 *        which the configuration is intended for, such as "logger". The key may also contain 
-  	 *        a dotted path to a specific configuration property, such as "logger.level".
-  	 */
-    this.configure = function (key, conf) {
-      if (typeof key !== 'string') {
-        throw new Error('Invalid configuration key');
-      }
-      
-      var plugin, notify, path, field, obj, keys = key.split('.'), confType = typeof conf;
-      
-      notify = function () {
-        Y.use(plugin, function () {
-          var i, field = keys.slice(1, keys.length).join('.');
-          for (i = 0; i < plugins.length; i++) {
-            if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
-              plugins[i].configure(field, conf);
-              return;
-            }
-          }
-        });
-      };
-
-      // the first component of the key is the plugin name
-      plugin = keys[0];
-
-      // the part up to the final dot is the namespace object
-      path = (keys.length < 3 ? "" : keys.slice(0, keys.length - 1).join('.'));
-      path = ("YUI.Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
-      obj = YUI.namespace(path);
-      
-      // the part after the final dot is the object key
-      field = keys[keys.length - 1];
-
-      if (confType === 'string' || confType === 'number' || confType === 'boolean') {
-        obj[field] = conf;
-        notify();
-      } else if (conf === null) {
-  	  	delete obj[field];
-        notify();
-      } else if (confType === 'object') {
-        for (var name in conf) {
-          // we don't want inherited values
-          if (conf.hasOwnProperty(name)) {
-            this.configure(key + "." + name, conf[name]);
-          }
-        }
-      } else {
-        return obj[field];
-      }
-    };
   };
+
+  // clone config if it is set, discard anything else from existing
+  // jsHub global object
+  var config = (global.jsHub && global.jsHub.config) ? global.jsHub.config : {};
 
   // jsHub object in global namespace
   jsHub = global.jsHub = new Hub();
+  jsHub.config = config;
 
   // Create an object to return safe instances of important variables
   jsHub.safe = function (obj) {
@@ -3439,9 +3386,8 @@ YUI.add('hub', function (Y) {
   };
   
   Y.log('hub module loaded', 'info', 'jsHub');
-	
-}, '2.0.0', {
-  requires: ['yui'],
+}, '2.0.0' , {
+  requires: ['yui'], 
   after: ['yui']
 });
 
@@ -3458,30 +3404,35 @@ YUI.add('hub', function (Y) {
 
 YUI.add('logger', function (Y) {
 
-  jsHub.logger = (function () {
-    var level = 9; // jsHub.configure('logger.level');
-    if (level && level >= 1) {
-      return window.debug;
-    } else {
-      var i, nullLogger = {}, doNothing = function () {},
-        names = ["log", "debug", "info", "warn", "error", "assert", "dir", 
-		  "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace", 
-		  "profile", "profileEnd"];
-      for (i = 0; i < names.length; ++i) {
-        nullLogger[names[i]] = function () {
-          // logger just swallows output
-          // we don't really need this closure but jslint insists on it
-          return doNothing;
+  // Initialise a logger instance based on what is available
+  if (window.debug && window.debug.log) {
+    // Use caching debug console wrapper
+    jsHub.logger = window.debug;
+  } else {
+    // firebugx based stub functions
+    // ref: http://getfirebug.com/firebug/firebugx.js
+    if (!window.console || !console.firebug) {
+      var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+      "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];      
+      window.console = {};
+      for (var i = 0; i < names.length; ++i) {
+        window.console[names[i]] = function () {
+          // Closure to keep 'i' correct if we use it in the function
+          // http://groups.google.com/group/comp.lang.javascript/browse_thread/thread/54ab90e2d778dc14
+          return function () {
+            /* do nothing */
+          }; 
         }(i);
       }
-  	  return nullLogger;
     }
-  })();
+    // Use whatever window.console is now available
+    jsHub.logger = window.console;
+  }
 
   Y.log('logger module loaded', 'info', 'jsHub');
 }, '2.0.0' , {
-  requires: ['debug', 'hub'],
-  after: ['debug', 'hub']
+  requires: ['hub'],
+  after: ['debug']
 });
 
 /**
@@ -3588,7 +3539,7 @@ YUI.add('image-transport', function (Y) {
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub, ActiveXObject */
+/*global YUI, jsHub */
 "use strict";
 
 YUI.add('form-transport', function (Y) {
@@ -3615,94 +3566,71 @@ YUI.add('form-transport', function (Y) {
      * be either a string, a number, or an array of strings / numbers, in which case multiple
      * form fields with the same name will be created. Any parameters which do not match this
      * expected format will be ignored.
-     * @return Object with references to the document, form and iframe that has been created
+     * @return the ID of the iframe that has been created
      */
     this.dispatch = function (method, url, data) {
-      var UA,        
-        Lang,
-        Obj,
-        guid, 
-        doc, 
-        form, 
-        formID, 
-        appendField,
-        input,
-        iframe, 
-        iframeID, 
-        field, 
-        array, 
-        i,
-        htmlelements;
-      
-      // Compressable YUI aliases
-      UA = Y.UA;
-      Lang = Y.Lang;
-      Obj = Y.Object;
+      var timestamp, form, formID, appendField, iframe, iframeID, field, array, i;
       
       /*
        * This data transport only supports POST or GET
+       * TODO: validate url for security reasons, reject javascript: protocol etc
        */
-      if (!(/^POST|GET$/i.test(method)) || !url || (/^javascript:|file:/i.test(url))) {
-        return false;
+      if (!(/^POST|GET$/i.test(method)) || !url) {
+        return;
       }
       data = data || {};
-      guid = Y.guid(); // Timestamp is not granular enough for unique IDs
-    
+      timestamp = jsHub.safe.getTimestamp();
+  
+      /**
+       * Add a hidden field to the form
+       * @param {Object} form
+       * @param {Object} name
+       * @param {Object} value
+       */
+      appendField = function (form, name, value) {
+        if ("string" === typeof value || "number" === typeof value) {
+          var input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        }
+      };
+  
       // Create the form
-      formID = "jshub-form-" + guid;        
+      formID = "jshub-form-" + timestamp;        
       form = document.createElement("form");
       form.id = formID;
-      // FIXME form.method doesn't seem to work in our Envjs - need to update to 1.1?
       form.method = method;
       form.action = url;
       form.style.visibility = "hidden";
       form.style.position = "absolute";
       form.style.top = 0;
 
-      // remove any existing fields
+      //remove any existing fields
       while (form.hasChildNodes()) {
         form.removeChild(form.lastChild);
       }
 
-      /**
-       * Recurse over the data and add a hidden field to the form based on the values supplied
-       * Arrays result in multiple inputs with the same name
-       * @param {Object} value
-       * @param {Object} prop
-       */
-      Obj.each(data, function appendField(value, prop) {
-        var input;
-        if (Lang.isString(value) || Lang.isNumber(value)) {
-          //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
-          if (UA.ie) {
-            input = document.createElement('<input name="' + prop + '" />');
-          } else {          
-            input = document.createElement("input");
-            input.name = prop;
-          }
-          input.type = "hidden";
-          input.value = value;
-          form.appendChild(input);
-        } else if (Lang.isArray(value)) {
+      for (field in data) {
+        if (data[field] instanceof Array) {
           // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
-          for (i = 0; i < value.length; i++) {
-            if (Lang.isString(value[i]) || Lang.isNumber(value[i])) {
-              appendField(value[i], prop);
+          array = data[field];
+          for (i = 0; i < array.length; i++) {
+            if ("string" === typeof array[i] || "number" === typeof array[i]) {
+              appendField(form, field, array[i]);
             }
           }
-        } else if (Lang.isFunction(value)) {
-          jsHub.logger.error("Functions will not be converted for transport");
-        } else if (Lang.isObject(value)) {
-          jsHub.logger.error("Objects should be JSON.stringify'd for transport");
         } else {
-          jsHub.logger.error("This value cannot be converted for transport");
-        }        
-      });
+          appendField(form, field, data[field]);
+        }
+      }
+      document.body.appendChild(form);
 
       // Create the iframe
-      iframeID = "jshub-iframe-" + guid;        
+      iframeID = "jshub-iframe-" + timestamp;        
       //IE won't let you assign a name using the DOM, must do it the hacky way
-      if (UA.ie) {
+      if (Y.UA.ie) {
         iframe = document.createElement('<iframe name="' + iframeID + '" />');
       } else {
         iframe = document.createElement("iframe");
@@ -3710,64 +3638,24 @@ YUI.add('form-transport', function (Y) {
       }
 
       iframe.id = iframeID;
+      // TODO avoid IE 'clicks'
+      // ref: http://www.julienlecomte.net/blog/2007/11/30/
       iframe.src = "#";
       iframe.style.visibility = "hidden";
       iframe.style.position = "absolute";
       iframe.style.top = 0;
       iframe.style.cssClass = "jshub-iframe";
- 
-      /*
-        add the generated elements to the document, or htmlfile object for IE to stop navigation clicks    
-        NOTE: htmlfile wont work in IE Server 2003 see slides  http://www.slideshare.net/joewalker/comet-making-the-web-a-2way-medium
-        ref: http://www.julienlecomte.net/blog/2007/11/30/
-        ref: http://cometdaily.com/2007/11/18/ie-activexhtmlfile-transport-part-ii/      
-        ref: http://grack.com/blog/2009/07/28/a-quieter-window-name-transport-for-ie/
-        TODO: may need CollectGarbage(); see thread http://groups.google.com/group/orbited-users/browse_thread/thread/e337ac03d0c9f13f
-      */
-      if (UA.ie) {
-        jsHub.logger.log('IE specific branch to avoid navigational clicks');
-        try {
-          if ("ActiveXObject" in window) {
-            doc = new ActiveXObject("htmlfile");
-            doc.open();
-            doc.write('<html><head><\/head><body><\/body><\/html>');
-            doc.body.innerHTML = form.outerHTML + iframe.outerHTML;
-            doc.close();
-            // get new references to the elements for binding events too, etc
-            form = doc.getElementById(form.id);
-            iframe = doc.getElementById(iframe.id);
-
-            jsHub.logger.log('IE ActiveXObject("htmlfile") created: %o', doc);
-          }
-        } catch (e) {
-          jsHub.logger.error('IE ActiveXObject("htmlfile") error: %o', e.message);
-        }
-        
-      } else {
-        doc = document;
-        doc.body.appendChild(form);
-        doc.body.appendChild(iframe);
-      }                         
-
-      // store references
-      htmlelements = {"doc": doc, "form": form, "iframe": iframe};
-
-      // give us an opportunity to know when the transport is complete 
-      iframe.transportState = 0;
-      // In IE ifrme.onload does not mean the iframe page itself has loaded
-      // ref: http://support.microsoft.com/kb/239638
-      // see comments: http://msdn.microsoft.com/en-us/library/ms535258(VS.85).aspx
-      iframe.onload = function () { 
-        jsHub.trigger("form-transport-complete", htmlelements);
-      };
+      document.body.appendChild(iframe);
   
       // Set the iframe as the submission target of the form, tied together by a timestamp
-      form.target = iframe.id;
-      // Submit the form, sent via the iframe
-      form.submit();            
-      jsHub.trigger("form-transport-sent", htmlelements);
-            
-      return htmlelements;
+      form.target = iframeID;
+
+      // And send it ...
+      form.submit();
+      jsHub.trigger("form-transport-sent", {
+        node: iframeID
+      });
+      return iframeID;
     };
   };
   
