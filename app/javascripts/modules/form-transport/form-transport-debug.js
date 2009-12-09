@@ -40,6 +40,7 @@ YUI.add('form-transport', function (Y) {
     this.dispatch = function (method, url, data) {
       var UA,        
         Lang,
+        Obj,
         guid, 
         doc, 
         form, 
@@ -56,6 +57,7 @@ YUI.add('form-transport', function (Y) {
       // Compressable YUI aliases
       UA = Y.UA;
       Lang = Y.Lang;
+      Obj = Y.Object;
       
       /*
        * This data transport only supports POST or GET
@@ -83,12 +85,12 @@ YUI.add('form-transport', function (Y) {
       }
 
       /**
-       * Add a hidden field to the form based on the values supplied
-       * @param {Object} form
-       * @param {Object} name
+       * Recurse over the data and add a hidden field to the form based on the values supplied
+       * Arrays result in multiple inputs with the same name
        * @param {Object} value
+       * @param {Object} prop
        */
-      appendField = function (form, prop, value) {
+      Obj.each(data, function appendField(value, prop) {
         var input;
         if (Lang.isString(value) || Lang.isNumber(value)) {
           //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
@@ -101,11 +103,11 @@ YUI.add('form-transport', function (Y) {
           input.type = "hidden";
           input.value = value;
           form.appendChild(input);
-        } else if (Lang.isArray(data[field])) {
+        } else if (Lang.isArray(value)) {
           // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
-          for (i = 0; i < data[field].length; i++) {
-            if (Lang.isString(data[field][i]) || Lang.isNumber(data[field][i])) {
-              appendField(form, field, data[field][i]);
+          for (i = 0; i < value.length; i++) {
+            if (Lang.isString(value[i]) || Lang.isNumber(value[i])) {
+              appendField(value[i], prop);
             }
           }
         } else if (Lang.isFunction(value)) {
@@ -115,11 +117,7 @@ YUI.add('form-transport', function (Y) {
         } else {
           jsHub.logger.error("This value cannot be converted for transport");
         }        
-      };
-      
-      for (field in data) {
-        appendField(form, field, data[field]);
-      }
+      });
 
       // Create the iframe
       iframeID = "jshub-iframe-" + guid;        
