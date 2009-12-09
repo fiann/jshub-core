@@ -25,6 +25,9 @@
 <p>
   This page tests methods for cross-domain data transport via form submission to an iframe.
 </p>
+<p>
+  This page requires network and DNS access.
+</p>
 
 <% end %>
 <!-- Any HTML you may require for your tests to work properly -->
@@ -61,14 +64,14 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test slow network delays complete event": (navigator.userAgent.match(/Rhino/)),
-        "test rapid creation of multiple transports have unique ids": (navigator.userAgent.match(/Rhino/))
+        "test rapid creation of multiple transports have unique ids": (navigator.userAgent.match(/Rhino/)),
+        "test slow network delays complete event": (navigator.userAgent.match(/Rhino/))
       }
     },
     
     "test rapid creation of multiple transports have unique ids": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
         n = 10;
         formIds = {},
@@ -86,17 +89,26 @@
 
     "test slow network delays complete event": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
-        data = { field1 : "value1", field2 : "value2" };
+        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        data = { 
+          field1 : "value1", 
+          field2 : "value2",
+          // Cuzillion settings to delay the request - min 2 secs
+          sleep: Math.floor(Math.random()*5+2), 
+          type: "html"
+        };
       var result = jsHub.dispatchViaForm(method, url, data);
 
       // Resume when we recieve the event
       var test = this;
+      var timestamp = new Date().getTime();
       jsHub.bind('form-transport-complete', 'unittest', function (obj) {
         // determine if this event is the one for the transport we just created
         if (obj.data.iframe.id === result.iframe.id) {
           test.resume(function () {
-            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ")
+            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ");
+            // iframe should never complete the request quicker than ~2secs
+            Y.assert(((new Date().getTime()) - timestamp) > 2000, "jsHub.dispatchViaForm() complete event fired too quickly")
           });
         }
       });
