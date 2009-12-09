@@ -94,6 +94,24 @@
       Y.Assert.isTrue(/^jshub-form-/i.test(result.form.id), "jsHub.dispatchViaForm() form.id is not correct");
       Y.Assert.isTrue(/^jshub-iframe-/i.test(result.iframe.id), "jsHub.dispatchViaForm() iframe.id is not correct");
     },
+    
+    "test rapid creation of multiple events are unique": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2" },
+        n = 10;
+        formIds = {},
+        iframeIds = {};
+      for ( i = 0; i < n; i++ ) {
+        var result = jsHub.dispatchViaForm(method, url, data);
+        Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
+        formIds[result.form.id] = true;
+        iframeIds[result.iframe.id] = true;
+      }
+      // Check returned ID's - duplicates will override existing properties and so the length will be wrong
+      Y.Assert.areEqual(n, Y.Object.size(formIds), "Each form.id is not unique");
+      Y.Assert.areEqual(n, Y.Object.size(iframeIds), "Each iframe.id is not unique");
+    },    
 
     "test form contains fields": function() {
       // IE6 can loose input names when in an ActiveXObject('htmlfile');
@@ -105,6 +123,18 @@
       Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
     },
 
+    "test form contains fields from a nested array": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2", field3 : ['a','b','c','d'], field4 : "value4" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      debug.log(result)
+      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.areEqual(data.field3.length, result.form.field3.length, "jsHub.dispatchViaForm() form.field3 not a serialised array");
+      Y.Assert.areEqual(data.field4, result.form.field4.value, "jsHub.dispatchViaForm() form.field4 missing");
+    },
+    
     "test iframe has a transportState": function() {
       var method = 'POST',
         url = 'http://test.causata.com/rtw',
@@ -149,8 +179,19 @@
         data = { field1 : "value1", field2 : "value2", funct: function () { doStuff() } };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isUndefined(result.form.funct, "jsHub.dispatchViaForm() should skip functions");
-    }
+    },
 
+    "test skip nested objects in the data object": function() {
+      var method = 'POST',
+        url = 'http://test.causata.com/rtw',
+        data = { field1 : "value1", field2 : "value2", field3: {f1:'a',f2:'b',f3:'c',f4:'d'}, field4 : "value4" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      debug.log(result)
+      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.isUndefined(result.form.field3, "jsHub.dispatchViaForm() form.field3 should not be present");
+      Y.Assert.areEqual(data.field4, result.form.field4.value, "jsHub.dispatchViaForm() form.field4 missing");      
+    }
 
 
   }));

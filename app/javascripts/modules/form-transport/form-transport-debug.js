@@ -38,7 +38,9 @@ YUI.add('form-transport', function (Y) {
      * @return Object with references to the document, form and iframe that has been created
      */
     this.dispatch = function (method, url, data) {
-      var timestamp, 
+      var UA,        
+        Lang,
+        guid, 
         doc, 
         form, 
         formID, 
@@ -51,6 +53,10 @@ YUI.add('form-transport', function (Y) {
         i,
         htmlelements;
       
+      // Compressable YUI aliases
+      UA = Y.UA;
+      Lang = Y.Lang;
+      
       /*
        * This data transport only supports POST or GET
        */
@@ -58,32 +64,10 @@ YUI.add('form-transport', function (Y) {
         return false;
       }
       data = data || {};
-      timestamp = jsHub.safe.getTimestamp();
-  
-      /**
-       * Add a hidden field to the form
-       * @param {Object} form
-       * @param {Object} name
-       * @param {Object} value
-       */
-      appendField = function (form, prop, value) {
-        var input;
-        if ("string" === typeof value || "number" === typeof value) {
-          //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
-          if (Y.UA.ie) {
-            input = document.createElement('<input name="' + prop + '" />');
-          } else {          
-            input = document.createElement("input");
-            input.name = prop;
-          }
-          input.type = "hidden";
-          input.value = value;
-          form.appendChild(input);
-        }
-      };
-  
+      guid = Y.guid(); // Timestamp is not granular enough for unique IDs
+    
       // Create the form
-      formID = "jshub-form-" + timestamp;        
+      formID = "jshub-form-" + guid;        
       form = document.createElement("form");
       form.id = formID;
       // FIXME form.method doesn't seem to work in our Envjs - need to update to 1.1?
@@ -98,24 +82,49 @@ YUI.add('form-transport', function (Y) {
         form.removeChild(form.lastChild);
       }
 
-      for (field in data) {
-        if (data[field] instanceof Array) {
+      /**
+       * Add a hidden field to the form based on the values supplied
+       * @param {Object} form
+       * @param {Object} name
+       * @param {Object} value
+       */
+      appendField = function (form, prop, value) {
+        var input;
+        if (Lang.isString(value) || Lang.isNumber(value)) {
+          //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
+          if (UA.ie) {
+            input = document.createElement('<input name="' + prop + '" />');
+          } else {          
+            input = document.createElement("input");
+            input.name = prop;
+          }
+          input.type = "hidden";
+          input.value = value;
+          form.appendChild(input);
+        } else if (Lang.isArray(data[field])) {
           // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
-          array = data[field];
-          for (i = 0; i < array.length; i++) {
-            if ("string" === typeof array[i] || "number" === typeof array[i]) {
-              appendField(form, field, array[i]);
+          for (i = 0; i < data[field].length; i++) {
+            if (Lang.isString(data[field][i]) || Lang.isNumber(data[field][i])) {
+              appendField(form, field, data[field][i]);
             }
           }
+        } else if (Lang.isFunction(value)) {
+          jsHub.logger.error("Functions will not be converted for transport");
+        } else if (Lang.isObject(value)) {
+          jsHub.logger.error("Objects should be JSON.stringify'd for transport");
         } else {
-          appendField(form, field, data[field]);
-        }
+          jsHub.logger.error("This value cannot be converted for transport");
+        }        
+      };
+      
+      for (field in data) {
+        appendField(form, field, data[field]);
       }
 
       // Create the iframe
-      iframeID = "jshub-iframe-" + timestamp;        
+      iframeID = "jshub-iframe-" + guid;        
       //IE won't let you assign a name using the DOM, must do it the hacky way
-      if (Y.UA.ie) {
+      if (UA.ie) {
         iframe = document.createElement('<iframe name="' + iframeID + '" />');
       } else {
         iframe = document.createElement("iframe");
@@ -137,7 +146,7 @@ YUI.add('form-transport', function (Y) {
         ref: http://grack.com/blog/2009/07/28/a-quieter-window-name-transport-for-ie/
         TODO: may need CollectGarbage(); see thread http://groups.google.com/group/orbited-users/browse_thread/thread/e337ac03d0c9f13f
       */
-      if (Y.UA.ie) {
+      if (UA.ie) {
         jsHub.logger.log('IE specific branch to avoid navigational clicks');
         try {
           if ("ActiveXObject" in window) {
@@ -167,7 +176,9 @@ YUI.add('form-transport', function (Y) {
 
       // give us an opportunity to know when the transport is complete 
       iframe.transportState = 0;
-      // onload does not mean the iframe page itself has loaded
+      // In IE ifrme.onload does not mean the iframe page itself has loaded
+      // ref: http://support.microsoft.com/kb/239638
+      // see comments: http://msdn.microsoft.com/en-us/library/ms535258(VS.85).aspx
       iframe.onload = function () { 
         jsHub.trigger("form-transport-complete", htmlelements);
       };
