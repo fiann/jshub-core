@@ -132,8 +132,8 @@ YUI.add('form-transport', function (Y) {
 
       iframe.id = iframeID;
       // TODO - work out which src is better for history handling
-      //iframe.src = "#";
-      iframe.src = "javascript:false";
+      iframe.src = "#";
+      //iframe.src = "javascript:false";
       iframe.style.visibility = "hidden";
       iframe.style.position = "absolute";
       iframe.style.top = 0;
@@ -173,11 +173,11 @@ YUI.add('form-transport', function (Y) {
       }
       
       // check elements created sucessfully
-      if (!form){
+      if (!form) {
         jsHub.logger.error('Form Transport form creation error');
       }
       // some older browsers do not return null for a failed iframe creation so check the nodeType
-      if (!iframe || Lang.isUndefined(iframe.nodeType)){
+      if (!iframe || Lang.isUndefined(iframe.nodeType)) {
         jsHub.logger.error('Form Transport iframe creation error');
       }
 
@@ -194,7 +194,7 @@ YUI.add('form-transport', function (Y) {
         jsHub.trigger("form-transport-complete", htmlelements);
       };
       // TODO clear iframe cache etc
-      iframe.onunload = function() {};
+      iframe.onunload = function () {};
   
       // Set the iframe as the submission target of the form, tied together by a guid
       form.target = iframe.id;
