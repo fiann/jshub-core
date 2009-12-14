@@ -66,8 +66,7 @@
         // FIXME Envjs has a problem with form.method
         "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino/)),
         "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino/)),
-        "test iframe sends a complete event": (navigator.userAgent.match(/Rhino/)),
-        "test skip nested objects in the data object": (navigator.userAgent.match(/Rhino/))
+        "test iframe sends a complete event": (navigator.userAgent.match(/Rhino/))
       }
     },
     
@@ -193,12 +192,9 @@
     "test skip nested objects in the data object": function() {
       var method = 'POST',
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
-        data = { field1 : "value1", field2 : "value2", field3: {f1:'a',f2:'b',f3:'c',f4:'d'}, field4 : "value4" };
+        data = { field1 : "value1", field2 : "value2", object: {f1:'a',f2:'b',f3:'c',f4:'d'}};
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.areEqual(data.field1, result.form.elements[0].value, "jsHub.dispatchViaForm() form.field1 missing");
-      Y.Assert.areEqual(data.field2, result.form.elements[1].value, "jsHub.dispatchViaForm() form.field2 missing");
-      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() form.field3 should not be present");
-      Y.Assert.areEqual(data.field4, result.form.elements[3].value, "jsHub.dispatchViaForm() form.field4 missing");      
+      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() form.object should not be present");
     }
 
 
