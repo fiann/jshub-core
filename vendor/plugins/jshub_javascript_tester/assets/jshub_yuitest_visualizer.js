@@ -133,9 +133,14 @@
     TestRunner.clear();
     // add the test cases and suites from the loaded HTML file
     //console.log("Browser: Running tests " + Y.JSON.stringify(suite,null,2))
-    TestRunner.add(suite);    
-    // run all tests
-    TestRunner.run();
-    //console.log("Browser: TestRunner complete");
+    TestRunner.add(suite);
+    
+    // flag to control whether to automatically run the tests as the page loads
+    var disableRunner = disableRunner || false;
+    if (!disableRunner){
+      // run all tests
+      TestRunner.run();
+      //console.log("Browser: TestRunner complete");
+    }
   }  
 })();

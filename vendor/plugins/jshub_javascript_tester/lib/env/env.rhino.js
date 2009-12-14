@@ -7053,7 +7053,7 @@ __extend__(HTMLFormElement.prototype,{
         return this.getAttribute('method');
         
     },
-    set method(action){
+    set method(method){
         this.setAttribute('method', method);
         
     },
