@@ -65,7 +65,7 @@ YUI.add('form-transport', function (Y) {
       if (!(/^POST|GET$/i.test(method)) || !url || (/^javascript:|file:/i.test(url))) {
         return false;
       }
-      data = data || {};
+      data = data || {}; // NOTE - why would we send an empty request? For cookies/referer info?
       guid = Y.guid(); // Timestamp is not granular enough for unique IDs
     
       // Create the form
@@ -78,6 +78,7 @@ YUI.add('form-transport', function (Y) {
       form.style.visibility = "hidden";
       form.style.position = "absolute";
       form.style.top = 0;
+      form.style.cssClass = "jshub-form";
 
       // remove any existing fields
       while (form.hasChildNodes()) {
@@ -130,7 +131,9 @@ YUI.add('form-transport', function (Y) {
       }
 
       iframe.id = iframeID;
-      iframe.src = "#";
+      // TODO - work out which src is better for history handling
+      //iframe.src = "#";
+      iframe.src = "javascript:false";
       iframe.style.visibility = "hidden";
       iframe.style.position = "absolute";
       iframe.style.top = 0;
@@ -167,21 +170,33 @@ YUI.add('form-transport', function (Y) {
         doc = document;
         doc.body.appendChild(form);
         doc.body.appendChild(iframe);
-      }                         
+      }
+      
+      // check elements created sucessfully
+      if (!form){
+        jsHub.logger.error('Form Transport form creation error');
+      }
+      // some older browsers do not return null for a failed iframe creation so check the nodeType
+      if (!iframe || Lang.isUndefined(iframe.nodeType)){
+        jsHub.logger.error('Form Transport iframe creation error');
+      }
 
       // store references
       htmlelements = {"doc": doc, "form": form, "iframe": iframe};
 
-      // give us an opportunity to know when the transport is complete 
+      // NOTE - for future use give us an opportunity to know when the transport is complete 
       iframe.transportState = 0;
-      // In IE ifrme.onload does not mean the iframe page itself has loaded
+      
+      // In IE iframe.onload does not necessarily mean the iframe page itself has loaded? But it seems to work
       // ref: http://support.microsoft.com/kb/239638
       // see comments: http://msdn.microsoft.com/en-us/library/ms535258(VS.85).aspx
-      iframe.onload = function () { 
+      iframe.onload = function () {
         jsHub.trigger("form-transport-complete", htmlelements);
       };
+      // TODO clear iframe cache etc
+      iframe.onunload = function() {};
   
-      // Set the iframe as the submission target of the form, tied together by a timestamp
+      // Set the iframe as the submission target of the form, tied together by a guid
       form.target = iframe.id;
       // Submit the form, sent via the iframe
       form.submit();            
