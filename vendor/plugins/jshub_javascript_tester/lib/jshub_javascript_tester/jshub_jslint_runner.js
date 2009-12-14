@@ -30,7 +30,7 @@ Updated by Fiann O'Hagan with jsHub options
     },
 
     // used for data-capture and data-output plugins, which must be adsafe compliant
-    strict : {
+    adsafe : {
       predef: ["jsHub"],
       safe: true,
       onevar: false, 
@@ -66,7 +66,7 @@ Updated by Fiann O'Hagan with jsHub options
     for (var i = 0; i < JSLINT.errors.length; i += 1) {
       var e = JSLINT.errors[i];
       if (e) {
-        print('Lint at line ' + (e.line + 1) + ' character ' +
+        print('Line ' + (e.line + 1) + ' character ' +
           (e.character + 1) + ': ' + e.reason);
         print((e.evidence || '').
           replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
