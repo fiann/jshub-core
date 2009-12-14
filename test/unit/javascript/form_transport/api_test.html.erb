@@ -208,5 +208,11 @@
   }));
 })();
 
+// disable the automatic running of the test runner
+var disableTestAutoRun = true;
+
+Y.on('load', function () {
+  Y.Test.Runner.run();
+});
   
 </script> 
