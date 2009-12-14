@@ -7,6 +7,10 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jsHub */
+/*jslint nomen: false, white: false, bitwise: false */
+
 "use strict";
 
   // Mixpanel original internal api for encoding data
@@ -298,7 +302,7 @@ YUI.add("samples-mixpanel", function (Y) {
   /*
    * Bind the plugin to the Hub so as to run when events we are interested in occur
    */
-  for ( i = 0; i < boundEvents.length; i++ ) {
+  for (var i = 0; i < boundEvents.length; i++ ) {
     jsHub.bind(boundEvents[i], metadata.id, send);
   }
   

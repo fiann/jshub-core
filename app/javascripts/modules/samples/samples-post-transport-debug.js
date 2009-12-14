@@ -15,6 +15,9 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jsHub */
+
 "use strict";
 
 YUI.add("samples-post-transport", function (Y) {
@@ -39,7 +42,7 @@ YUI.add("samples-post-transport", function (Y) {
    * @param event {Object} the event to serialize and send to the server
    * @property metadata
    */
-  send = function(event) {
+  send = function (event) {
   
     jsHub.logger.group("Sample POST output: sending '%s' event", event.type);
     
@@ -60,8 +63,8 @@ YUI.add("samples-post-transport", function (Y) {
     /**
      * Append account ID if supplied
      */
-    if(account !== ""){
-      url += url.substring(url.length-1, url.length) == "/" ? "" : "/";
+    if (account !== "") {
+      url += url.substring(url.length - 1, url.length) === "/" ? "" : "/";
       url += "account/" + account;
     }    
 
@@ -76,10 +79,10 @@ YUI.add("samples-post-transport", function (Y) {
       sender: metadata.name + " v" + metadata.version
     };
     
-	  // Copy all readable data into the output data
-	  for (field in event.data) {
+    // Copy all readable data into the output data
+    for (var field in event.data) {
       if ("string" === typeof event.data[field] || "number" === typeof event.data[field]) {
-	  	data[field] = event.data[field];
+        data[field] = event.data[field];
       }
     }
 
@@ -93,7 +96,7 @@ YUI.add("samples-post-transport", function (Y) {
   /*
    * Bind the plugin to the Hub so as to run when events we are interested in occur
    */
-  for (i = 0; i < boundEvents.length; i++) {
+  for (var i = 0; i < boundEvents.length; i++) {
     jsHub.bind(boundEvents[i], metadata.id, send);
   }
   

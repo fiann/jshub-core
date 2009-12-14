@@ -10,6 +10,8 @@
  */
 /*--------------------------------------------------------------------------*/
 
+// JSLint options
+/*global YUI, jsHub */
 "use strict";
 
 YUI.add("samples-get-transport", function (Y) {
@@ -35,7 +37,7 @@ YUI.add("samples-get-transport", function (Y) {
    * @param event {Object} the event to serialize and send to the server
    * @property metadata
    */
-  send = function(event) {
+  send = function (event) {
   
     jsHub.logger.group("Sample get transport: sending '%s' event", event.type);
     
@@ -56,8 +58,8 @@ YUI.add("samples-get-transport", function (Y) {
     /**
      * Append account ID if supplied
      */
-    if(account !== ""){
-      url += url.substring(url.length-1, url.length) == "/" ? "" : "/";
+    if (account !== "") {
+      url += url.substring(url.length - 1, url.length) === "/" ? "" : "/";
       url += "account/" + account;
     }
     
