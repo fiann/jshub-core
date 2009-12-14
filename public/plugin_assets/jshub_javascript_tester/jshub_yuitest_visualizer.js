@@ -74,35 +74,39 @@
     if (window.jsHub) {
       jsHub.logger.debug('Test results', evt.results);
     }
-	if (evt.results.failed == 0) {
-	  status = evt.results.passed + " test" + 
-	    (evt.results.passed !== 1 ? "s" : "") +
-	    " passed in " + timeTaken + "ms";
-	  statusBar.addClass("passed");
-	} else {
-	  status = evt.results.failed + " test" + 
-	    (evt.results.failed !== 1 ? "s" : "") +
-	    " failed. Tests complete in " + timeTaken + " ms";
-	  statusBar.addClass("failed");
-	}
-	updateStatus(status);
-	  // sample URLs:
-	  // local test: 
-    // ... and send the results to the local data collection server
-	  var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
-	  
-	  // or if its a External Vendor test, e.g. http://some.domain/core/test/external/:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
-    if (/test\/external/.test(window.location.pathname)){
-   	  resultsUrl = window.location.pathname.replace(/test\/external\/(\d+)\/.*/, "test/external/$1/results");
+    if (evt.results.failed == 0) {
+      status = evt.results.passed + " test" + 
+        (evt.results.passed !== 1 ? "s" : "") +
+        " passed in " + timeTaken + "ms";
+      statusBar.addClass("passed");
+    } else {
+      status = evt.results.failed + " test" + 
+        (evt.results.failed !== 1 ? "s" : "") +
+        " failed. Tests complete in " + timeTaken + " ms";
+      statusBar.addClass("failed");
     }
-    
-    // default url for non-core applications that don't use 'test' in the URL, e.g. UI
-    if (!/test\//.test(resultsUrl)){
-      resultsUrl = "/core/test/results";
+    updateStatus(status);
+  
+    // flag to control whether to automatically submit the tests as the page loads
+    if (!window.disableTestAutoRun){
+      // sample URLs:
+      // local test: 
+      // ... and send the results to the local data collection server
+      var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
+      
+      // or if its a External Vendor test, e.g. http://some.domain/core/test/external/:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
+      if (/test\/external/.test(window.location.pathname)){
+        resultsUrl = window.location.pathname.replace(/test\/external\/(\d+)\/.*/, "test/external/$1/results");
+      }
+      
+      // default url for non-core applications that don't use 'test' in the URL, e.g. UI
+      if (!/test\//.test(resultsUrl)){
+        resultsUrl = "/core/test/results";
+      }
+  
+      var reporter = new Y.Test.Reporter(resultsUrl, Y.Test.Format.JSON);
+      reporter.report(evt.results);
     }
-
-    var reporter = new Y.Test.Reporter(resultsUrl, Y.Test.Format.JSON);
-    reporter.report(evt.results);
   }
 
   if (!navigator.userAgent.match(/Rhino/)){
@@ -133,9 +137,13 @@
     TestRunner.clear();
     // add the test cases and suites from the loaded HTML file
     //console.log("Browser: Running tests " + Y.JSON.stringify(suite,null,2))
-    TestRunner.add(suite);    
-    // run all tests
-    TestRunner.run();
-    //console.log("Browser: TestRunner complete");
+    TestRunner.add(suite);
+    
+    // flag to control whether to automatically run the tests as the page loads
+    if (!window.disableTestAutoRun){
+      // run all tests
+      TestRunner.run();
+      //console.log("Browser: TestRunner complete");
+    }
   }  
 })();
