@@ -64,14 +64,9 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test return is an object": (navigator.userAgent.match(/Rhino/)),
-        "test return contains references to generated elements": (navigator.userAgent.match(/Rhino/)),
-        "test form contains fields": (navigator.userAgent.match(/Rhino/)),
         "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino/)),
         "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino/)),
-        "test iframe has a transportState": (navigator.userAgent.match(/Rhino/)),
         "test iframe sends a complete event": (navigator.userAgent.match(/Rhino/)),
-        "test skip functions in the data object": (navigator.userAgent.match(/Rhino/)),
         "test skip nested objects in the data object": (navigator.userAgent.match(/Rhino/))
       }
     },
@@ -104,8 +99,8 @@
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
-      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.areEqual(data.field1, result.form.elements[0].value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.elements[1].value, "jsHub.dispatchViaForm() form.field2 missing");
     },
 
     "test form contains fields with spaces in the name": function() {
@@ -113,6 +108,7 @@
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { "field one" : "value1", "field two" : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
+      // FIXME - Envjs can only provide form element references through the 'elements' array not as properties
       Y.Assert.areEqual(data['field one'], result.form['field one'].value, "jsHub.dispatchViaForm() form['field one'] missing");
       Y.Assert.areEqual(data['field two'], result.form['field two'].value, "jsHub.dispatchViaForm() form['field two'] missing");
     },
@@ -122,6 +118,7 @@
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2", field3 : ['a','b','c','d'], field4 : "value4" };
       var result = jsHub.dispatchViaForm(method, url, data);
+      // FIXME - Envjs can only provide form element references through the 'elements' array not as properties
       Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
       Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
       Y.Assert.areEqual(data.field3.length, result.form.field3.length, "jsHub.dispatchViaForm() form.field3 not a serialised array");
@@ -190,7 +187,7 @@
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2", funct: function () { doStuff() } };
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.isUndefined(result.form.funct, "jsHub.dispatchViaForm() should skip functions");
+      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() should skip functions");
     },
 
     "test skip nested objects in the data object": function() {
@@ -198,10 +195,10 @@
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2", field3: {f1:'a',f2:'b',f3:'c',f4:'d'}, field4 : "value4" };
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
-      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
-      Y.Assert.isUndefined(result.form.field3, "jsHub.dispatchViaForm() form.field3 should not be present");
-      Y.Assert.areEqual(data.field4, result.form.field4.value, "jsHub.dispatchViaForm() form.field4 missing");      
+      Y.Assert.areEqual(data.field1, result.form.elements[0].value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.elements[1].value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() form.field3 should not be present");
+      Y.Assert.areEqual(data.field4, result.form.elements[3].value, "jsHub.dispatchViaForm() form.field4 missing");      
     }
 
 

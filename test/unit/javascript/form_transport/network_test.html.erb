@@ -64,7 +64,6 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test rapid creation of multiple transports have unique ids": (navigator.userAgent.match(/Rhino/)),
         "test slow network delays complete event": (navigator.userAgent.match(/Rhino/))
       }
     },
@@ -73,7 +72,7 @@
       var method = 'POST',
         url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
-        n = 10;
+        n = 5;
         formIds = {},
         iframeIds = {};
       for ( i = 0; i < n; i++ ) {
