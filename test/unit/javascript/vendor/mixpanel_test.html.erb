@@ -3,20 +3,20 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag :'jshub+microformats-min' %>
-<%= javascript_include_tag "/js/src/modules/microformats/hpage-capture-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/samples/samples-mixpanel-debug.js" %>
 
 <script type="text/javascript">
-  YUI().use('jshub', 'microformats', function(Y, result) {
-    if (!result.success) {
-        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
-    } else {
-        Y.log('Loaded: jsHub', 'info', 'jsHub');
-    }
+  YUI().use('jshub', function(Y) {
+  	jsHub.configure("samples-mixpanel", true);
   });
 </script>
 
-<%= javascript_include_tag "/js/src/data-transport/mixpanel-get-plugin.js" %>
+
 <% end %>
 
 <% content_for :intro do %>
@@ -54,8 +54,6 @@
     
     "test required test dependencies": function() {
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
-      Y.Assert.isNotUndefined(window.jQuery, "The jQuery library is required");
-      Y.Assert.isFunction($('html').getMicroformatPropertyValue, "$.getMicroformatPropertyValue() is not a function");
     },
     
     "test jsHub API dependencies": function() {

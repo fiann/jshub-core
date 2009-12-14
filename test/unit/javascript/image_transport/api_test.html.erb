@@ -3,15 +3,16 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag :'jshub-min' %>
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/image-transport/image-transport-debug.js" %>
 
 <script type="text/javascript">
-  YUI().use('jshub', function(Y, result) {
-    if (!result.success) {
-        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
-    } else {
-        Y.log('Loaded: jsHub', 'info', 'jsHub');
-    }
+  YUI().use('jshub', function(Y) {
+  	jsHub.configure("image-transport", true);
   });
 </script>
 

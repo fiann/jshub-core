@@ -211,7 +211,7 @@
       return utftext;
   };
 
-(function() {
+YUI.add("samples-mixpanel", function (Y) {
 
   /**
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -309,4 +309,8 @@
   
   // lifecycle notification
   jsHub.trigger("plugin-initialization-complete", metadata);
-})();
+  Y.log('jshub module loaded', 'info', 'jsHub technographics');
+}, "2.0.0", {
+  requires: ["yui", "hub", "logger"], 
+  after: ["yui"]
+});

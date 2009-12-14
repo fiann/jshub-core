@@ -9,6 +9,8 @@
 /*jslint strict: true */
 "use strict";
 
+YUI.add("samples-google-analytics-markup", function (Y) {
+
 (function($) {
 
   /*
@@ -167,3 +169,8 @@
 
 jsHub.bind("data-capture-start", metadata.id, initializeInlineTracking);
 })(jQuery);
+
+}, "2.0.0", {
+  requires: ["yui", "hub", "logger", "jquery"], 
+  after: ["yui"]
+});
