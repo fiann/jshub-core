@@ -9,7 +9,6 @@ class JsControllerTest < ActionController::TestCase
     # check for presence of an example file and folder link
     assert_select "ul" do
       assert_select "li a[href$=modules]", "modules"
-      assert_select "li a[href$=data-capture]", "data-capture"
     end
   end
   
