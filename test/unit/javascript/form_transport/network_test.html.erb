@@ -70,7 +70,7 @@
     
     "test rapid creation of multiple transports have unique ids": function() {
       var method = 'POST',
-        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
         n = 5;
         formIds = {},
@@ -88,7 +88,7 @@
 
     "test slow network delays complete event": function() {
       var method = 'POST',
-        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { 
           field1 : "value1", 
           field2 : "value2",

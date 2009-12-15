@@ -72,7 +72,7 @@
 
     "test send lots of data in a single field": function() {
       var method = 'POST',
-        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { 
           field1 : "value1", 
           field2 : "value2", 
@@ -97,7 +97,7 @@
 
     "test send lots of fields": function() {
       var method = 'POST',
-        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = {},
         n = 100;
         
@@ -124,7 +124,7 @@
     
     "test creation of multiple transports releases memory": function() {
       var method = 'POST',
-        url = 'http://echo.jshub.org/cgi-bin/cuzillion/resource.cgi',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
         n = 10,
         transports = 0;
