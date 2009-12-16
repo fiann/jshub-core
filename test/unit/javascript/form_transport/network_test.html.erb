@@ -1,0 +1,123 @@
+<% set_title "Form to iframe < Data transport" %>
+<% content_for :javascripts do %>
+
+<!-- jsHub dist file -->
+<!-- jsHub dist file -->
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/form-transport/form-transport-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');    
+    }
+  });
+</script>
+
+<% end %>
+<% content_for :intro do %>
+<p>
+  This page tests methods for cross-domain data transport via form submission to an iframe.
+</p>
+<p>
+  This page requires network and DNS access.
+</p>
+
+<% end %>
+<!-- Any HTML you may require for your tests to work properly -->
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /*
+   * Form Transport uses different methods for IE vs other browsers to avoid navigational clicks
+   */
+  suite.add(new Y.Test.Case({
+    name: "Form Transport",
+    
+    _should: {
+      ignore: {
+        // FIXME Envjs has a problem with form.method
+        "test slow network delays complete event": (navigator.userAgent.match(/Rhino/))
+      }
+    },
+    
+    "test rapid creation of multiple transports have unique ids": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { field1 : "value1", field2 : "value2" },
+        n = 5;
+        formIds = {},
+        iframeIds = {};
+      for ( i = 0; i < n; i++ ) {
+        var result = jsHub.dispatchViaForm(method, url, data);
+        Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
+        formIds[result.form.id] = true;
+        iframeIds[result.iframe.id] = true;
+      }
+      // Check returned ID's - duplicates will override existing properties and so the length will be wrong
+      Y.Assert.areEqual(n, Y.Object.size(formIds), "Each form.id is not unique");
+      Y.Assert.areEqual(n, Y.Object.size(iframeIds), "Each iframe.id is not unique");
+    },
+
+    "test slow network delays complete event": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { 
+          field1 : "value1", 
+          field2 : "value2",
+          // Cuzillion settings to delay the request - min 2 secs
+          sleep: Math.floor(Math.random()*5+2), 
+          type: "html"
+        };
+      var result = jsHub.dispatchViaForm(method, url, data);
+
+      // Resume when we recieve the event
+      var test = this;
+      var timestamp = new Date().getTime();
+      jsHub.bind('form-transport-complete', 'unittest', function (obj) {
+        // determine if this event is the one for the transport we just created
+        if (obj.data.iframe.id === result.iframe.id) {
+          test.resume(function () {
+            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ");
+            // iframe should never complete the request quicker than ~2secs
+            Y.assert(((new Date().getTime()) - timestamp) > 2000, "jsHub.dispatchViaForm() complete event fired too quickly")
+          });
+        }
+      });
+      // wait for the event to occur
+      this.wait();
+    }
+
+
+  }));
+})();
+
+  
+</script> 

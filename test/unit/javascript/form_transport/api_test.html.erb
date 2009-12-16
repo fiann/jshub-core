@@ -1,4 +1,4 @@
-<% set_title "Activexobject < Data transport" %>
+<% set_title "Form to iframe < Data transport" %>
 <% content_for :javascripts do %>
 
 <!-- jsHub dist file -->
@@ -21,7 +21,7 @@
   This page tests methods for cross-domain data transport via form submission to an iframe.
 </p>
 <p>
-  Due to the Same-Origin Policy a visual check on the Request and Response body using tools such as Firebug, IEWatch, an HTTP proxy or browser developer tools is recommended.
+  Due to the Same-Origin Policy a visual check on the Request and Response body using tools such as Firebug, IEWatch, an HTTP proxy or other browser developer tools is recommended.
 </p>
 
 <% end %>
@@ -59,12 +59,9 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test return is an object": (navigator.userAgent.match(/Rhino/)),
-        "test return contains references to generated elements": (navigator.userAgent.match(/Rhino/)),
-        "test form contains fields": (navigator.userAgent.match(/Rhino/)),
-        "test iframe has a transportState": (navigator.userAgent.match(/Rhino/)),
-        "test rapid creation of multiple events are unique": (navigator.userAgent.match(/Rhino/)),
-        "test skip functions in the data object": (navigator.userAgent.match(/Rhino/))
+        "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino/)),
+        "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino/)),
+        "test iframe sends a complete event": (navigator.userAgent.match(/Rhino/))
       }
     },
     
@@ -74,7 +71,7 @@
 
     "test return is an object": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
@@ -83,35 +80,77 @@
 
     "test return contains references to generated elements": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isTrue(/^jshub-form-/i.test(result.form.id), "jsHub.dispatchViaForm() form.id is not correct");
       Y.Assert.isTrue(/^jshub-iframe-/i.test(result.iframe.id), "jsHub.dispatchViaForm() iframe.id is not correct");
     },
-
+    
     "test form contains fields": function() {
       // IE6 can loose input names when in an ActiveXObject('htmlfile');
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
-      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.areEqual(data.field1, result.form.elements[0].value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.elements[1].value, "jsHub.dispatchViaForm() form.field2 missing");
     },
 
+    "test form contains fields with spaces in the name": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { "field one" : "value1", "field two" : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      // FIXME - Envjs can only provide form element references through the 'elements' array not as properties
+      Y.Assert.areEqual(data['field one'], result.form['field one'].value, "jsHub.dispatchViaForm() form['field one'] missing");
+      Y.Assert.areEqual(data['field two'], result.form['field two'].value, "jsHub.dispatchViaForm() form['field two'] missing");
+    },
+
+    "test form contains fields from a nested array": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { field1 : "value1", field2 : "value2", field3 : ['a','b','c','d'], field4 : "value4" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+      // FIXME - Envjs can only provide form element references through the 'elements' array not as properties
+      Y.Assert.areEqual(data.field1, result.form.field1.value, "jsHub.dispatchViaForm() form.field1 missing");
+      Y.Assert.areEqual(data.field2, result.form.field2.value, "jsHub.dispatchViaForm() form.field2 missing");
+      Y.Assert.areEqual(data.field3.length, result.form.field3.length, "jsHub.dispatchViaForm() form.field3 not a serialised array");
+      Y.Assert.areEqual(data.field4, result.form.field4.value, "jsHub.dispatchViaForm() form.field4 missing");
+    },
+    
     "test iframe has a transportState": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isNumber(result.iframe.transportState, "jsHub.dispatchViaForm() iframe.transportState is not a number");
     },
     
+    "test iframe sends a complete event": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { field1 : "value1", field2 : "value2" };
+      var result = jsHub.dispatchViaForm(method, url, data);
+
+      // Resume when we recieve the event
+      var test = this;
+      jsHub.bind('form-transport-complete', 'unittest', function (obj) {
+        // determine if this event is the one for the transport we just created
+        if (obj.data.iframe.id === result.iframe.id) {
+          test.resume(function () {
+            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ")
+          });
+        }
+      });
+      // wait for the event to occur
+      this.wait();
+    },
+    
     /* Error conditions */
     "test reject unsafe methods": function() {
       var method = 'PUT',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" };
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject PUT method");
@@ -123,7 +162,6 @@
       method = 'CUSTOM',
       result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject CUSTOM method");
-
     },
     
     "test reject unsafe protocols in urls": function() {
@@ -133,23 +171,36 @@
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject file:/// protocols");
 
-      url = 'javascript:alert("unsafe")',
+      url = 'javascript:alert("unsafe");',
       result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject javascript: protocol");
     },
 
     "test skip functions in the data object": function() {
       var method = 'POST',
-        url = 'http://test.causata.com/rtw',
+        url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2", funct: function () { doStuff() } };
       var result = jsHub.dispatchViaForm(method, url, data);
-      Y.Assert.isUndefined(result.form.funct, "jsHub.dispatchViaForm() should skip functions");
-    }
+      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() should skip functions");
+    },
 
+    "test skip nested objects in the data object": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { field1 : "value1", field2 : "value2", object: {f1:'a',f2:'b',f3:'c',f4:'d'}};
+      var result = jsHub.dispatchViaForm(method, url, data);
+      Y.Assert.isUndefined(result.form.elements[2], "jsHub.dispatchViaForm() form.object should not be present");
+    }
 
 
   }));
 })();
 
+// disable the automatic running of the test runner
+var disableTestAutoRun = true;
+
+Y.on('load', function () {
+  Y.Test.Runner.run();
+});
   
 </script> 

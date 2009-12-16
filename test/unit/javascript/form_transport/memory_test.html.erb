@@ -1,0 +1,176 @@
+<% set_title "Form to iframe < Data transport" %>
+<% content_for :javascripts do %>
+
+<!-- jsHub dist file -->
+<!-- jsHub dist file -->
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/form-transport/form-transport-debug.js" %>
+
+<script type="text/javascript">
+  YUI().use('jshub', function(Y, result) {
+    if (!result.success) {
+        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
+    } else {
+        Y.log('Loaded: jsHub', 'info', 'jsHub');    
+    }
+  });
+</script>
+
+<% end %>
+<% content_for :intro do %>
+<p>
+  This page tests methods for cross-domain data transport via form submission to an iframe.
+</p>
+<p>
+  This page requires network and DNS access.
+</p>
+
+<% end %>
+<!-- Any HTML you may require for your tests to work properly -->
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+  
+  /*
+   * Form Transport uses different methods for IE vs other browsers to avoid navigational clicks
+   */
+  suite.add(new Y.Test.Case({
+    name: "Form Transport",
+    
+    _should: {
+      ignore: {
+        // FIXME Envjs has a problem with form.method
+        "test send lots of data in a single field": (navigator.userAgent.match(/Rhino/)),
+        "test send lots of fields": (navigator.userAgent.match(/Rhino/)),
+        "test creation of multiple transports releases memory": (navigator.userAgent.match(/Rhino/))
+      }
+    },    
+
+    "test send lots of data in a single field": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { 
+          field1 : "value1", 
+          field2 : "value2", 
+          // use the document source text as a raw input
+          bigfield: document.body.innerHTML 
+        };
+      var result = jsHub.dispatchViaForm(method, url, data);
+
+      // Resume when we recieve the event
+      var test = this;
+      jsHub.bind('form-transport-complete', 'unittest', function (obj) {
+        // determine if this event is the one for the transport we just created
+        if (obj.data.iframe.id === result.iframe.id) {
+          test.resume(function () {
+            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ");
+          });
+        }
+      });
+      // wait for the event to occur
+      this.wait();
+    },
+
+    "test send lots of fields": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = {},
+        n = 100;
+        
+        for ( i = 0; i < n; i++ ) {
+          data["'field"+ i +"'"] = "value"+i+"";
+        }
+
+      var result = jsHub.dispatchViaForm(method, url, data);
+
+      // Resume when we recieve the event
+      var test = this;
+      jsHub.bind('form-transport-complete', 'unittest', function (obj) {
+        // determine if this event is the one for the transport we just created
+        if (obj.data.iframe.id === result.iframe.id) {
+          test.resume(function () {
+            Y.Assert.areEqual(result.iframe.id, obj.data.iframe.id, "jsHub.dispatchViaForm() event data is not for the expected transport instance ");
+            Y.Assert.areEqual(n, obj.data.form.length, "jsHub.dispatchViaForm() number of fields does not match");
+          });
+        }
+      });
+      // wait for the event to occur
+      this.wait();
+    },
+    
+    "test creation of multiple transports releases memory": function() {
+      var method = 'POST',
+        url = '/cgi-bin/cuzillion/resource.cgi',
+        data = { field1 : "value1", field2 : "value2" },
+        n = 10,
+        transports = 0;
+        
+      for ( i = 0; i < n; i++ ) {
+        var result = jsHub.dispatchViaForm(method, url, data);
+        Y.Assert.isNotNull(result, "jsHub.dispatchViaForm() return value is null");
+
+        // Resume when we recieve the event
+        var test = this;
+        jsHub.bind('form-transport-complete', 'unittest', function (obj) {
+          // cache the id's so we can use them later to assert the removal
+          var formId = obj.data.form.id;
+          var iframeId = obj.data.iframe.id;
+          
+          jsHub.logger.log("Removing transport from the DOM: %o %o", obj.data.form, obj.data.iframe)
+          if (obj.data.form){
+              obj.data.form.parentNode.removeChild(obj.data.form);
+              obj.data.form = null;
+          }        
+          if (obj.data.iframe){
+              obj.data.iframe.parentNode.removeChild(obj.data.iframe);
+              obj.data.iframe = null;
+          }
+
+          Y.Assert.isNull(obj.data.form, "jsHub.dispatchViaForm() form reference still open");                
+          Y.Assert.isNull(obj.data.doc.getElementById(formId), "jsHub.dispatchViaForm() form is still in the DOM");
+          Y.Assert.isNull(obj.data.iframe, "jsHub.dispatchViaForm() the iframe reference is still open");                
+          Y.Assert.isNull(obj.data.doc.getElementById(iframeId), "jsHub.dispatchViaForm() iframe is still in the DOM");
+
+          //record that we cleaned up
+          transports++;
+
+          // resume once we have sent all the requests
+          if (n === transports) {
+            test.resume(function () {
+              Y.Assert.areEqual(n, transports, "jsHub.dispatchViaForm() not all transports were cleaned up");                
+            });
+          }          
+        });
+      }
+      // wait for the all the events to occur
+      this.wait();      
+    }    
+
+  }));
+})();
+
+</script> 
