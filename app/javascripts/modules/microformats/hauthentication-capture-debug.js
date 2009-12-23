@@ -142,6 +142,6 @@ YUI.add("hauthentication-capture", function (Y) {
     
   })(jQuery);
 }, "2.0.0", {
-  requires: ["microformats"], 
-  after: ["microformats"]
+  requires: ["microformats-api"], 
+  after: ["microformats-api"]
 });
