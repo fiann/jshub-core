@@ -3,10 +3,16 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jquery/jquery-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/microformats/microformats-api-debug.js" %>
 
 <script type="text/javascript">
-  YUI().use('jshub', 'microformats', function(Y, result) {
+  YUI().use('jshub', 'microformats-api', function(Y, result) {
     if (!result.success) {
         Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
     } else {

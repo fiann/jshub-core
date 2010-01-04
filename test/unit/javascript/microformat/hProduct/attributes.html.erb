@@ -3,7 +3,13 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag :'jshub+microformats-min' %>
+<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jquery/jquery-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/modules/microformats/microformats-api-debug.js" %>
 <%= javascript_include_tag "/js/src/modules/microformats/hproduct-capture-debug.js" %>
 
 <script type="text/javascript">
