@@ -15,7 +15,8 @@ development: &non_production_settings
     :port: 3000
     :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
-    :base_url: http://localhost:3000/
+    # if you want to run a server on a different port, use script/server and then change this url
+    :base_url: http://localhost/core/
   :combo:
     # URL prefix to the combo/CDN/api server, e.g. http://apis.jshub.org/
     :base_url: http://localhost/phploader/
