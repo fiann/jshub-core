@@ -1,4 +1,5 @@
 # The test:javascripts task
+desc "Run tests for javascript unit test pages, use 'TEST=' to test a single page."
 Rake::TestTask.new("test:javascripts" => "db:test:prepare") do |t|
   # get a list of all the test files
   t.pattern = 'test/unit/javascript/**/*.html.erb'
@@ -20,7 +21,6 @@ Rake::TestTask.new("test:javascripts" => "db:test:prepare") do |t|
     end
   end
 end
-Rake::Task["test:javascripts"].comment = "Run tests for javascript unit test pages, use 'FILE=' to test a single page."
 
 # Rake merges actions from duplicate tasks
 # ref: http://blog.jayfields.com/2008/02/rake-task-overwriting.html
