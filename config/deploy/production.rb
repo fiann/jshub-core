@@ -3,12 +3,11 @@
 
 puts "Deploying to PRODUCTION"
 
-set :scm_domain,  "github.com"
 set :domain,      "jshub.org"
 set :rails_env,   "jshub"
 
 # construct the path to the repository
-set :repository,   "git@#{scm_domain}:jshub/jshub-core.git"
+set :repository,   "git@github.com:jshub/jshub-core.git"
 
 #If you log into your server with a different user name than you are logged 
 #into your local machine with, youll need to tell Capistrano about that user 
