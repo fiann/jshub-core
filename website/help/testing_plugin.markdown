@@ -64,7 +64,7 @@ To run the tests in this way you must have Java installed and this application r
 Set the URL to your running instance in `config/jshub_javascript_tester.yml`
 
 <pre class="brush: ruby; light: true;">
-    :continuous_integration:
+    :webserver:
       :base_url: http://localhost:3000/ # default install
 </pre>
       

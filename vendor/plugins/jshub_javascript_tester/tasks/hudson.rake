@@ -35,7 +35,7 @@ namespace "jshub" do
       if FileTest.exists? "tmp/pids/server.pid"
         puts "Server is already running and pid file exists"        
       elsif
-        port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        port = JSHUB_JAVASCRIPT_TESTER[:webserver][:port]
         # start the local server so tests can be requested directly from the app
         puts "Starting local server on port #{port}"
         FileUtils.mkpath "tmp/pids"  

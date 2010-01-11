@@ -16,8 +16,8 @@ require 'benchmark'
 
 class JshubTestRunner < ActiveSupport::TestCase
   
-  REPORTS_PATH = "#{JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:reports_path]}"
-  BASE_URL = "#{JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:base_url]}"
+  REPORTS_PATH = "#{JSHUB_JAVASCRIPT_TESTER[:reports_path]}"
+  BASE_URL = "#{JSHUB_JAVASCRIPT_TESTER[:webserver][:base_url]}"
   DEBUG = (ENV['JSHUB_DEBUG'] == 'true') 
   
   # Initialize tests on this class for each html unit test page.

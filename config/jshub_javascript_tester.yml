@@ -11,12 +11,31 @@ development: &non_production_settings
       :site: secret
       # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
       :url_pattern: secret
-  :continuous_integration:
+  :reports_path: test/reports
+  :webserver:
     :port: 3000
-    :reports_path: test/reports
     # URL prefix to test server, e.g. http://some.server.com/core/
     # if you want to run a server on a different port, use script/server and then change this url
     :base_url: http://localhost/core/
+  :combo:
+    # URL prefix to the combo/CDN/api server, e.g. http://apis.jshub.org/
+    :base_url: http://localhost/phploader/
+      
+hudson:
+  :test_run:
+    :vendor:
+      :name: secret
+      :user: secret
+      :password: secret
+      # URL to Litmus API, e.g. http://<username>.litmusapp.com/
+      :site: secret
+      # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
+      :url_pattern: secret
+  :reports_path: test/reports
+  :webserver:
+    :port: 3000
+    # URL prefix to test server, e.g. http://some.server.com/core/
+    :base_url: http://localhost:3000/
   :combo:
     # URL prefix to the combo/CDN/api server, e.g. http://apis.jshub.org/
     :base_url: http://localhost/phploader/
