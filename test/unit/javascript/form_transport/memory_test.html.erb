@@ -64,9 +64,9 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test send lots of data in a single field": (navigator.userAgent.match(/Rhino/)),
-        "test send lots of fields": (navigator.userAgent.match(/Rhino/)),
-        "test creation of multiple transports releases memory": (navigator.userAgent.match(/Rhino/))
+        "test send lots of data in a single field": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test send lots of fields": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test creation of multiple transports releases memory": (navigator.userAgent.match(/Rhino|Envjs/))
       }
     },    
 

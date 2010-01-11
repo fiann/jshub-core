@@ -71,9 +71,9 @@
 
     _should: {
       ignore: {
-        // Flash cannot run in Rhino
-        "test data sent directly from flash": (navigator.userAgent.match(/Rhino/)),
-        "test data sent via jsHub from flash": (navigator.userAgent.match(/Rhino/))
+        // Flash cannot run in Env.js
+        "test data sent directly from flash": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test data sent via jsHub from flash": (navigator.userAgent.match(/Rhino|Envjs/))
       }
     },
     

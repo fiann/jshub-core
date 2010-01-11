@@ -59,9 +59,9 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino/)),
-        "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino/)),
-        "test iframe sends a complete event": (navigator.userAgent.match(/Rhino/))
+        "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test iframe sends a complete event": (navigator.userAgent.match(/Rhino|Envjs/))
       }
     },
     

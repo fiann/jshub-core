@@ -35,7 +35,8 @@
   var baseUrl = (function() {
     if (window.location.protocol === "file:") {
       return "";
-    } else if(navigator.userAgent.match(/Rhino/)) {
+    } else if(navigator.userAgent.match(/Rhino|Envjs/)) {
+	  // env.js does not currently normalise the url of images in the page
       return "";
     } else {
       // get the base url of the page, e.g. http://localhost:3000/

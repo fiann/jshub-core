@@ -64,7 +64,7 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test slow network delays complete event": (navigator.userAgent.match(/Rhino/))
+        "test slow network delays complete event": (navigator.userAgent.match(/Rhino|Envjs/))
       }
     },
     
@@ -72,7 +72,7 @@
       var method = 'POST',
         url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
-        n = 5;
+        n = 5,
         formIds = {},
         iframeIds = {};
       for ( i = 0; i < n; i++ ) {
