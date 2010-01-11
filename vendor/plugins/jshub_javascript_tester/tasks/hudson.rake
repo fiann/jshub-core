@@ -22,7 +22,7 @@ namespace "jshub" do
         stub_path = "/usr/local/lib/ruby/gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # gromit
   
         # invoke the CI task in same process as test to output results in JUnit XML format into the default location (./test/reports)
-        sh "cd '#{RAILS_ROOT}' && rake -f #{stub_path} ci:setup:testunit test" 
+        sh "cd '#{RAILS_ROOT}' && rake -f #{stub_path} ci:setup:testunit test RAILS_ENV=#{RAILS_ENV}" 
       ensure
         # stop server
         Rake::Task["jshub:runcoderun:server:stop"].execute []
