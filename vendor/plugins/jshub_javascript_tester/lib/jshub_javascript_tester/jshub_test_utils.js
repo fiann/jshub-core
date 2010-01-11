@@ -291,7 +291,13 @@ runTest = function(test_file, isDebug) {
     console.info("Env: Test execution started");
   });
   TestRunner.subscribe(TestRunner.TEST_PASS_EVENT, utils.reportResult);
+  TestRunner.subscribe(TestRunner.TEST_PASS_EVENT, function(evt) {
+    ruby_test_runner.callback_test_complete(evt);
+  });
   TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, utils.reportResult);
+  TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, function(evt) {
+    ruby_test_runner.callback_test_complete(evt);
+  });
   TestRunner.subscribe(TestRunner.TEST_IGNORE_EVENT, utils.reportResult);
   TestRunner.subscribe(TestRunner.COMPLETE_EVENT, utils.reportCompletionStatus);
   console.info("Env: YUI TestRunner events subscribed");
