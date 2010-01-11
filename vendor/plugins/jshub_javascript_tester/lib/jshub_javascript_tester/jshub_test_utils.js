@@ -15,7 +15,7 @@ runTest = function(test_file, isDebug) {
 
   // time how long it takes to run
   var startTime = 0;
-    
+  
   /**
    * Utility functions
    */     
@@ -166,11 +166,10 @@ runTest = function(test_file, isDebug) {
      */
     printReport: function(data) {
       var timeTaken = (+new Date()) - startTime;    
-      print('\nUnit Test Report: ' + data.results.passed + " Passed, " 
+      print(data.results.passed + " Passed, " 
 	    + data.results.failed + " Failed, " 
 		+ data.results.ignored + " Ignored, " 
-		+ data.results.total + " Total tests in " + timeTaken + "ms"
-		+ ' for '+ test_file_name);
+		+ timeTaken + "ms running JavaScript");
     },  
     
     // Output data in YUI JSON format to a file for debugging

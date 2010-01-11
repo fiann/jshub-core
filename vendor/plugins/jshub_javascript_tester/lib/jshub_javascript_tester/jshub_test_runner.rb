@@ -12,6 +12,8 @@ require 'johnson/tracemonkey'
 require 'johnson/cli'
 require 'envjs/runtime'
 
+require 'benchmark'
+
 class JshubTestRunner < ActiveSupport::TestCase
   
   REPORTS_PATH = "#{JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:reports_path]}"
@@ -21,30 +23,29 @@ class JshubTestRunner < ActiveSupport::TestCase
   # Initialize tests on this class for each html unit test page.
   # All the tests should be in the folder RAILS_ROOT/test/unit/javascript/
   def self.initialize_tests(test_cases=[])
-
-    # Run each HTML file supplied
-    test_cases.each do |t|
-      @test_case = t.gsub!("/javascript","").gsub!(/\.html\.erb$/,"")
-      test_case_url = BASE_URL + @test_case
-      puts "URL to Test Case #{test_case_url}" if DEBUG
-
-      puts "Creating JavaScript runtime" if DEBUG
-      runtime = Johnson::Runtime.new
-      runtime.extend Envjs::Runtime
-      runtime.load Envjs::ENVJS
-      runtime.load File.join( File.dirname(__FILE__), "jshub_test_utils.js" )
-      runtime[:results] = 'spud'
-      runtime[:ruby_test_runner] = self
-      
-      # Run the test
-      runtime.evaluate <<-EOJS
-        runTest("#{test_case_url}", #{DEBUG});
-      EOJS
-#      puts "Defining method ##{test_case}" if DEBUG
-#      define_method "#{@test_case}" do
-#        execute_test(@test_case)
-#      end
+    
+    time = Benchmark.realtime do  
+    
+      # Run each HTML file supplied
+      test_cases.each_index do |i|
+        @test_case = test_cases[i].gsub!("/javascript","").gsub!(/\.html\.erb$/,"")
+        test_case_url = BASE_URL + @test_case
+        puts "(#{i}/#{test_cases.length}) Running #{@test_case}"
+  
+        puts "Creating JavaScript runtime" if DEBUG
+        runtime = Johnson::Runtime.new
+        runtime.extend Envjs::Runtime
+        runtime.load Envjs::ENVJS
+        runtime.load File.join( File.dirname(__FILE__), "jshub_test_utils.js" )
+        runtime[:ruby_test_runner] = self
+        
+        # Run the test
+        runtime.evaluate <<-EOJS
+          runTest("#{test_case_url}", #{DEBUG});
+        EOJS
+      end
     end
+    puts "Finished in %.6fs" % time
   end
   
   def self.callback_test_complete(result)
@@ -59,7 +60,7 @@ class JshubTestRunner < ActiveSupport::TestCase
       elsif /Failure/i =~ result[:error][:name]
         flunk result[:error][:message]
       else
-        fail result[:error][:message]
+        fail result[:error][:message] + result[:error][:cause][:stack]  
       end
     end
   end
