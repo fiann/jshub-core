@@ -30,7 +30,7 @@ namespace "jshub" do
       elsif
         # Behave nice on RunCodeRun servers
         # ref: http://support.runcoderun.com/discussions/builds-open-source/72-server-500-error-on-localhost
-        #port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        #port = JSHUB_JAVASCRIPT_TESTER[:webserver][:port]
         port = 81664
         # start the local server so tests can be requested directly from the app
         puts "Starting local server on port #{port}"

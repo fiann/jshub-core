@@ -20,7 +20,11 @@ production:
   
 passenger:
   development
-  
+
+# Used by Hudson continuous integration server
+hudson:
+  test
+
 # paths specific for the Gromit server
 gromit:
   adapter: sqlite3

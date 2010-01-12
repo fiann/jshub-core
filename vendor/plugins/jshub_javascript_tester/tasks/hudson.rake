@@ -6,9 +6,7 @@ namespace "jshub" do
     desc "Run the Continuous Integration build tasks for Hudson"
     task :build => [
       "gems:install", 
-      "db:migrate",
-      # linting is used as an equivilant to a compile failure
-      "jshub:javascripts:lint"] do
+      "db:migrate"] do
       
       begin
         puts "Running Hudson build task"
@@ -16,13 +14,9 @@ namespace "jshub" do
         # start a server instance to serve javascript unit tests html pages
         Rake::Task["jshub:hudson:server:start"].execute []
         
-        # Server specific path removes the need for manual install of ci_reporter and editing of rake files in the app allowing rake gems:install to work for end users. See #773
-        puts "CI Reporter: invoking using 'Advanced Usage' ref: http://caldersphere.rubyforge.org/ci_reporter/"
-        #stub_path = "/Library/Ruby/Gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # osx
-        stub_path = "/usr/local/lib/ruby/gems/1.8/gems/ci_reporter-1.5.2/stub.rake" # gromit
-  
         # invoke the CI task in same process as test to output results in JUnit XML format into the default location (./test/reports)
-        sh "cd '#{RAILS_ROOT}' && rake -f #{stub_path} ci:setup:testunit test" 
+        Rake::Task["ci:setup:testunit"].execute []
+        Rake::Task["test"].invoke
       ensure
         # stop server
         Rake::Task["jshub:runcoderun:server:stop"].execute []
@@ -35,7 +29,7 @@ namespace "jshub" do
       if FileTest.exists? "tmp/pids/server.pid"
         puts "Server is already running and pid file exists"        
       elsif
-        port = JSHUB_JAVASCRIPT_TESTER[:continuous_integration][:port]
+        port = JSHUB_JAVASCRIPT_TESTER[:webserver][:port]
         # start the local server so tests can be requested directly from the app
         puts "Starting local server on port #{port}"
         FileUtils.mkpath "tmp/pids"  
@@ -52,6 +46,12 @@ namespace "jshub" do
         puts "Cannot find pid file to stop server"        
       end
     end
-  
+
   end
+end
+
+# Include linting in the tests
+task :test do
+  Rake::Task["jshub:javascripts:lint"].invoke
+  Rake::Task["test:javascripts"].invoke
 end

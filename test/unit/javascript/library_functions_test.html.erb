@@ -48,9 +48,9 @@
        * 
        * TODO this does not run properly in env.js with the file: protocol
        */
-      var server = document.location.protocol + "//" + document.location.hostname;
-      if (document.location.port && document.location.port !== '80') {
-        server += ":" + document.location.port;
+      var server = window.location.protocol + "//" + window.location.hostname;
+      if (window.location.port && window.location.port !== '80') {
+        server += ":" + window.location.port;
       }
 
       /*

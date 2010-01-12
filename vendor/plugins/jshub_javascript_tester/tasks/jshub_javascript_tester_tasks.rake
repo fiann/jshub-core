@@ -1,4 +1,5 @@
 # The test:javascripts task
+desc "Run tests for javascript unit test pages, use 'TEST=' to test a single page."
 Rake::TestTask.new("test:javascripts" => "db:test:prepare") do |t|
   # get a list of all the test files
   t.pattern = 'test/unit/javascript/**/*.html.erb'
@@ -13,14 +14,14 @@ Rake::TestTask.new("test:javascripts" => "db:test:prepare") do |t|
         @ruby_opts.unshift( "-I#{lib_path}" )
         @ruby_opts.unshift( "-w" ) if @warning
         ruby @ruby_opts.join(" ") +
-          " -e \"load '" + File.expand_path("#{File.dirname(__FILE__)}/../lib/jshub_javascript_tester/jshub_test_runner.rb") + "'; " +
+          " -e \"RAILS_ENV='#{RAILS_ENV}'; " +
+          "load '" + File.expand_path("#{File.dirname(__FILE__)}/../lib/jshub_javascript_tester/jshub_test_runner.rb") + "'; " +
           # use files matching t.pattern or TEST=
           "JshubTestRunner.initialize_tests(%w{#{file_list}})\""
       end
     end
   end
 end
-Rake::Task["test:javascripts"].comment = "Run tests for javascript unit test pages, use 'FILE=' to test a single page."
 
 # Rake merges actions from duplicate tasks
 # ref: http://blog.jayfields.com/2008/02/rake-task-overwriting.html

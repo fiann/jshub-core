@@ -1,46 +1,44 @@
-# add our classes from lib/
-require File.expand_path("#{File.dirname(__FILE__)}/../lib/rhino/rhinojs")
-
 # invoke with optional [src] flag or list of files, e.g. files=src/hub.js,src/api.js
 # TODO: generate list of files from dir only
 namespace :jshub do 
   namespace :javascripts do 
     
     desc "Validate JavaScript source files with JsLint in Rhino"
-    task :lint, :files do |task, args|
+    Rake::TestTask.new(:lint) do |t|
+      # get a list of all the test files
+      t.pattern = 'app/javascripts/**/*.js'
+      t.verbose = true if ENV['JSHUB_DEBUG'] == 'true'
       
-      # by default lint the src js files
-      if (args.files == nil || args.files=='src')
-        files = Dir["#{RAILS_ROOT}/app/javascripts/**/*.js"]
-        # or specifically named files
-      else
-        files = args.files.split(",")
-      end
-      
-      # remove libraries and minimised files as they won't lint
-      files = files.reject do |f|
-        if f.match /app\/javascripts\/dist\//
-          print "Skip linting distribution file #{f}\n"
-          true
-        elsif f.match /jquery\/|yui\/|loader\/|json\/|debug\//
-          print "Skip linting library #{f}\n"
-          true
-        elsif f.match /app\/javascripts\/modules\/(?!(.+-debug\.js))/
-          print "Skip linting generated file #{f}\n"
-          true
-        else 
-          false
+      # Create the tasks defined by this task lib
+      def t.define
+        # remove libraries and minimised files as they won't lint
+        files = file_list.reject do |f|
+          if f.match /app\/javascripts\/dist\//
+            print "Skip linting distribution file #{f}\n" if ENV["JSHUB_DEBUG"]
+            true
+          elsif f.match /jquery\/|yui\/|loader\/|json\/|debug\//
+            print "Skip linting library #{f}\n" if ENV["JSHUB_DEBUG"]
+            true
+          elsif f.match /app\/javascripts\/modules\/(?!(.+-debug\.js))/
+            print "Skip linting generated file #{f}\n" if ENV["JSHUB_DEBUG"]
+            true
+          else 
+            false
+          end
+        end
+
+        lib_path = @libs.join(File::PATH_SEPARATOR)
+        task @name do
+          RakeFileUtils.verbose(@verbose) do
+            @ruby_opts.unshift( "-I#{lib_path}" )
+            @ruby_opts.unshift( "-w" ) if @warning
+            ruby @ruby_opts.join(" ") +
+              " -e \"load '#{File.expand_path(File.dirname(__FILE__)+"/../lib/jshub_javascript_tester/jslint_test_runner.rb")}'; " +
+              # use files matching t.pattern or TEST=
+              "JslintTestRunner.initialize_tests(%w{#{files}})\""
+          end
         end
       end
-      
-      # lint the files in Rhino
-      rhinojs = RhinoJS.new
-      allok = rhinojs.lint(files)
-      
-      if !allok
-        fail "Lint validation errors"
-      end
     end
-    
-  end  
+  end
 end
