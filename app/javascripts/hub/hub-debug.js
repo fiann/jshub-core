@@ -5,10 +5,10 @@
  *//*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global YUI, jQuery */
+/*global jQuery */
 "use strict";
 
-YUI.add('hub', function (Y) {
+(function () {
 
   // global namespace
   var global = window, 
@@ -335,9 +335,4 @@ YUI.add('hub', function (Y) {
     return new Date().getTime();
   };
   
-  Y.log('hub module loaded', 'info', 'jsHub');
-	
-}, '2.0.0', {
-  requires: ['yui'],
-  after: ['yui']
-});
+})();

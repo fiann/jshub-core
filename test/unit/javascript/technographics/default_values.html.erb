@@ -3,18 +3,11 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-technographics-debug.js" %>
-
-<script type="text/javascript">
-  YUI().use('jshub', function(Y) {
-  	jsHub.configure("jshub-technographics", true);
-  });
-</script>
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-technographics-debug.js" %>
 
 <% end %>
 

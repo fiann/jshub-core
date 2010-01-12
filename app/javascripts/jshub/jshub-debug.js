@@ -7,11 +7,12 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add("jshub", function (Y) {
+(function () {
 
   jsHub.bind('domready', 'init', function () {
     // Initialise lifecycle triggers
-    jsHub.logger.info("Hub initialized, triggering page lifecycle events");
+    jsHub.logger.info("Triggering page lifecycle events");
+	
     // Can be used to pre-configure data at page level if necessary
     jsHub.trigger("data-capture-start");
   
@@ -22,9 +23,5 @@ YUI.add("jshub", function (Y) {
     jsHub.trigger("data-capture-complete");
   });
 
-  Y.log('jshub module loaded', 'info', 'jsHub');
-}, "2.0.0", {
-  requires: ["yui", "hub", "logger", "image-transport", "form-transport", "plugins", "domready"], 
-  after: ["yui"]
-});
+})();
 

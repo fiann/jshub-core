@@ -11,7 +11,7 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add("causata-transport", function (Y) {
+(function () {
 
     /**
      * Metadata about this plug-in for use by UI tools and the Hub
@@ -119,7 +119,4 @@ YUI.add("causata-transport", function (Y) {
     // lifecycle notification
     jsHub.trigger("plugin-initialization-complete", metadata);
 
-  }, "2.0.0", {
-    requires: ["hub", "logger", "form-transport", "json-stringify"],
-    after: ["hub", "logger", "form-transport", "json-stringify"]
-  });
+})();

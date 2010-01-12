@@ -12,7 +12,6 @@
 /*jslint strict: true */
 "use strict";
 
-YUI.add("hauthentication-capture", function (Y) {
   (function ($) {
   
     /*
@@ -141,7 +140,3 @@ YUI.add("hauthentication-capture", function (Y) {
     jsHub.trigger("plugin-initialization-complete", metadata);
     
   })(jQuery);
-}, "2.0.0", {
-  requires: ["microformats-api"], 
-  after: ["microformats-api"]
-});

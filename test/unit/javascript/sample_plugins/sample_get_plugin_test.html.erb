@@ -1,29 +1,18 @@
-<% set_title "Image Transport < Data Transport" %>
+<% set_title "Image Transport Sample < Sample Plugins" %>
 
 <% content_for :javascripts do %>  
 
-<!-- jsHub dist file -->
-<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/image-transport/image-transport-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/samples/samples-get-transport-debug.js" %>
-
-<script type="text/javascript">
-  YUI().use('jshub', function(Y) {
-  	jsHub.configure("samples-get-transport", true);
-  });
-</script>
+<!-- jsHub source files -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/image-transport/image-transport-debug.js" %>
+<%= javascript_include_tag "/js/src/samples/samples-get-transport-debug.js" %>
 
 <% end %>
 
 <% content_for :intro do %>
-<p>
-  The <a href=".">image transport test suite</a> tests <strong>data output from the tag
-  to servers</strong> using the HTTP GET method.
-</p>
 <p>
   This page tests the sample GET plugin provided as a starting point for vendor developers.
 </p>

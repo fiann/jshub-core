@@ -9,9 +9,9 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add('plugins', function (Y) {
+(function () {
     
-  var PluginAPI = {
+  var Utils = {
 
     /** 
      * Fix relative pathed URLs
@@ -110,13 +110,7 @@ YUI.add('plugins', function (Y) {
       return uri; 
     }
   };
-  /*
-   * Add the API as global functions on the core jsHub object
-   */
-  Y.mix(jsHub, PluginAPI);
+  
+  jsHub.utils = Utils;
 
-  Y.log('plugins module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['hub'], 
-  after: ['hub']
-});
+})();

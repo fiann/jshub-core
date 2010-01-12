@@ -22,11 +22,10 @@
 /*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global YUI, jQuery, jsHub */
+/*global jQuery, jsHub */
 /*jslint strict: true */
 "use strict";
 
-YUI.add("hpage-capture", function (Y) {
   (function ($) {
   
     /*
@@ -226,8 +225,3 @@ YUI.add("hpage-capture", function (Y) {
     jsHub.trigger("plugin-initialization-complete", metadata);
     
   })(jQuery);
-  
-}, "2.0.0", {
-  requires: ["microformats-api"], 
-  after: ["microformats-api"]
-});

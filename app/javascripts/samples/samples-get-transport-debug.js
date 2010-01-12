@@ -11,10 +11,10 @@
 /*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global YUI, jsHub */
+/*global jsHub */
 "use strict";
 
-YUI.add("samples-get-transport", function (Y) {
+(function (Y) {
 
   /**
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -90,7 +90,4 @@ YUI.add("samples-get-transport", function (Y) {
   // lifecycle notification
   jsHub.trigger("plugin-initialization-complete", metadata);
 
-}, "2.0.0", {
-  requires: ["yui", "hub", "logger", "image-transport"], 
-  after: ["yui"]
-});
+})();

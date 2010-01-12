@@ -8,10 +8,10 @@
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub */
+/*global jsHub */
 "use strict";
 
-YUI.add('form-transport', function (Y) {
+(function () {
 
   var FormTransport = function () {
 
@@ -130,9 +130,5 @@ YUI.add('form-transport', function (Y) {
   
   jsHub.dispatchViaForm = (new FormTransport()).dispatch;
 
-  Y.log('form-transport module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['hub'], 
-  after: ['hub']
-});
+})();
     

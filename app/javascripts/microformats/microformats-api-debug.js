@@ -10,7 +10,6 @@
 /*global YUI, jsHub, jQuery */
 "use strict";
 
-YUI.add('microformats-api', function (Y) {
 
   (function ($) {
   
@@ -222,12 +221,6 @@ YUI.add('microformats-api', function (Y) {
     /*
      * Add the API as object methods on the any jQuery object
      */
-    Y.mix($.fn, MicroformatAPI);
+    $.extend($.fn, MicroformatAPI);
       
   })(jQuery);
-
-  Y.log('microformats module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['hub', 'jquery'], 
-  after: ['hub', 'jquery']
-});

@@ -6,12 +6,12 @@
  *//*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global YUI, jsHub */
+/*global jsHub */
 /*jslint strict: true */
 "use strict";
  
  
-YUI.add("jshub-technographics", function (Y) {
+(function () {
 
   /*
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -92,7 +92,4 @@ YUI.add("jshub-technographics", function (Y) {
    */
   jsHub.trigger("plugin-initialization-complete", metadata);
   
-}, "2.0.0", {
-  requires: ["yui", "hub", "logger"], 
-  after: ["yui"]
-});
+})();

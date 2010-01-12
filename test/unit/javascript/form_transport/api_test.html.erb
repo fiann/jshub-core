@@ -1,19 +1,12 @@
 <% set_title "Form to iframe < Data transport" %>
 <% content_for :javascripts do %>
 
-<!-- jsHub dist file -->
-<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/form-transport/form-transport-debug.js" %>
-
-<script type="text/javascript">
-  YUI().use('jshub', function(Y) {
-  	jsHub.configure("form-transport", true);
-  });
-</script>
+<!-- jsHub source files -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/form-transport/form-transport-debug.js" %>
 
 <% end %>
 <% content_for :intro do %>
@@ -155,11 +148,11 @@
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject PUT method");
 
-      method = 'DELETE',
+      method = 'DELETE';
       result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject DELETE method");
 
-      method = 'CUSTOM',
+      method = 'CUSTOM';
       result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject CUSTOM method");
     },
@@ -171,7 +164,7 @@
       var result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject file:/// protocols");
 
-      url = 'javascript:alert("unsafe");',
+      url = 'javascript:alert("unsafe");'
       result = jsHub.dispatchViaForm(method, url, data);
       Y.Assert.isFalse(result, "jsHub.dispatchViaForm() should reject javascript: protocol");
     },

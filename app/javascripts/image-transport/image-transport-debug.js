@@ -10,10 +10,10 @@
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub */
+/*global jsHub */
 "use strict";
 
-YUI.add('image-transport', function (Y) {
+(function (Y) {
 
   var ImageTransport = function () {
 
@@ -86,9 +86,5 @@ YUI.add('image-transport', function (Y) {
   
   jsHub.dispatchViaImage = (new ImageTransport()).dispatch;
 
-  Y.log('image-transport module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['hub'], 
-  after: ['hub']
-});
+})();
     

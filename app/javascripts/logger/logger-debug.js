@@ -6,10 +6,10 @@
 // TODO: Enable sending of logging data to remote servers
 
 // JSLint options
-/*global YUI, jsHub */
+/*global jsHub */
 "use strict";
 
-YUI.add('logger', function (Y) {
+(function () {
 
   jsHub.logger = (function () {
     var level = 9; // jsHub.configure('logger.level');
@@ -31,8 +31,4 @@ YUI.add('logger', function (Y) {
     }
   })();
 
-  Y.log('logger module loaded', 'info', 'jsHub');
-}, '2.0.0' , {
-  requires: ['debug', 'hub'],
-  after: ['debug', 'hub']
-});
+})();

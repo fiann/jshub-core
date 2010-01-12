@@ -1,24 +1,12 @@
 <% set_title "Form to iframe < Data transport" %>
 <% content_for :javascripts do %>
 
-<!-- jsHub dist file -->
-<!-- jsHub dist file -->
-<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/form-transport/form-transport-debug.js" %>
-
-<script type="text/javascript">
-  YUI().use('jshub', function(Y, result) {
-    if (!result.success) {
-        Y.log('Load failure: ' + result.msg, 'warn', 'jsHub');
-    } else {
-        Y.log('Loaded: jsHub', 'info', 'jsHub');    
-    }
-  });
-</script>
+<!-- jsHub source files -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
+<%= javascript_include_tag "/js/src/form-transport/form-transport-debug.js" %>
 
 <% end %>
 <% content_for :intro do %>
@@ -72,7 +60,7 @@
       var method = 'POST',
         url = '/cgi-bin/cuzillion/resource.cgi',
         data = { field1 : "value1", field2 : "value2" },
-        n = 5;
+        n = 5,
         formIds = {},
         iframeIds = {};
       for ( i = 0; i < n; i++ ) {
