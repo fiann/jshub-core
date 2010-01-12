@@ -20,32 +20,32 @@ class JslintTestRunner < ActiveSupport::TestCase
   
   JSLINT_RULES = {
     :core => {
-      :onevar => false, 
-      :white => true, 
-      :indent => 2, 
-      :eqeqeq => true, 
-      :browser => true, 
-      :rhino => false,
-      :strict => true,
-      :laxbreak => true, 
-      :undef => true, 
-      :nomen => true, 
-      :bitwise => true, 
-      :regexp => false
+      "onevar" => false, 
+      "white" => true, 
+      "indent" => 2, 
+      "eqeqeq" => true, 
+      "browser" => true, 
+      "rhino" => false,
+      "strict" => true,
+      "laxbreak" => true, 
+      "undef" => true, 
+      "nomen" => true, 
+      "bitwise" => true, 
+      "regexp" => false
     },
     :adsafe => {
-      :predef => ["jsHub"],
-      :safe => true,
-      :onevar => false, 
-      :white => true, 
-      :indent => 2, 
-      :eqeqeq => true, 
-      :strict => true,
-      :laxbreak => true, 
-      :undef => true, 
-      :nomen => true, 
-      :bitwise => true, 
-      :regexp => true
+      "predef" => ["jsHub"],
+      "safe" => true,
+      "onevar" => false, 
+      "white" => true, 
+      "indent" => 2, 
+      "eqeqeq" => true, 
+      "strict" => true,
+      "laxbreak" => true, 
+      "undef" => true, 
+      "nomen" => true, 
+      "bitwise" => true, 
+      "regexp" => true
     }
   }
   
