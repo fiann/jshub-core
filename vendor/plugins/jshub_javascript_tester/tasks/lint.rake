@@ -1,6 +1,3 @@
-# add our classes from lib/
-require File.expand_path("#{File.dirname(__FILE__)}/../lib/rhino/rhinojs")
-
 # invoke with optional [src] flag or list of files, e.g. files=src/hub.js,src/api.js
 # TODO: generate list of files from dir only
 namespace :jshub do 
@@ -17,13 +14,13 @@ namespace :jshub do
         # remove libraries and minimised files as they won't lint
         files = file_list.reject do |f|
           if f.match /app\/javascripts\/dist\//
-            print "Skip linting distribution file #{f}\n"
+            print "Skip linting distribution file #{f}\n" if ENV["JSHUB_DEBUG"]
             true
           elsif f.match /jquery\/|yui\/|loader\/|json\/|debug\//
-            print "Skip linting library #{f}\n"
+            print "Skip linting library #{f}\n" if ENV["JSHUB_DEBUG"]
             true
           elsif f.match /app\/javascripts\/modules\/(?!(.+-debug\.js))/
-            print "Skip linting generated file #{f}\n"
+            print "Skip linting generated file #{f}\n" if ENV["JSHUB_DEBUG"]
             true
           else 
             false
