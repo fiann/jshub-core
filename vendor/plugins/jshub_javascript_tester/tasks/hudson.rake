@@ -6,9 +6,7 @@ namespace "jshub" do
     desc "Run the Continuous Integration build tasks for Hudson"
     task :build => [
       "gems:install", 
-      "db:migrate",
-      # linting is used as an equivilant to a compile failure
-      "jshub:javascripts:lint"] do
+      "db:migrate"] do
       
       begin
         puts "Running Hudson build task"
@@ -18,7 +16,7 @@ namespace "jshub" do
         
         # invoke the CI task in same process as test to output results in JUnit XML format into the default location (./test/reports)
         Rake::Task["ci:setup:testunit"].execute []
-        Rake::Task["test"].execute []
+        Rake::Task["test"].invoke
       ensure
         # stop server
         Rake::Task["jshub:runcoderun:server:stop"].execute []
@@ -48,6 +46,12 @@ namespace "jshub" do
         puts "Cannot find pid file to stop server"        
       end
     end
-  
+
   end
+end
+
+# Include linting in the tests
+task :test do
+  Rake::Task["jshub:javascripts:lint"].invoke
+  Rake::Task["test:javascripts"].invoke
 end
