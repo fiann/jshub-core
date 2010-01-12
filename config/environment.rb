@@ -46,7 +46,7 @@ Rails::Initializer.run do |config|
   
   # convert test output to XML for CI Servers like Hudson and CruiseControl
   # ref: http://blog.huikau.com/2008/01/09/jruby-ruby-continuous-integration-with-hudson/
-  config.gem "ci_reporter", :lib => "ci/reporter/core" if RAILS_ENV == 'gromit'
+  config.gem "ci_reporter", :lib => "ci/reporter/core" if RAILS_ENV == 'test' || RAILS_ENV == 'hudson'
 
   # for running unit tests in JavaScript
   config.gem "smparkes-johnson", :lib => 'johnson', :source => 'http://gems.github.com'

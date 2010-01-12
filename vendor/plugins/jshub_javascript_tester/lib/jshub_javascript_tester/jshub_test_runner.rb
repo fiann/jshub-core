@@ -6,6 +6,9 @@ require 'johnson'
 require 'rubygems'
 require 'pathname'
 
+# Output to test/reports for continuous integration server to read 
+require 'ci/reporter/rake/test_unit_loader'
+
 require 'envjs/options'
 
 require 'johnson/tracemonkey'
