@@ -28,7 +28,10 @@
   
     /** Plugins that have registered with the hub. */
     plugins = [],
-	
+
+    /** Configuration values cache */
+    config = {},
+
     /**
      * a listener has an authentication token and a callback
      * @class Listener
@@ -216,6 +219,9 @@
       // additional special behavior for particular event types
       if (eventName === "plugin-initialization-start") {
         plugins.push(data);
+        if (config[data.id]) {
+          this.configure(data.id, config[data.id]);
+        }
       }
     };
   
@@ -249,36 +255,35 @@
         throw new Error('Invalid configuration key');
       }
       
-      var plugin, notify, path, field, obj, keys = key.split('.'), confType = typeof conf;
+      var plugin, notify, field, keys = key.split('.'), confType = typeof conf;
       
       notify = function () {
-        Y.use(plugin, function () {
-          var i, field = keys.slice(1, keys.length).join('.');
-          for (i = 0; i < plugins.length; i++) {
-            if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
-              plugins[i].configure(field, conf);
-              return;
-            }
+        var i, field = keys.slice(1, keys.length).join('.');
+        for (i = 0; i < plugins.length; i++) {
+          if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
+            plugins[i].configure(field, conf);
+            return;
           }
-        });
+        }
       };
-
+      
       // the first component of the key is the plugin name
       plugin = keys[0];
 
-      // the part up to the final dot is the namespace object
-      path = (keys.length < 3 ? "" : keys.slice(0, keys.length - 1).join('.'));
-      path = ("YUI.Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
-      obj = YUI.namespace(path);
-      
       // the part after the final dot is the object key
       field = keys[keys.length - 1];
 
+      // the part up to the final dot is the namespace to cache the configuration value
+      for (var cacheNode = config, i = 0; i < keys.length - 1; i++) {
+        cacheNode[keys[i]] = cacheNode[keys[i]] || {};
+        cacheNode = cacheNode[keys[i]]; 
+      }
+      
       if (confType === 'string' || confType === 'number' || confType === 'boolean') {
-        obj[field] = conf;
+        cacheNode[field] = conf;
         notify();
       } else if (conf === null) {
-  	  	delete obj[field];
+  	  	delete cacheNode[field];
         notify();
       } else if (confType === 'object') {
         for (var name in conf) {
@@ -288,7 +293,7 @@
           }
         }
       } else {
-        return obj[field];
+        return cacheNode[field];
       }
     };
   };

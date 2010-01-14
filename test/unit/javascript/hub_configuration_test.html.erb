@@ -58,10 +58,10 @@
       var plugins = jsHub.getPluginInfo();
       var metadata = plugins[0];
       Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name);
-	  metadata.name = 'tampered data';
-	  metadata = jsHub.getPluginInfo()[0];
+	    metadata.name = 'tampered data';
+	    metadata = jsHub.getPluginInfo()[0];
       Y.Assert.areEqual('hPage Microformat Parser Plugin', metadata.name, 
-	    "Plugin metadata should not be changed from outside");
+	      "Plugin metadata should not be changed from outside");
     }	
   }));
   
@@ -124,11 +124,37 @@
         type : "data-capture",
         configure : mockPlugin.configure
       };
+      
+      // register the plugin
       jsHub.trigger("plugin-initialization-start", mockPlugin.metadata);
       
       // set the config item
-      var key = "mock-plugin.level";
-      jsHub.configure(key, "one");
+      jsHub.configure("mock-plugin.level", "one");
+      Y.Mock.verify(mockPlugin);
+    },
+		
+    "test new plugins are notified of existing configuration": function() {
+      Y.Assert.isFunction(jsHub.configure, "jsHub.configure() is not a Function");
+
+      // when a configuration changes, the plugin should be called
+      var mockPlugin = new Y.Mock(); 
+      Y.Mock.expect(mockPlugin, {
+        method : "configure",
+        args : ["level", "one"]
+      })
+      mockPlugin.metadata = {
+        id : "mock-plugin2",
+        name : "Mock Plugin 2",
+        type : "data-capture",
+        configure : mockPlugin.configure
+      };
+      
+      // set the config item
+      jsHub.configure("mock-plugin2.level", "one");
+
+      // then register the plugin, should be informed in
+      jsHub.trigger("plugin-initialization-start", mockPlugin.metadata);
+      
       Y.Mock.verify(mockPlugin);
     }
 		
