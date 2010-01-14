@@ -75,18 +75,9 @@
         }
       }
 
-      /**
-       * Convert an object to a JSON representation
-       */
-      jsHub.safe.toJSONString = function (object) {
-        if (Y.JSON) {
-          return Y.JSON.stringify(object, null, 2);
-        }
-      };
-
       var outputData = {
         sender: metadata.name + " v" + metadata.version,
-        event: jsHub.safe.toJSONString(outputEvent)
+        event: jsHub.json.stringify(outputEvent)
       };
 
       var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");

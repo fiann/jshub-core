@@ -1,6 +1,7 @@
 /*
     http://www.JSON.org/json2.js
     2009-09-29
+    (with minor modifications for jshub.org)
 
     Public Domain.
 
@@ -155,6 +156,8 @@
     test, toJSON, toString, valueOf
 */
 
+/* ******************************
+ * Not used by jsHub
 
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
@@ -162,9 +165,10 @@
 if (!this.JSON) {
     this.JSON = {};
 }
+ */
 
 (function () {
-
+  
     function f(n) {
         // Format integers to have at least two digits.
         return n < 10 ? '0' + n : n;
@@ -350,10 +354,11 @@ if (!this.JSON) {
         }
     }
 
-// If the JSON object does not yet have a stringify method, give it one.
+// If the jsHub object does not yet have a toJSON method, give it one.
 
-    if (typeof JSON.stringify !== 'function') {
-        JSON.stringify = function (value, replacer, space) {
+    jsHub.json = jsHub.json || {};
+    if (typeof jsHub.json.stringify !== 'function') {
+        jsHub.json.stringify = function (value, replacer, space) {
 
 // The stringify method takes a value and an optional replacer, and an optional
 // space parameter, and returns a JSON text. The replacer can be a function
@@ -396,6 +401,10 @@ if (!this.JSON) {
         };
     }
 
+
+/* *******************************************
+ *  Not used by jsHub
+ * ******************************************* 
 
 // If the JSON object does not yet have a parse method, give it one.
 
@@ -477,5 +486,5 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 
             throw new SyntaxError('JSON.parse');
         };
-    }
+    }  */
 }());

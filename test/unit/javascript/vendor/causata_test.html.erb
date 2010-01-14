@@ -6,9 +6,17 @@
 <%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
 <%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
 <%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/json/json-stringify.js" %>
+<%= javascript_include_tag "/js/src/lib/json2.js" %>
 <%= javascript_include_tag "/js/src/vendor-causata/causata-transport-debug.js" %>
 <%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
+
+<script type="text/javascript">
+	// Configuration for Causata transport plugin
+  jsHub.configure('causata-transport', {
+    server: "test.causata.com",
+    account: "1234"
+  });
+</script>
 
 <% end %>
 
@@ -46,7 +54,8 @@
     "test jsHub API dependencies": function() {
       Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
       Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
-      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+      Y.Assert.isNotUndefined(jsHub.json, "jsHub.json is not defined");
+      Y.Assert.isFunction(jsHub.json.stringify, "jsHub.json.stringify() is not a function");
     },
 
     "test Causata plugin initialized": function() {
