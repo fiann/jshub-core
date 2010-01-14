@@ -3,19 +3,12 @@
 <% content_for :javascripts do %>  
 
 <!-- jsHub dist file -->
-<%= javascript_include_tag "/js/src/modules/yui/yui-base-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/debug/debug-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/logger/logger-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/hub/hub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jshub/jshub-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/jquery/jquery-debug.js" %>
-<%= javascript_include_tag "/js/src/modules/samples/samples-google-analytics-markup-debug.js" %>
-
-<script type="text/javascript">
-  YUI().use('jshub', function(Y) {
-  	jsHub.configure("samples-google-analytics-markup", true);
-  });
-</script>
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "jquery/jquery.js" %>
+<%= javascript_include_tag "/js/src/samples/samples-google-analytics-markup-debug.js" %>
+<%= javascript_include_tag "/js/src/jshub/jshub-debug.js" %>
 
 <% end %>
 

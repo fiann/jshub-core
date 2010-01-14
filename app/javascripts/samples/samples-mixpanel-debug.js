@@ -215,7 +215,11 @@
       return utftext;
   };
 
-YUI.add("samples-mixpanel", function (Y) {
+/*******************************************
+ * jsHub plugin wrapper for Mixpanel code
+ *******************************************/
+
+(function () {
 
   /**
    * Metadata about this plug-in for use by UI tools and the Hub
@@ -302,8 +306,21 @@ YUI.add("samples-mixpanel", function (Y) {
     jsHub.logger.debug("Dispatch data: %o", dispatch);
     jsHub.dispatchViaImage(url, dispatch);
     jsHub.logger.groupEnd();
-  };
+  },
   
+  /**
+   * Receive a configuration update
+   */
+  configure = function (key, value) {
+    config[key] = value;
+  };
+
+  /*
+   * First trigger an event to show that the plugin is being registered
+   */
+  metadata.configure = configure;
+  jsHub.trigger("plugin-initialization-start", metadata);
+
   /*
    * Bind the plugin to the Hub so as to run when events we are interested in occur
    */
@@ -313,8 +330,4 @@ YUI.add("samples-mixpanel", function (Y) {
   
   // lifecycle notification
   jsHub.trigger("plugin-initialization-complete", metadata);
-  Y.log('jshub module loaded', 'info', 'Mixpanel sample plugin');
-}, "2.0.0", {
-  requires: ["yui", "hub", "logger"], 
-  after: ["yui"]
-});
+})();
