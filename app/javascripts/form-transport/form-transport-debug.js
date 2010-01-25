@@ -8,7 +8,7 @@
  *//*--------------------------------------------------------------------------*/
 
 /*jslint strict: true */
-/*global YUI, jsHub, ActiveXObject */
+/*global jsHub, ActiveXObject */
 "use strict";
 
 (function () {
@@ -38,20 +38,13 @@
      * @return Object with references to the document, form and iframe that has been created
      */
     this.dispatch = function (method, url, data) {
-      var UA,        
-        Lang,
-        Obj,
-        guid, 
-        doc, 
+      var timestamp = + new Date(), 
+        doc = document, 
+        msie = (/MSIE/).test(navigator.userAgent),
         form, 
-        formID, 
-        appendField,
-        input,
+        formID = "jshub-form-" + timestamp, 
         iframe, 
-        iframeID, 
-        field, 
-        array, 
-        i,
+        iframeID = "jshub-iframe-" + timestamp, 
         htmlelements;
       
       /*
@@ -61,11 +54,9 @@
         return false;
       }
       data = data || {}; // NOTE - why would we send an empty request? For cookies/referer info?
-      guid = Y.guid(); // Timestamp is not granular enough for unique IDs
     
       // Create the form
-      formID = "jshub-form-" + guid;        
-      form = document.createElement("form");
+      form = doc.createElement("form");
       form.id = formID;
       // FIXME form.method doesn't seem to work in our Envjs - need to update to 1.1?
       form.method = method;
@@ -86,42 +77,37 @@
        * @param {Object} value
        * @param {Object} prop
        */
-      Obj.each(data, function appendField(value, prop) {
-        var input;
-        if (Lang.isString(value) || Lang.isNumber(value)) {
+      jsHub.util.each(data, function appendField(value, prop) {
+        var i, input;
+        if (typeof value === 'string' || typeof value === 'number') {
           //In a ActiveXObject('htmlfile') IE won't let you assign a name using the DOM in an object, must do it the hacky way
-          if (UA.ie) {
-            input = document.createElement('<input name="' + prop + '" />');
+          if (msie) {
+            input = doc.createElement('<input name="' + prop + '" />');
           } else {          
-            input = document.createElement("input");
+            input = doc.createElement("input");
             input.name = prop;
           }
           input.type = "hidden";
           input.value = value;
           form.appendChild(input);
-        } else if (Lang.isArray(value)) {
+        } else if (jsHub.util.isArray(value)) {
           // TODO improve array test for security: http://blog.360.yahoo.com/blog-TBPekxc1dLNy5DOloPfzVvFIVOWMB0li?p=916
           for (i = 0; i < value.length; i++) {
-            if (Lang.isString(value[i]) || Lang.isNumber(value[i])) {
+            if (typeof value[i] === 'string' || typeof value[i] === 'number') {
               appendField(value[i], prop);
             }
           }
-        } else if (Lang.isFunction(value)) {
-          jsHub.logger.error("Functions will not be converted for transport");
-        } else if (Lang.isObject(value)) {
-          jsHub.logger.error("Objects should be JSON.stringify'd for transport");
         } else {
           jsHub.logger.error("This value cannot be converted for transport");
         }        
       });
 
       // Create the iframe
-      iframeID = "jshub-iframe-" + guid;        
       //IE won't let you assign a name using the DOM, must do it the hacky way
-      if (UA.ie) {
-        iframe = document.createElement('<iframe name="' + iframeID + '" />');
+      if (msie) {
+        iframe = doc.createElement('<iframe name="' + iframeID + '" />');
       } else {
-        iframe = document.createElement("iframe");
+        iframe = doc.createElement("iframe");
         iframe.name = iframeID;
       }
 
@@ -142,7 +128,7 @@
         ref: http://grack.com/blog/2009/07/28/a-quieter-window-name-transport-for-ie/
         TODO: may need CollectGarbage(); see thread http://groups.google.com/group/orbited-users/browse_thread/thread/e337ac03d0c9f13f
       */
-      if (UA.ie) {
+      if (msie) {
         jsHub.logger.log('IE specific branch to avoid navigational clicks');
         try {
           if ("ActiveXObject" in window) {
@@ -162,7 +148,6 @@
         }
         
       } else {
-        doc = document;
         doc.body.appendChild(form);
         doc.body.appendChild(iframe);
       }
@@ -172,7 +157,7 @@
         jsHub.logger.error('Form Transport form creation error');
       }
       // some older browsers do not return null for a failed iframe creation so check the nodeType
-      if (!iframe || Lang.isUndefined(iframe.nodeType)) {
+      if (!iframe || typeof (iframe.nodeType) === 'undefined') {
         jsHub.logger.error('Form Transport iframe creation error');
       }
 
@@ -191,7 +176,7 @@
       // TODO clear iframe cache etc
       iframe.onunload = function () {};
   
-      // Set the iframe as the submission target of the form, tied together by a guid
+      // Set the iframe as the submission target of the form, tied together by the timestamp
       form.target = iframe.id;
       // Submit the form, sent via the iframe
       form.submit();            
