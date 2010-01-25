@@ -59,6 +59,19 @@ class JslintTestRunner < ActiveSupport::TestCase
       @@runtime.load File.expand_path("#{File.dirname(__FILE__)}/../jslint/fulljslint.js")
 #      @@runtime.load File.join( File.dirname(__FILE__), "jslint_runner.js" )
     
+      # remove libraries and minimised files as they won't lint
+      js_files = js_files.reject do |f|
+        if f.match /jquery\/|yui\/|loader\/|json\/|debug\//
+          print "Skip linting library #{f}\n" if ENV["JSHUB_DEBUG"]
+          true
+        elsif ! f.match /-debug\.js$/
+          print "Skip linting generated file #{f}\n" if ENV["JSHUB_DEBUG"]
+          true
+        else
+          false
+        end
+      end
+
       # Run each HTML file supplied
       js_files.each do |file|
         full_test_name = "test lint #{file}"

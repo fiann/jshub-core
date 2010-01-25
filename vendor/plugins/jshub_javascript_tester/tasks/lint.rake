@@ -11,22 +11,6 @@ namespace :jshub do
       
       # Create the tasks defined by this task lib
       def t.define
-        # remove libraries and minimised files as they won't lint
-        files = file_list.reject do |f|
-          if f.match /app\/javascripts\/dist\//
-            print "Skip linting distribution file #{f}\n" if ENV["JSHUB_DEBUG"]
-            true
-          elsif f.match /jquery\/|yui\/|loader\/|json\/|debug\//
-            print "Skip linting library #{f}\n" if ENV["JSHUB_DEBUG"]
-            true
-          elsif f.match /app\/javascripts\/modules\/(?!(.+-debug\.js))/
-            print "Skip linting generated file #{f}\n" if ENV["JSHUB_DEBUG"]
-            true
-          else 
-            false
-          end
-        end
-
         lib_path = @libs.join(File::PATH_SEPARATOR)
         task @name do
           RakeFileUtils.verbose(@verbose) do
@@ -35,7 +19,7 @@ namespace :jshub do
             ruby @ruby_opts.join(" ") +
               " -e \"load '#{File.expand_path(File.dirname(__FILE__)+"/../lib/jshub_javascript_tester/jslint_test_runner.rb")}'; " +
               # use files matching t.pattern or TEST=
-              "JslintTestRunner.initialize_tests(%w{#{files}})\""
+              "JslintTestRunner.initialize_tests(%w{#{file_list}})\""
           end
         end
       end
