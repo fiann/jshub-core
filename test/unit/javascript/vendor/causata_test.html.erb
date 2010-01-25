@@ -44,11 +44,7 @@
     name: "Environment check",
 
     "test required test dependencies": function() {
-      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
       Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
-      YUI().use('json', function(lib, result) {
-        Y.Assert.isNotUndefined(lib.JSON, "The JSON library is required");
-      });
     },
 
     "test jsHub API dependencies": function() {
@@ -84,7 +80,7 @@
       Y.Mock.expect(jsHub, {
         method : "dispatchViaForm",
         args : [ Y.Mock.Value.String, Y.Mock.Value.String, Y.Mock.Value.Object ]
-      })
+      });
       jsHub.trigger("page-view", {});
       Y.Mock.verify(jsHub);
     },
@@ -94,7 +90,7 @@
       Y.Mock.expect(jsHub, {
         method : "dispatchViaForm",
         args : [ "POST", Y.Mock.Value.String, Y.Mock.Value.Object ]
-      })
+      });
       jsHub.trigger("page-view", {});
       Y.Mock.verify(jsHub);
     },
@@ -104,7 +100,7 @@
       Y.Mock.expect(jsHub, {
         method : "dispatchViaForm",
         args : [ Y.Mock.Value.String, "http://test.causata.com", Y.Mock.Value.Object ]
-      })
+      });
       jsHub.trigger("page-view", {});
       Y.Mock.verify(jsHub);
     },
@@ -113,7 +109,7 @@
       var recordedData, timestamp = new Date().getTime();
       jsHub.dispatchViaForm = function (method, url, data) {
         recordedData = data;
-      }
+      };
       jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);
       Y.Assert.isObject(recordedData, "No event data sent");
       var expectedData = {
@@ -135,9 +131,9 @@
         return Y.JSON.stringify(this);
       };
       Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, function (one, two) {
-          return two.name === one.name && two.value === one.value;
-        }, "Event attributes are not correct");
-      }
+        return two.name === one.name && two.value === one.value;
+      }, "Event attributes are not correct");
+    }
 
   }));
 </script>
