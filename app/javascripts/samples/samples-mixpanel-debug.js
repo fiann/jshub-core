@@ -228,8 +228,6 @@
   	id: 'mixpanel-get-plugin',
     name: 'Mixpanel GET transport plugin',
     version: 0.1,
-    author: "Liam Clancy",
-    email: 'liamc@jshub.org',
     vendor: 'jsHub'
   },    
   
@@ -237,6 +235,20 @@
    * The events that will be captured and sent to the server
    */
   boundEvents = ['interaction'],
+
+  /**
+   * Account/Project Token ID
+   * Note that the field <code>account_id</code> in the string is replaced
+   * when the tag is generated.
+   */
+  account = "295eb54e58ad790b4f2a3f3288499591",
+  
+  /**
+   * URL to dispatch to the server
+   * Note that the field <code>server_url</code> in the string is replaced
+   * when the tag is generated.
+   */
+  url = "http://api.mixpanel.com/track/",
 
   /**
    * Event driven anonymous function bound to events
@@ -249,20 +261,6 @@
     jsHub.logger.group("Mixpanel get transport: sending '%s' event", event.type);
     jsHub.logger.debug("Event: %o", event);
     
-    /**
-     * Account/Project Token ID
-     * Note that the field <code>account_id</code> in the string is replaced
-     * when the tag is generated.
-     */
-    var account = "295eb54e58ad790b4f2a3f3288499591";
-    
-    /**
-     * URL to dispatch to the server
-     * Note that the field <code>server_url</code> in the string is replaced
-     * when the tag is generated.
-     */
-    var url = "http://api.mixpanel.com/track/";
-
     /**
      * Each field in this object is serialized as a name=value pair in the query
      * string of the URL that is created for the image request.
@@ -282,7 +280,7 @@
     /**
      * Append account ID if supplied
      */
-    if(account !== ""){
+    if (account !== ""){
       // insert the account token for encoding
       dispatch.data.properties.token = account;    
     }
@@ -312,7 +310,9 @@
    * Receive a configuration update
    */
   configure = function (key, value) {
-    config[key] = value;
+    if (key === "account") {
+      account = value;
+    }
   };
 
   /*
