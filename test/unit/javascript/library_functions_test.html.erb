@@ -34,6 +34,59 @@
       Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
     }
   }));
+  
+  suite.add(new Y.Test.Case({
+    name: "Core utility functions",
+    
+    "test each with array": function () {
+      var values = [], indexes = [];
+      jsHub.util.each(["one", "two", "three"], function (value, idx) {
+        values.push(value);
+        indexes.push(idx);
+      });
+      Y.ArrayAssert.itemsAreEqual(["one", "two", "three"], values, 
+        "Array values were not correct");
+      Y.ArrayAssert.itemsAreEqual([0, 1, 2], indexes, "Array indexes were not correct");
+    },
+    
+    "test each with empty array": function () {
+      var called = false;
+      jsHub.util.each([], function (value, idx) {
+        called = true;
+      });
+      Y.Assert.isFalse(called, "Iterator function should not be called");
+    },
+    
+    "test each with null": function () {
+      var called = false;
+      jsHub.util.each(null, function (value, idx) {
+        called = true;
+      });
+      Y.Assert.isFalse(called, "Iterator function should not be called");
+    },
+    
+    "test each with non array": function () {
+      var called = false;
+      jsHub.util.each("string", function (value, idx) {
+        called = true;
+      });
+      Y.Assert.isFalse(called, "Iterator function should not be called");
+    },
+
+    "test each with object": function () {
+      var keys = [], values = [], object = { "one": 1, "two": 2, "three": 3 };
+      jsHub.util.each(object, function (value, key) {
+        keys.push(key);
+        values.push(value);
+      });
+      Y.ArrayAssert.itemsAreEqual(["one", "two", "three"], keys, 
+        "Object keys were not correct");
+      Y.ArrayAssert.itemsAreEqual([1, 2, 3], values, "Array values were not correct");
+    }
+    
+
+  }));
+  
 
   suite.add(new Y.Test.Case({
     name: "HREF and URI parsing",
