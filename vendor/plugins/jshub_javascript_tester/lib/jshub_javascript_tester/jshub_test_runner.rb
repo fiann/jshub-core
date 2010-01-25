@@ -43,9 +43,13 @@ class JshubTestRunner < ActiveSupport::TestCase
         runtime[:ruby_test_runner] = self
         
         # Run the test
-        runtime.evaluate <<-EOJS
-          runTest("#{test_case_url}", #{DEBUG});
-        EOJS
+        begin
+          runtime.evaluate <<-EOJS
+            runTest("#{test_case_url}", #{DEBUG});
+          EOJS
+        rescue Exception => e
+          callback_parse_failed e
+        end
       end
     end
     puts "Finished in %.6fs" % time
@@ -65,6 +69,16 @@ class JshubTestRunner < ActiveSupport::TestCase
       else
         fail result[:error][:message] + result[:error][:cause][:stack]  
       end
+    end
+  end
+  
+  def self.callback_parse_failed(error)
+    full_test_name = "#{@test_case}.parse html file"
+    puts "Defining method ##{full_test_name}" if DEBUG
+    define_method full_test_name do
+      e = Exception.new("Error while parsing HTML file")
+      e.set_backtrace(error.backtrace)
+      raise e
     end
   end
   
