@@ -39,8 +39,10 @@
     name: "Core utility functions",
     
     "test each with array": function () {
-      var values = [], indexes = [];
-      jsHub.util.each(["one", "two", "three"], function (value, idx) {
+      var array = ["one", "two", "three"], values = [], indexes = [];
+      // add a bogus key to ensure it is being parsed as an array, not an object
+      array.bogus = 'fake';
+      jsHub.util.each(array, function (value, idx) {
         values.push(value);
         indexes.push(idx);
       });
@@ -118,60 +120,60 @@
       
       // Root relative
       var href = "/index.html";
-      var uri = jsHub.utils.qualifyHREF(href);
+      var uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + "/index.html", uri);
       
       href = "/somewhere/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + "/somewhere/index.html", uri);
       
       href = "/somewhere/else/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + "/somewhere/else/index.html", uri);
       
       // Page relative
       href = "index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + baseURL + "index.html", uri);
       
       href = "somewhere/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/index.html", uri);
       
       href = "somewhere/else/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/else/index.html", uri);
       
       href = "./index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + baseURL + "index.html", uri);
       
       href = "../index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/test/index.html", uri);
       
       href = "../../index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/index.html", uri);
       
       href = "../somewhere/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/test/somewhere/index.html", uri);
       
       href = "../somewhere/else/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/test/somewhere/else/index.html", uri);
       
       href = "../../somewhere/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/somewhere/index.html", uri);
       
       href = "../../somewhere/else/index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + "/somewhere/else/index.html", uri);
       
       href = "somewhere/else/../../index.html";
-      uri = jsHub.utils.qualifyHREF(href);
+      uri = jsHub.util.qualifyHREF(href);
       Y.Assert.areSame(server + appPrefix + baseURL + "somewhere/else/../../index.html", uri);
       
     }

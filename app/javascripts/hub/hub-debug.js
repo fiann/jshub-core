@@ -74,7 +74,7 @@
       var containsToken = function (string, token) {
         string = string.split(",");
         for (var i = 0; i < string.length; i++) {
-          if (token === jsHub.utils.trim(string[i])) {
+          if (token === jsHub.util.trim(string[i])) {
             return true;
           }
         }
@@ -343,18 +343,27 @@
   /**
    * Utility functions
    */
-  jsHub.util = {
+  var Utils = function () {
     
+    var utils = this;
+  
     /**
      * Trim whitespace at beginning and end of value and
      * remove multiple spaces
      */
-    trim: function (value) {
+    utils.trim = function (value) {
       if (typeof value === 'string') {
         value = value.replace(/(&nbsp;|\s)+/g, ' ').replace(/(^\s+)|(\s+$)/g, '');
       }
       return value;
-    },
+    };
+    
+    /**
+     * Check that an object is an array. 
+     */
+    utils.isArray = function (obj) {
+      return Object.prototype.toString.call(obj) === "[object Array]";
+    };
     
     /**
      * Iterate over an array or object, applying the function to each item 
@@ -363,8 +372,8 @@
      * @param fn the function which will be applied
      * @return the source object
      */
-    each: function (object, fn) {
-      if (object && object.prototype === Array) {
+    utils.each = function (object, fn) {
+      if (utils.isArray(object)) {
         for (var i = 0, limit = object.length; i < limit; i++) {
           fn.call(jsHub, object[i], i);
         }
@@ -376,13 +385,13 @@
         }
       }
       return object;
-    },
+    };
     
     /**
      * Augment an object with additional properties, overwriting existing properties
      * on the object with new properties.
      */
-    merge: function (object, additions) {
+    utils.merge = function (object, additions) {
       object = object || {};
       additions = additions || {};
       for (var key in additions) {
@@ -391,8 +400,9 @@
         }
       }
       return object;
-    }
+    };
   };
-
+  
+  jsHub.util = new Utils();
 
 })();
