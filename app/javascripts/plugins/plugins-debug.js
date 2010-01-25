@@ -1,5 +1,5 @@
 /**
- * Enhancements to jQuery for common functions 
+ * Enhancements to jsHub.utils for common functions 
  * used in plugins
  * @module utilities
  * @class PluginAPI

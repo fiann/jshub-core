@@ -54,11 +54,6 @@
         i,
         htmlelements;
       
-      // Compressable YUI aliases
-      UA = Y.UA;
-      Lang = Y.Lang;
-      Obj = Y.Object;
-      
       /*
        * This data transport only supports POST or GET
        */

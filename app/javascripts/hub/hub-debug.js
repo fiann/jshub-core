@@ -15,7 +15,7 @@
   
   // instance of jsHub object
   jsHub,
-
+  
   /**
    * Core event dispatcher functionality of the hub
    * @class Hub
@@ -74,7 +74,7 @@
       var containsToken = function (string, token) {
         string = string.split(",");
         for (var i = 0; i < string.length; i++) {
-          if (token === Y.Lang.trim(string[i])) {
+          if (token === jsHub.utils.trim(string[i])) {
             return true;
           }
         }
@@ -88,7 +88,7 @@
        * @param payload {object}
        */
       validate = function (token, payload) {
-        var who = Y.Lang.trim(payload.event_visibility);
+        var who = jsHub.util.trim(payload.event_visibility);
         if (who === undefined || who === "" || who === "*") {
           return true;
         }
@@ -104,7 +104,7 @@
       filter = function (token, data) {
         // TODO remove fields from data that do not validate
         var filtered = {};
-        Y.Object.each(data, function (value, key) {
+        jsHub.util.each(data, function (value, key) {
           if (/_visibility$/.test(key) === false) {
             var fieldVisibility = data[key + "_visibility"];
             if (typeof fieldVisibility !== 'string'
@@ -137,7 +137,7 @@
           extraData = listener.callback(evt);
           // merge any additional data found by the listener into the data
           if (extraData) {
-            Y.mix(data, extraData);
+            jsHub.util.merge(data, extraData);
             jsHub.logger.debug("Listener %s added data, event is now ", listener.token, data);
           }
         }
@@ -340,4 +340,59 @@
     return new Date().getTime();
   };
   
+  /**
+   * Utility functions
+   */
+  jsHub.util = {
+    
+    /**
+     * Trim whitespace at beginning and end of value and
+     * remove multiple spaces
+     */
+    trim: function (value) {
+      if (typeof value === 'string') {
+        value = value.replace(/(&nbsp;|\s)+/g, ' ').replace(/(^\s+)|(\s+$)/g, '');
+      }
+      return value;
+    },
+    
+    /**
+     * Iterate over an array or object, applying the function to each item 
+     * in the array.
+     * @param the source object
+     * @param fn the function which will be applied
+     * @return the source object
+     */
+    each: function (object, fn) {
+      if (object && object.prototype === Array) {
+        for (var i = 0, limit = object.length; i < limit; i++) {
+          fn.call(jsHub, object[i], i);
+        }
+      } else if (typeof object === 'object') {
+        for (var key in object) {
+          if (object.hasOwnProperty(key)) {
+            fn.call(jsHub, object[key], key);
+          }
+        }
+      }
+      return object;
+    },
+    
+    /**
+     * Augment an object with additional properties, overwriting existing properties
+     * on the object with new properties.
+     */
+    merge: function (object, additions) {
+      object = object || {};
+      additions = additions || {};
+      for (var key in additions) {
+        if (additions.hasOwnProperty(key)) {
+          object[key] = additions[key];
+        }
+      }
+      return object;
+    }
+  };
+
+
 })();
