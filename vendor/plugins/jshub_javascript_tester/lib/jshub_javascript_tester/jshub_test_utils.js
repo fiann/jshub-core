@@ -274,6 +274,8 @@ runTest = function(test_file, isDebug) {
       message += " parsing the HTML file";
     }
     print("Errors loading the HTML test file: " + test_file + "\n" + message);
+    throw e;
+//    ruby_test_runner.callback_parse_failed(e);
 //    // Manually construct a YUI Test JSON results object to represent the failure
 //    var results = utils.manualResultsObject(message, e, test_file_name, test_file);
 //    // save this error as a JUnit report
