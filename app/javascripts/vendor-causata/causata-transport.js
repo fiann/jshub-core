@@ -11,7 +11,7 @@
 /*global YUI, jsHub */
 "use strict";
 
-YUI.add("causata-transport", function (Y) {
+(function () {
 
     /**
      * Metadata about this plug-in for use by UI tools and the Hub
@@ -73,18 +73,9 @@ YUI.add("causata-transport", function (Y) {
         }
       }
 
-      /**
-       * Convert an object to a JSON representation
-       */
-      jsHub.safe.toJSONString = function (object) {
-        if (Y.JSON) {
-          return Y.JSON.stringify(object, null, 2);
-        }
-      };
-
       var outputData = {
         sender: metadata.name + " v" + metadata.version,
-        event: jsHub.safe.toJSONString(outputEvent)
+        event: jsHub.json.stringify(outputEvent)
       };
 
       var protocol = (("https:" === jsHub.safe('document').location.protocol) ? "https://" : "http://");
@@ -116,7 +107,4 @@ YUI.add("causata-transport", function (Y) {
     // lifecycle notification
     jsHub.trigger("plugin-initialization-complete", metadata);
 
-  }, "2.0.0", {
-    requires: ["hub", "logger", "form-transport", "json-stringify"],
-    after: ["hub", "logger", "form-transport", "json-stringify"]
-  });
+})();

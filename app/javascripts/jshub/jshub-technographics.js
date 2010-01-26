@@ -45,7 +45,7 @@
     jsHub.trigger("technographic-parse-start", event);
 
     // extract hPage from html dom
-    var document = jsHub.safe('document'), data = event.data, found = {};
+    var document = window.document, data = event.data, found = {};
     
     /*
      * collect technographic environment data, e.g. screen size, browser plugins, 

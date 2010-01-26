@@ -5,17 +5,17 @@
  *//*--------------------------------------------------------------------------*/
 
 // JSLint options
-/*global YUI, jQuery */
+/*global jQuery */
 "use strict";
 
-YUI.add('hub', function (Y) {
+(function () {
 
   // global namespace
   var global = window, 
   
   // instance of jsHub object
   jsHub,
-
+  
   /**
    * Core event dispatcher functionality of the hub
    * @class Hub
@@ -28,7 +28,10 @@ YUI.add('hub', function (Y) {
   
     /** Plugins that have registered with the hub. */
     plugins = [],
-	
+
+    /** Configuration values cache */
+    config = {},
+
     /**
      * a listener has an authentication token and a callback
      * @class Listener
@@ -71,7 +74,7 @@ YUI.add('hub', function (Y) {
       var containsToken = function (string, token) {
         string = string.split(",");
         for (var i = 0; i < string.length; i++) {
-          if (token === Y.Lang.trim(string[i])) {
+          if (token === jsHub.util.trim(string[i])) {
             return true;
           }
         }
@@ -85,7 +88,7 @@ YUI.add('hub', function (Y) {
        * @param payload {object}
        */
       validate = function (token, payload) {
-        var who = Y.Lang.trim(payload.event_visibility);
+        var who = jsHub.util.trim(payload.event_visibility);
         if (who === undefined || who === "" || who === "*") {
           return true;
         }
@@ -101,7 +104,7 @@ YUI.add('hub', function (Y) {
       filter = function (token, data) {
         // TODO remove fields from data that do not validate
         var filtered = {};
-        Y.Object.each(data, function (value, key) {
+        jsHub.util.each(data, function (value, key) {
           if (/_visibility$/.test(key) === false) {
             var fieldVisibility = data[key + "_visibility"];
             if (typeof fieldVisibility !== 'string'
@@ -133,7 +136,7 @@ YUI.add('hub', function (Y) {
           extraData = listener.callback(evt);
           // merge any additional data found by the listener into the data
           if (extraData) {
-            Y.mix(data, extraData);
+            jsHub.util.merge(data, extraData);
           }
         }
       };
@@ -212,6 +215,9 @@ YUI.add('hub', function (Y) {
       // additional special behavior for particular event types
       if (eventName === "plugin-initialization-start") {
         plugins.push(data);
+        if (config[data.id]) {
+          this.configure(data.id, config[data.id]);
+        }
       }
     };
   
@@ -245,36 +251,35 @@ YUI.add('hub', function (Y) {
         throw new Error('Invalid configuration key');
       }
       
-      var plugin, notify, path, field, obj, keys = key.split('.'), confType = typeof conf;
+      var plugin, notify, field, keys = key.split('.'), confType = typeof conf;
       
       notify = function () {
-        Y.use(plugin, function () {
-          var i, field = keys.slice(1, keys.length).join('.');
-          for (i = 0; i < plugins.length; i++) {
-            if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
-              plugins[i].configure(field, conf);
-              return;
-            }
+        var i, field = keys.slice(1, keys.length).join('.');
+        for (i = 0; i < plugins.length; i++) {
+          if (plugin === plugins[i].id && typeof plugins[i].configure === 'function') {
+            plugins[i].configure(field, conf);
+            return;
           }
-        });
+        }
       };
-
+      
       // the first component of the key is the plugin name
       plugin = keys[0];
 
-      // the part up to the final dot is the namespace object
-      path = (keys.length < 3 ? "" : keys.slice(0, keys.length - 1).join('.'));
-      path = ("YUI.Env.jsHub.config." + (keys.length < 2 ? "" : plugin) + "." + path).replace(/\.+/g, '.').replace(/\.$/, '');
-      obj = YUI.namespace(path);
-      
       // the part after the final dot is the object key
       field = keys[keys.length - 1];
 
+      // the part up to the final dot is the namespace to cache the configuration value
+      for (var cacheNode = config, i = 0; i < keys.length - 1; i++) {
+        cacheNode[keys[i]] = cacheNode[keys[i]] || {};
+        cacheNode = cacheNode[keys[i]]; 
+      }
+      
       if (confType === 'string' || confType === 'number' || confType === 'boolean') {
-        obj[field] = conf;
+        cacheNode[field] = conf;
         notify();
       } else if (conf === null) {
-  	  	delete obj[field];
+  	  	delete cacheNode[field];
         notify();
       } else if (confType === 'object') {
         for (var name in conf) {
@@ -284,7 +289,7 @@ YUI.add('hub', function (Y) {
           }
         }
       } else {
-        return obj[field];
+        return cacheNode[field];
       }
     };
   };
@@ -331,8 +336,69 @@ YUI.add('hub', function (Y) {
     return new Date().getTime();
   };
   
-	
-}, '2.0.0', {
-  requires: ['yui'],
-  after: ['yui']
-});
+  /**
+   * Utility functions
+   */
+  var Utils = function () {
+    
+    var utils = this;
+  
+    /**
+     * Trim whitespace at beginning and end of value and
+     * remove multiple spaces
+     */
+    utils.trim = function (value) {
+      if (typeof value === 'string') {
+        value = value.replace(/(&nbsp;|\s)+/g, ' ').replace(/(^\s+)|(\s+$)/g, '');
+      }
+      return value;
+    };
+    
+    /**
+     * Check that an object is an array. 
+     */
+    utils.isArray = function (obj) {
+      return Object.prototype.toString.call(obj) === "[object Array]";
+    };
+    
+    /**
+     * Iterate over an array or object, applying the function to each item 
+     * in the array.
+     * @param the source object
+     * @param fn the function which will be applied
+     * @return the source object
+     */
+    utils.each = function (object, fn) {
+      if (utils.isArray(object)) {
+        for (var i = 0, limit = object.length; i < limit; i++) {
+          fn.call(jsHub, object[i], i);
+        }
+      } else if (typeof object === 'object') {
+        for (var key in object) {
+          if (object.hasOwnProperty(key)) {
+            fn.call(jsHub, object[key], key);
+          }
+        }
+      }
+      return object;
+    };
+    
+    /**
+     * Augment an object with additional properties, overwriting existing properties
+     * on the object with new properties.
+     */
+    utils.merge = function (object, additions) {
+      object = object || {};
+      additions = additions || {};
+      for (var key in additions) {
+        if (additions.hasOwnProperty(key)) {
+          object[key] = additions[key];
+        }
+      }
+      return object;
+    };
+  };
+  
+  jsHub.util = new Utils();
+
+})();
