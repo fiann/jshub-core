@@ -31,7 +31,8 @@ class YUICompressor
         out = File.open("#{normal_file}","w");
         src.each { |line|
           # output each file unless it contains this text
-          out.puts line unless line =~ /jsHub\.logger\.|Y\.log\(/
+          line = "// #{line}" if line =~ /jsHub\.logger\.|Y\.log\(/ 
+          out.puts line
         }
         src.close; 
         out.close;
