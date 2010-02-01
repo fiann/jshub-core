@@ -13,7 +13,7 @@
 /*global jsHub */
 "use strict";
 
-(function() {
+(function () {
 
   var timer = null, doc = document;
 
@@ -22,9 +22,13 @@
     jsHub.logger.info("Triggering page lifecycle events");
     
     // Don't fire the events more than once
-    if (triggerPageLoadEvents.done) return;
+    if (triggerPageLoadEvents.done) {
+      return;
+    }
     triggerPageLoadEvents.done = true;
-    if (timer) clearInterval(timer);
+    if (timer) {
+      clearInterval(timer);
+    }
     
     // Can be used to pre-configure data at page level if necessary
     jsHub.trigger("data-capture-start");
@@ -44,15 +48,15 @@
     /* for Internet Explorer */
     doc.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
     var script = doc.getElementById("__ie_onload");
-    script.onreadystatechange = function() {
-      if (this.readyState == "complete") {
+    script.onreadystatechange = function () {
+      if (this.readyState === "complete") {
         triggerPageLoadEvents();
       }
-    }
+    };
   
   } else if (/WebKit/i.test(navigator.userAgent)) {
     /* for older Safari */
-    timer = setInterval(function() {
+    timer = setInterval(function () {
       if (/loaded|complete/.test(doc.readyState)) {
         triggerPageLoadEvents();
       }
