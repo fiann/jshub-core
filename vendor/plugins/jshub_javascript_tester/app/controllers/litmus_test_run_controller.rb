@@ -241,7 +241,7 @@ protected
   def list_test_pages
     # List the available Test Pages from the file system
     #test_pages = Dir.entries "#{RAILS_ROOT}/test/unit/javascript/"
-    test_pages = Dir["#{RAILS_ROOT}/test/unit/javascript/**/*.*"]
+    test_pages = Dir[JSHUB_JAVASCRIPT_TESTER[:src_path], "**/*.*"]
     test_pages.delete_if {|page| page =~ /^\./ }
     # we only want actual pages
     test_pages.delete_if {|page| !page.include? ".html.erb" }

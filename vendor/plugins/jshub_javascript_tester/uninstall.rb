@@ -10,7 +10,7 @@ if config_file.exist?
 end
 
 # Leave location for Javascript Unit tests with template HTML files
-examples = Pathname.new("#{File.dirname(__FILE__)}/../../../test/unit/javascript/")
+examples = Pathname.new("#{File.dirname(__FILE__)}/../../../test/javascript/")
 if examples.exist?
   puts "Leaving unit test files in #{examples.cleanpath}/"
 end

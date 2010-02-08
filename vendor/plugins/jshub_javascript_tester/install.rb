@@ -31,7 +31,7 @@ FileUtils.cp_r plugin_migrations, migrations
 
 # Make location for Javascript Unit tests with template HTML files
 plugin_examples = "#{File.dirname(__FILE__)}/lib/jshub_javascript_tester/templates/." # note '.'
-examples = File.expand_path("#{File.dirname(__FILE__)}/../../../test/unit/javascript/")
+examples = File.expand_path("#{File.dirname(__FILE__)}/../../../#{JSHUB_JAVASCRIPT_TESTER[:src_path]}")
 FileUtils.mkdir_p examples
 FileUtils.cp_r plugin_examples, examples
 

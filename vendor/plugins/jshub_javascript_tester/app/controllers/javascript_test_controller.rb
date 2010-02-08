@@ -9,8 +9,8 @@ class JavascriptTestController < ApplicationController
   # GET /test/external/:test_page_id/:action/*path
   # 
   # Render a test case page from the template. The actual test html is stored
-  # under /test/unit/javascript. Templates for rendering folder views etc are 
-  # in the standard location under /app/views.
+  # under /test/javascript (or elsewhere, as defined in config/jshub_javascript/tester.yml). 
+  # Templates for rendering folder views etc are in the standard location under /app/views.
   #
   # Note that you can place a YUItest test case in any other page or view in your
   # app, and as long as the results collector is correctly configured, it will 
@@ -19,8 +19,7 @@ class JavascriptTestController < ApplicationController
   # additional paths to look for templates, appended to allow for overrides in 'app/views'
   # ref: http://rethink.unspace.ca/2009/5/21/cascading-view-paths-for-fun-and-profit
   # ref: http://www.axehomeyg.com/2009/06/10/view-path-manipulation-for-rails-with-aop/
-  append_view_path "#{RAILS_ROOT}/test/unit/javascript"
-  append_view_path "#{RAILS_ROOT}/test/functional/javascript"
+  append_view_path File.join(RAILS_ROOT, JSHUB_JAVASCRIPT_TESTER[:src_path])
 
   def index
     # forward to unit tests by default
@@ -28,8 +27,10 @@ class JavascriptTestController < ApplicationController
   end
   
   def unit
+    # use the *path part of the url set in the routes.rb to find the template
+    url = params[:path].join('/')
     # Get full OS path to URL
-    path = Pathname.new("#{RAILS_ROOT}/test/unit/javascript/#{params[:path].join('/')}")
+    path = Pathname.new(RAILS_ROOT).join(JSHUB_JAVASCRIPT_TESTER[:src_path], url)
     # if a directory we find the contents and generate a listing for navigation
     if path.directory?
       children = path.children.reject{|f| f.basename.to_s =~ /^\.+/ }
@@ -37,11 +38,9 @@ class JavascriptTestController < ApplicationController
       @files = children.reject{|f| f.directory?}
       render :template => 'javascript_unit_test/index', :layout => 'js'
     else
-      # use the *path part of the url set in the routes.rb to find the template
-      url = params[:path].join('/')
       # chose the layout based on the 'min' parameter
       layout = (params[:view] == 'min') ? 'javascript_test_minimal' : 'javascript_test'      
-      render :template => "#{url}", :layout => "#{layout}"
+      render :template => url, :layout => layout
     end
   end
 
