@@ -32,6 +32,7 @@ hudson:
       # Test Run URL pattern for public server, e.g. http://some.server.com:81/core/test/external/%s/unit/%s
       url_pattern: secret
   reports_path: test/reports
+  src_path: test/javascript
   webserver:
     port: 3000
     # URL prefix to test server, e.g. http://some.server.com/core/
