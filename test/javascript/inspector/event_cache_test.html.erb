@@ -1,0 +1,91 @@
+<% set_title "Event Cache < Inspector" %>
+
+<% content_for :javascripts do %>  
+
+<!-- jsHub source files -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+
+<% end %>
+
+<% content_for :intro do %>
+<p>Tests for the hub's core event caching functionality.</p>
+<p>All events that are triggered, should be cached in the hub so that when the
+  Inspector is invoked in the page, it can read the events which have already happened
+  before it was initialized.</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+(function() {
+
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.YUI, "The YUI library is required");
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.cachedEvents, "jsHub.cachedEvents() is not a Function");
+    }
+  }));
+  
+  // tests for hub events
+  suite.add(new Y.Test.Case({
+    name: "jsHub event cache",
+    
+    "test cache is initially empty": function() {
+      var events = jsHub.cachedEvents();
+      Y.Assert.isArray(events, "Did not retrieve an array of events");
+      Y.ArrayAssert.isEmpty(events, "Event list was not empty");
+    },
+    
+    "test single event retrieved": function() {
+      jsHub.trigger("someEvent", {});
+      var events = jsHub.cachedEvents();
+      Y.Assert.isArray(events, "Did not retrieve an array of events");
+      Y.Assert.areEqual(1, events.length, "Wrong number of events");
+      var found = events[0];
+      Y.Assert.areEqual("someEvent", found.type, "Event type is not correct");
+      Y.ObjectAssert.areEqual({}, found.data, "Event data is not correct");
+      Y.Assert.isNotUndefined(found.timestamp, "Event timestamp is not defined");
+    },
+    
+    "test multiple events retrieved in order": function() {
+      jsHub.trigger("someEvent", { "number" : 1 });
+      jsHub.trigger("someEvent", { "number" : 2 });
+      jsHub.trigger("anotherEvent", { "number" : 3 });
+      var events = jsHub.cachedEvents();
+      Y.Assert.isArray(events, "Did not retrieve an array of events");
+      // currently cannot clear events, so this contains event from previous
+      // test case
+      Y.Assert.areEqual(4, events.length, "Wrong number of events");
+      var found = events[1];
+      Y.Assert.areEqual("someEvent", found.type, "Event 1 type is not correct");
+      Y.ObjectAssert.areEqual({ "number" : 1 }, found.data, "Event 1 data is not correct");
+      Y.Assert.isNotUndefined(found.timestamp, "Event 1 timestamp is not defined");
+      var found = events[2];
+      Y.Assert.areEqual("someEvent", found.type, "Event 2 type is not correct");
+      Y.ObjectAssert.areEqual({ "number" : 2 }, found.data, "Event 2 data is not correct");
+      Y.Assert.isNotUndefined(found.timestamp, "Event 2 timestamp is not defined");
+      var found = events[3];
+      Y.Assert.areEqual("anotherEvent", found.type, "Event 3 type is not correct");
+      Y.ObjectAssert.areEqual({ "number" : 3 }, found.data, "Event 3 data is not correct");
+      Y.Assert.isNotUndefined(found.timestamp, "Event 3 timestamp is not defined");
+    }
+    
+
+  }));
+})();
+
+  
+</script> 

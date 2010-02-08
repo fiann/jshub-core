@@ -28,6 +28,9 @@
   
     /** Plugins that have registered with the hub. */
     plugins = [],
+    
+    /** Events which have already occurred. */
+    eventCache = [],
 
     /** Configuration values cache */
     config = {},
@@ -196,6 +199,9 @@
       jsHub.logger.group("Event %s triggered with data", eventName, (data || "'none'"));
       // empty object if not defined
       data = data || {};
+      // keep the event in the local cache
+      var evt = new Event(eventName, data, timestamp);
+      eventCache.push(evt);
       // find all registered listeners for the specific event, and for "*"
       var registered = (listeners[eventName] || []);
       var found, listener, listeners_all = (listeners["*"] || []), i, j;
@@ -223,6 +229,32 @@
           this.configure(data.id, config[data.id]);
         }
       }
+
+      // finally return the data object for the event
+      return data;
+    };
+    
+    /**
+     * Retrieve an array of the events which have already been fired.
+     * Primarily used by the Activity Inspector, so that it can be injected after the
+     * page has loaded and still retrieve the events that have already occurred.
+     */
+    this.cachedEvents = function () {
+      // take a deep copy to prevent the data being tampered with 
+      var clone = [], i;
+      for (i = 0; i < eventCache.length; i++) {
+        var evt = eventCache[i], evt_clone = {};
+        evt_clone.type = evt.type;
+        evt_clone.timestamp = evt.timestamp;
+        evt_clone.data = {};
+        for (var field in evt.data) {
+          if (typeof evt.data[field] === 'string' || typeof evt.data[field] === 'number') {
+            evt_clone.data[field] = evt.data[field];
+          }
+        }
+        clone.push(evt_clone);
+      }
+      return clone;
     };
   
     /**
