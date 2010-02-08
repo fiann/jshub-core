@@ -1,6 +1,6 @@
 # load a YAML file for use
 raw_config = File.read(RAILS_ROOT + "/config/jshub_javascript_tester.yml")
-JSHUB_JAVASCRIPT_TESTER = YAML.load(raw_config)[RAILS_ENV]
+JSHUB_JAVASCRIPT_TESTER = YAML.load(raw_config)[RAILS_ENV].symbolize_keys!
 
 # Register one or more javascript/stylesheet files to be included when :symbol is passed to javascript_include_tag.
 
