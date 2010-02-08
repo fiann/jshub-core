@@ -22,7 +22,7 @@ class JshubTestRunner < ActiveSupport::TestCase
   
   REPORTS_PATH = JSHUB_JAVASCRIPT_TESTER[:reports_path]
   BASE_URL = JSHUB_JAVASCRIPT_TESTER[:webserver][:base_url]
-  DEBUG = JSHUB_JAVASCRIPT_TESTER[:debug] 
+  DEBUG = (JSHUB_JAVASCRIPT_TESTER[:debug] == true || ENV['JSHUB_DEBUG'] == 'true')  
   
   # Initialize tests on this class for each html unit test page.
   # All the tests should be in the folder RAILS_ROOT/test/javascript/
@@ -35,7 +35,7 @@ class JshubTestRunner < ActiveSupport::TestCase
         @test_case = test_cases[i].gsub!(/\.html\.erb$/,"")
         test_case_url = BASE_URL + @test_case
         puts "(#{i}/#{test_cases.length}) Running #{@test_case}"
-        html = (DEBUG ? Net::HTTP.get_response(URI.parse(test_case_url)).body : nil)
+        page = Net::HTTP.get_response(URI.parse(test_case_url))
   
         puts "Creating JavaScript runtime" if DEBUG
         runtime = Johnson::Runtime.new
@@ -50,7 +50,7 @@ class JshubTestRunner < ActiveSupport::TestCase
             runTest("#{test_case_url}", #{DEBUG});
           EOJS
         rescue Exception => e
-          callback_parse_failed(e, test_case_url, html)
+          callback_parse_failed(e, test_case_url, page)
         end
       end
     end
@@ -74,14 +74,14 @@ class JshubTestRunner < ActiveSupport::TestCase
     end
   end
   
-  def self.callback_parse_failed(error, url, html)
+  def self.callback_parse_failed(error, url, page)
     full_test_name = "#{@test_case}.parse html file"
     puts "Defining method ##{full_test_name}" if DEBUG
     define_method full_test_name do
       e = Exception.new("Error while parsing HTML file")
-      if DEBUG
-        puts "*** HTML file #{url} ***"
-        puts html
+      unless page.instance_of? Net::HTTPOK
+        puts "*** HTML file #{url} #{page.code} ***"
+        puts page.body
         puts "*** HTML file ends ***"
       end
       e.set_backtrace(error.backtrace)
