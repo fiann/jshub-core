@@ -8,7 +8,7 @@ runTest = function(test_file, isDebug) {
   
   // Paths and vars
   var reports_path = "test/reports/";
-  var url_path = "/test/unit/";
+  var url_path = "/test/javascript/";
   
   // get the path/name of the test file e.g. image_transport/api_test
   var test_file_name = test_file.substring(test_file.lastIndexOf(url_path) + url_path.length);
