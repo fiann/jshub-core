@@ -28,7 +28,7 @@ namespace "jshub" do
     task "server:start" => "environment" do
       if FileTest.exists? "tmp/pids/server.pid"
         puts "Server is already running and pid file exists"        
-      elsif
+      else
         port = JSHUB_JAVASCRIPT_TESTER[:webserver][:port]
         # start the local server so tests can be requested directly from the app
         puts "Starting local server on port #{port}"
