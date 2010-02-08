@@ -34,10 +34,12 @@ runTest = function(test_file, isDebug) {
               // big objects
               var clone = {};
               for (var field in entity) {
-                if (entity[field] === null || !entity[field].toString) {
+                if (typeof entity[field] === 'undefined') {
+                  clone[field] = "undefined";
+                } else if (entity[field] === null || !entity[field].toString) {
                   clone[field] = entity[field];
-                } else if (typeof entity[field] == 'function' ||
-                entity[field].toString !== Object.prototype.toString) {
+                } else if (typeof entity[field] === 'function' ||
+                    entity[field].toString !== Object.prototype.toString) {
                   clone[field] = entity[field].toString();
                 } else {
                   clone[field] = entity[field].toSource();
