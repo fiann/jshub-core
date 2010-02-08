@@ -50,6 +50,10 @@ class JshubTestRunner < ActiveSupport::TestCase
           EOJS
         rescue Exception => e
           callback_parse_failed e
+          puts "*** HTML file #{test_case_url} ***"
+          puts Net::HTTP.get_print URI.parse(test_case_url)
+          puts "*** HTML file ends ***"
+      
         end
       end
     end
@@ -78,11 +82,6 @@ class JshubTestRunner < ActiveSupport::TestCase
     puts "Defining method ##{full_test_name}" if DEBUG
     define_method full_test_name do
       e = Exception.new("Error while parsing HTML file")
-      
-      puts "*** HTML file ***"
-      puts Net::HTTP.get_print URI.parse(BASE_URL + @test_case)
-      puts "*** HTML file ends ***"
-      
       e.set_backtrace(error.backtrace)
       raise e
     end
