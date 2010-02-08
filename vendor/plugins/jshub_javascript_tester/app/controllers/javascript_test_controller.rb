@@ -23,7 +23,7 @@ class JavascriptTestController < ApplicationController
 
   def index
     # forward to unit tests by default
-    redirect_to :action => 'unit'
+    redirect_to :action => 'javascript'
   end
   
   def javascript

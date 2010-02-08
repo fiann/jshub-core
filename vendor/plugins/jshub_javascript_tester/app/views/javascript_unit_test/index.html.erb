@@ -1,9 +1,9 @@
-<% @title = 'Javascript Unit Test Pages' %>
+<% @title = 'Javascript Test Pages' %>
 
-<h1>Unit test files</h1>
+<h1>JavaScript test files</h1>
 
 <p>
-  <%= link_to 'unit tests', javascript_test_path(:unit) %>
+  <%= link_to 'All tests', javascript_test_path(:javascript) %>
   <% params[:path].each_index do |i| %>
   / <%= link_to params[:path][i], :path => params[:path][0..i] %>
   <% end %>
