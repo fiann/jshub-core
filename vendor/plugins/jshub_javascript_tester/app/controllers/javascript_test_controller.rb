@@ -26,7 +26,7 @@ class JavascriptTestController < ApplicationController
     redirect_to :action => 'unit'
   end
   
-  def unit
+  def javascript
     # use the *path part of the url set in the routes.rb to find the template
     url = params[:path].join('/')
     # Get full OS path to URL

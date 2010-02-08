@@ -31,7 +31,7 @@ class JshubTestRunner < ActiveSupport::TestCase
     
       # Run each HTML file supplied
       test_cases.each_index do |i|
-        @test_case = test_cases[i].gsub!("/javascript","").gsub!(/\.html\.erb$/,"")
+        @test_case = test_cases[i].gsub!(/\.html\.erb$/,"")
         test_case_url = BASE_URL + @test_case
         puts "(#{i}/#{test_cases.length}) Running #{@test_case}"
   
