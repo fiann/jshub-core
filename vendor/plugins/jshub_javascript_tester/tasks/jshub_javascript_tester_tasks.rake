@@ -2,7 +2,7 @@
 desc "Run tests for javascript unit test pages, use 'TEST=' to test a single page."
 Rake::TestTask.new("test:javascripts" => "db:test:prepare") do |t|
   # get a list of all the test files
-  t.pattern = 'test/unit/javascript/**/*.html.erb'
+  t.pattern = 'test/javascript/**/*.html.erb'
   t.libs << 'test'
   t.verbose = true if ENV['JSHUB_DEBUG'] == 'true'
   
