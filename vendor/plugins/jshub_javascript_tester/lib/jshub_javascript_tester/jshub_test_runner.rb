@@ -35,6 +35,7 @@ class JshubTestRunner < ActiveSupport::TestCase
         @test_case = test_cases[i].gsub!(/\.html\.erb$/,"")
         test_case_url = BASE_URL + @test_case
         puts "(#{i}/#{test_cases.length}) Running #{@test_case}"
+        html = (DEBUG ? Net::HTTP.get_response(URI.parse(test_case_url)).body : nil)
   
         puts "Creating JavaScript runtime" if DEBUG
         runtime = Johnson::Runtime.new
@@ -49,7 +50,7 @@ class JshubTestRunner < ActiveSupport::TestCase
             runTest("#{test_case_url}", #{DEBUG});
           EOJS
         rescue Exception => e
-          callback_parse_failed(e, test_case_url)
+          callback_parse_failed(e, test_case_url, html)
         end
       end
     end
@@ -73,14 +74,14 @@ class JshubTestRunner < ActiveSupport::TestCase
     end
   end
   
-  def self.callback_parse_failed(error, url)
+  def self.callback_parse_failed(error, url, html)
     full_test_name = "#{@test_case}.parse html file"
     puts "Defining method ##{full_test_name}" if DEBUG
     define_method full_test_name do
       e = Exception.new("Error while parsing HTML file")
       if DEBUG
-        puts "*** HTML file #{test_case_url} ***"
-        puts Net::HTTP.get_print(URI.parse(test_case_url))
+        puts "*** HTML file #{url} ***"
+        puts html
         puts "*** HTML file ends ***"
       end
       e.set_backtrace(error.backtrace)
