@@ -39,6 +39,7 @@ hudson:
   combo:
     # URL prefix to the combo/CDN/api server, e.g. http://apis.jshub.org/
     base_url: http://localhost/phploader/
+  debug: true
       
 test:
   <<: *non_production_settings

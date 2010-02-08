@@ -5,6 +5,7 @@ require 'rake'
 require 'johnson'
 require 'rubygems'
 require 'pathname'
+require 'net/http'
 
 # Output to test/reports for continuous integration server to read 
 require 'ci/reporter/rake/test_unit_loader'
@@ -21,7 +22,7 @@ class JshubTestRunner < ActiveSupport::TestCase
   
   REPORTS_PATH = JSHUB_JAVASCRIPT_TESTER[:reports_path]
   BASE_URL = JSHUB_JAVASCRIPT_TESTER[:webserver][:base_url]
-  DEBUG = (ENV['JSHUB_DEBUG'] == 'true') 
+  DEBUG = JSHUB_JAVASCRIPT_TESTER[:debug] 
   
   # Initialize tests on this class for each html unit test page.
   # All the tests should be in the folder RAILS_ROOT/test/javascript/
@@ -77,6 +78,11 @@ class JshubTestRunner < ActiveSupport::TestCase
     puts "Defining method ##{full_test_name}" if DEBUG
     define_method full_test_name do
       e = Exception.new("Error while parsing HTML file")
+      
+      puts "*** HTML file ***"
+      puts Net::HTTP.get_print URI.parse(BASE_URL + @test_case)
+      puts "*** HTML file ends ***"
+      
       e.set_backtrace(error.backtrace)
       raise e
     end
