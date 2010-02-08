@@ -49,8 +49,7 @@ class JslintTestRunner < ActiveSupport::TestCase
     }
   }
   
-  # Initialize tests on this class for each html unit test page.
-  # All the tests should be in the folder RAILS_ROOT/test/unit/javascript/
+  # Initialize a set of source files to be linted
   def self.initialize_tests(js_files=[])
     
     time = Benchmark.realtime do  
