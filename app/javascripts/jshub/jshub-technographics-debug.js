@@ -39,7 +39,7 @@
    * @event hub.technographicEvent
    * @event technographic.CompleteParsing
    */
-  var capture = function capture(event) {
+  metadata.eventHandler = function capture(event) {
   
     // Notify start lifecycle event
     jsHub.trigger("technographic-parse-start", event);
@@ -85,7 +85,7 @@
    * Bind the plugin to the Hub to look for hPage microformats and add the data
    * to page view events
    */
-  jsHub.bind("page-view", metadata.id, capture);
+  jsHub.bind("page-view", metadata);
 
   /*
    * Last trigger an event to show that the plugin has bene registered
