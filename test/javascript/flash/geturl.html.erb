@@ -23,15 +23,20 @@
   // mock object to capture events from Flash untill tests can run
   function MockListener(authToken) {
     var self = this;
-    self.authToken = authToken;
-    self.events = [];
-    this.eventFired = function(evt) {
-      self.events.push(evt);
+    this.count = 0;
+    this.events = [];
+    this.metadata = {
+      id : "unittest",
+      eventHandler : function(evt) {
+        self.events.push(evt);
+        self.count++;
+      }
     };
   }; 
+
   // create and bind a listener to flash events
   var listener1 = new MockListener("listener1");
-  jsHub.bind("flash:event", listener1.authToken, listener1.eventFired);
+  jsHub.bind("flash:event", listener1.metadata);
 </script>
 
 <script language="javascript" type="text/javascript">

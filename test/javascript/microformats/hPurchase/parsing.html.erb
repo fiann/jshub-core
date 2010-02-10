@@ -82,36 +82,41 @@
   }));
 
   // tests for hPurchaseEvent parser
-  suite.parse = function(selector) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    jsHub.bind("checkout", "unittest", function(evt) {
-      data = evt.data;
-      count++;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(1, count, 'wrong number of checkout events have been generated');
-    Y.Assert.isNotNull(data, 'checkout event had no data');
-	return data;
-  };  
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
+    }
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data;
+      }
+    };
+    jsHub.bind("checkout", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
+    Y.Assert.isNotNull(data, 'Event had no data');
+  	return data;
+  };
   
   suite.add(new Y.Test.Case({ 
     name : "hPurchaseEvent - required default properties",
     
     "test values not specified" : function () {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.isUndefined(data['cart-id'], 'cart-id is not specified, it should be undefined');
       Y.Assert.isUndefined(data['product-id'], 'product-id is not specified, it should be undefined');
     },
 
     "test optional cart-id value specified" : function () {
-      var data = suite.parse("#example2");
+      var data = parse("#example2");
       Y.Assert.areEqual(data['cart-id'], "ABCDEF", 'cart-id is not the same as the declaration');
     },
 
     "test optional values specified" : function () {
-      var data = suite.parse("#example3");
+      var data = parse("#example3");
       Y.Assert.areEqual(data['product-id'], "123456", 'product-id is not the same as the declaration');
       Y.Assert.areEqual(data['cart-id'], "ABCDEF", 'cart-id is not the same as the declaration');
     }

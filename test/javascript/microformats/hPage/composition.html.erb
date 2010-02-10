@@ -52,18 +52,20 @@
   /* 
    * Capture the data from a hPage-found event
    */
-  suite.parse = function(selector, hPageCount) {
+  function parse(selector, hPageCount) {
     var data = null, count = 0;
     if (typeof hPageCount != 'number') {
       hPageCount = 1;
     }
-    jsHub.bind("hpage-found", "unittest", function(evt) {
-	  count ++;
-      data = evt.data.hpage;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data.hpage;
+      }
+    };
+    jsHub.bind("hpage-found", listener);
+    jsHub.trigger("page-view", { context: selector });
     Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
 	return data;
   };
@@ -98,7 +100,7 @@
     name: "Composition rule",
     
     "test value is the composite of multiple non-conflicting nodes": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('Above the fold', data['page-name']);
       Y.Assert.areEqual('Page title', data['page-title']);
     }
@@ -130,7 +132,7 @@
     name: "Overriding rule",
     
     "test value is the instance found for singular nodes": function() {
-      var data = suite.parse("#example2");
+      var data = parse("#example2");
       Y.Assert.areEqual('Below the fold', data['page-name']);
     }
   }));
@@ -183,12 +185,12 @@
     name: "Additivity rule",
     
     "test value is the union of values for multiple nodes": function() {
-      var data = suite.parse("#example3");
+      var data = parse("#example3");
       Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data['page-category']);
     },
 
     "test value duplicate values are removed": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.ArrayAssert.itemsAreEqual(['microformat','hpage','additivity','rule'], data['page-category']);
     }
   }));

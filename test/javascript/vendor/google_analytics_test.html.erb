@@ -62,17 +62,23 @@ $(document).ready(function () {
   /* 
    * Capture the values of the page-view event
    */
-  suite.parse = function(selector) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    jsHub.bind("page-view", "unittest", function(evt) {
-      data = evt.data;
-      count++;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(1, count, 'wrong number of page view events have been generated');
-	return data;
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
+    }
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data;
+      }
+    };
+    jsHub.bind("page-view", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
+    Y.Assert.isNotNull(data, 'Event had no data');
+  	return data;
   };
 </script>  
 
@@ -91,14 +97,14 @@ $(document).ready(function () {
     name: "Capture default (non-specified) page name",
     
     "test pagename not specified": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual(window.location.pathname, data['page-name'], 'Page name should default to the window.location.pathname if it is not explicitly stated');
     },
 	
 	  // unlike hpage plugin the GA plugin defaults to pathname rather than leaving it blank, so it
 	  // should explicitly state the source
     "test source metadata is applied to default fields": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('location.pathname', data['page-name-source'], 'name-source is not correct');
     }
   }));
@@ -117,12 +123,12 @@ $(document).ready(function () {
     name: "Capture explicit values",
     
     "test pagename explicitly specified": function() {
-      var data = suite.parse("#example2");
+      var data = parse("#example2");
       Y.Assert.areEqual("Test page", data['page-name'], 'Page name should match the defined value');
     },
 	
     "test source metadata is applied to explicit fields": function() {
-      var data = suite.parse("#example2");
+      var data = parse("#example2");
 	    var pluginId = 'google-analytics-markup';
       Y.Assert.areEqual(pluginId, data['page-name-source'], 'name-source is not correct');
     }
@@ -155,12 +161,15 @@ $(document).ready(function () {
     
     "test error thrown for duplicate values": function() {
       var errorData = null, errors = 0;
-      jsHub.bind("duplicate-value-warning", "unittest", function(evt) {
-        errorData = evt.data;
-        errors++;
+      jsHub.bind("duplicate-value-warning", {
+        id : "unittest", 
+        eventHandler : function(evt) {
+          errorData = evt.data;
+          errors++;
+        }
       });
       
-      var data = suite.parse("#example3");
+      var data = parse("#example3");
       Y.Assert.areEqual(1, errors, 'Expected to get a warning about duplicate values');
       Y.Assert.areEqual("new name", errorData.fields.name.previous.value, 'Wrong value in error event from previous plugin');
       Y.Assert.areEqual("hPage-plugin", errorData.fields.name.previous.source, 'Wrong previous plugin source');
@@ -194,9 +203,12 @@ $(document).ready(function () {
     "test instrumented links": function() {
       window.clickHandlersTriggered = false;
 	    var data, events = 0;
-      jsHub.bind("page-view", "unittest", function(evt) {
-        data = evt.data;
-        events++;
+      jsHub.bind("page-view", {
+        id : "unittest", 
+        eventHandler : function(evt) {
+          data = evt.data;
+          events++;
+        }
       });
       
       $('#example4 a').click();

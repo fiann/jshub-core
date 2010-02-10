@@ -47,20 +47,23 @@
   /* 
    * Capture the data from a hPage-found event
    */
-  suite.parse = function(selector, hPageCount) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    if (typeof hPageCount != 'number') {
-      hPageCount = 1;
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
     }
-    jsHub.bind("page-view", "unittest", function(evt) {
-	  count ++;
-      data = evt.data;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
-	return data;
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data;
+      }
+    };
+    jsHub.bind("page-view", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
+    Y.Assert.isNotNull(data, 'Event had no data');
+  	return data;
   };
 </script>
 
@@ -84,12 +87,12 @@
     name: "Default text field values",
     
     "test title field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual(document.title, data.title);
     },
 	
     "test referrer field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual(document.referrer, data.referrer);
     }
   }));

@@ -168,7 +168,7 @@
    */
   metadata.eventHandler = function (event) {
     if (event.type === "page-view") {
-      capture(event);
+      return capture(event);
     } else if (event.type === "data-capture-start") {
       initializeInlineTracking();
     }

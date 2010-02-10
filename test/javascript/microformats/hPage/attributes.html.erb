@@ -51,20 +51,22 @@
   /* 
    * Capture the data from a hPage-found event
    */
-  suite.parse = function(selector, hPageCount) {
+  function parse(selector, hPageCount) {
     var data = null, count = 0;
     if (typeof hPageCount != 'number') {
       hPageCount = 1;
     }
-    jsHub.bind("hpage-found", "unittest", function(evt) {
-	  count ++;
-      data = evt.data.hpage;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+        data = evt.data.hpage;
+        count++;
+      }
+    };
+    jsHub.bind("hpage-found", listener);
+    jsHub.trigger("page-view", { context: selector });
     Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
-	return data;
+	  return data;
   };
 </script>
 
@@ -111,23 +113,23 @@
     name: "Simple value class extraction",
     
     "test value class extraction": function() {
-      var data = suite.parse("#example1");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example1");
+	    Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
       Y.Assert.areEqual('10%', data.attributes['discount'], "Attribute value");
     },
 	
     "test value class extraction from html": function() {
-      var data = suite.parse("#example2");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example2");
+	    Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
       Y.Assert.areEqual('10%', data.attributes['discount'], "Attribute value");
     },
 	
     "test value class extracting is order independent": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
 	  Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
@@ -154,18 +156,16 @@
 </div>
 <script type="text/javascript">
 /* <![CDATA[  // this script contains html, so escape it for Rhino parser */
-/* Allowing for UpperCase HTML tag names and optional '"'s is required as this is how IE represents the DOM */
-
   suite.add(new Y.Test.Case({
     name: "Nested value classes",
     
     "test nested value classes are ignored": function() {
-      var data = suite.parse("#example4");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example4");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
-	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
-	  Y.Assert.isTrue(/10 <(SPAN|span)( id=""\s*)? class=(")?value(")?\s*>%<\/(SPAN|span)>/.test(data.attributes['discount']), "Attribute value: "+data.attributes['discount']);
+      // IE uses UpperCase HTML tag names and omits quotes on attribute values
+      Y.Assert.isTrue(/10 <(SPAN|span) class=(")?value(")?\s*>%<\/(SPAN|span)>/.test(data.attributes['discount']), "Attribute value: " + data.attributes['discount']);
     }
   }));
 // ]]>
@@ -200,16 +200,16 @@
     name: "Implicit default value",
     
     "test unspecified type": function() {
-      var data = suite.parse("#example5");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example5");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
       Y.Assert.areEqual('true', data.attributes['discount'], "Default attribute value");
     },
-	
+    
     "test unspecified value": function() {
-      var data = suite.parse("#example6");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example6");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('discount', data.attributes);
       Y.Assert.areEqual('true', data.attributes['discount'], "Default attribute value");
@@ -264,29 +264,29 @@
     name: "Multiple attribute values",
     
     "test multiple values declared separately": function() {
-      var data = suite.parse("#example7");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example7");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('sports', data.attributes);
-	  var expectedValues = [ "rugby", "football", "tennis" ];
+      var expectedValues = ["rugby", "football", "tennis"];
       Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
     },
-	
+    
     "test multiple values in one node": function() {
-      var data = suite.parse("#example8");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example8");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('sports', data.attributes);
-	  var expectedValues = [ "rugby", "football", "tennis" ];
+      var expectedValues = ["rugby", "football", "tennis"];
       Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
     },
-	
+    
     "test duplicate values": function() {
-      var data = suite.parse("#example9");
-	  Y.Assert.isObject(data.attributes, "No attributes found");
+      var data = parse("#example9");
+      Y.Assert.isObject(data.attributes, "No attributes found");
       Y.Assert.areEqual(1, Y.Object.keys(data.attributes).length, "One attribute specified");
       Y.ObjectAssert.ownsKey('sports', data.attributes);
-	  var expectedValues = [ "rugby", "football" ];
+      var expectedValues = ["rugby", "football"];
       Y.ArrayAssert.itemsAreEqual(expectedValues, data.attributes['sports']);
     }
   }));
@@ -325,13 +325,13 @@
     name: "Invalid attributes",
     
     "test multiple type instances": function() {
-      var data = suite.parse("#example10");
-	  Y.Assert.isUndefined(data.attributes, "No attributes should be found");
+      var data = parse("#example10");
+      Y.Assert.isUndefined(data.attributes, "No attributes should be found");
     },
-	
+    
     "test empty attribute node": function() {
-      var data = suite.parse("#example11");
-	  Y.Assert.isUndefined(data.attributes, "No attributes should be found");
+      var data = parse("#example11");
+      Y.Assert.isUndefined(data.attributes, "No attributes should be found");
     }
   }));
 </script>

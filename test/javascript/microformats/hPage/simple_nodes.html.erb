@@ -51,20 +51,22 @@
   /* 
    * Capture the data from a hPage-found event
    */
-  suite.parse = function(selector, hPageCount) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    if (typeof hPageCount != 'number') {
-      hPageCount = 1;
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
     }
-    jsHub.bind("hpage-found", "unittest", function(evt) {
-	  count ++;
-      data = evt.data.hpage;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
-	return data;
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data.hpage;
+      }
+    };
+    jsHub.bind("hpage-found", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
+  	return data;
   };
 </script>
 
@@ -100,22 +102,22 @@
     name: "Text field values",
     
     "test name field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('page name', data['page-name']);
     },
 	
     "test title field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('page title', data['page-title']);
     },
 	
     "test referrer field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('referrer URL', data['page-referrer']);
     },
 	
     "test type field": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('Homepage', data['page-type']);
     }
   }));
@@ -146,12 +148,12 @@
     name: "hPage without required fields",
     
     "test no hPage found when no fields are specified": function() {
-      var data = suite.parse("#example2", 0);
+      var data = parse("#example2", 0);
 	  Y.Assert.isNull(data);
     },
 	
     "test no hPage found when required fields are not specified": function() {
-      var data = suite.parse("#example3", 0);
+      var data = parse("#example3", 0);
 	  Y.Assert.isNull(data);
     }
   }));
@@ -189,22 +191,22 @@
     name: "Whitespace normalization",
     
     "test leading and trailing newlines removed": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.Assert.areEqual('page name with newlines', data['page-name']);
 	},
 	
     "test leading and trailing spaces removed": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.Assert.areEqual('page title with spaces', data['page-title']);
 	},
 	
     "test leading and trailing tabs removed": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.Assert.areEqual('page referrer with tabs', data['page-referrer']);
 	},
 	
     "test inline whitespace normalized": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.Assert.areEqual('type with inline newlines and spaces', data['page-type']);
     }
   }));
@@ -237,11 +239,11 @@
     name: "Embedded HTML",
     
     "test inline HTML is preserved": function() {
-      var data = suite.parse("#example5");	
-	  // the ugly regex is required because of the way Rhino reserializes the innerHTML
-      Y.Assert.isTrue(/name with an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-name']), "Excerpted page name: " + data['page-name']);
-      Y.Assert.isTrue(/title with whitespace and an <[Aa]( id=""\s*)? href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-title']), "Excerpted title: " + data['page-title']);
-      Y.Assert.isTrue(/referrer with a <(SPAN|span)( id=""\s*)?>span nesting more <[Aa]( id=""\s*)? href=(")?#(")?\s*>html<\/[Aa]><\/(SPAN|span)>/.test(data['page-referrer']), "Excerpted referrer: " + data['page-referrer']);
+      var data = parse("#example5");	
+	    // IE provides upper case tag names and omits quotes on attributes
+      Y.Assert.isTrue(/name with an <[Aa] href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-name']), "Excerpted page name: " + data['page-name']);
+      Y.Assert.isTrue(/title with whitespace and an <[Aa] href=(")?#(")?\s*>embedded link<\/[Aa]>/.test(data['page-title']), "Excerpted title: " + data['page-title']);
+      Y.Assert.isTrue(/referrer with a <(SPAN|span)>span nesting more <[Aa] href=(")?#(")?\s*>html<\/[Aa]><\/(SPAN|span)>/.test(data['page-referrer']), "Excerpted referrer: " + data['page-referrer']);
     }
   }));
 // ]]>

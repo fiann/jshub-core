@@ -51,18 +51,23 @@
   // tests for hAuthenticationEvent parser
   // the parser listens for page-view events, so we trigger an event and then
   // listen for authentication events that are triggered from the parser
-  suite.parse = function(selector) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    jsHub.bind("authentication", "unittest", function(evt) {
-      data = evt.data;
-      count++;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(1, count, 'wrong number of authentication events have been generated');
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
+    }
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data;
+      }
+    };
+    jsHub.bind("authentication", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of hPage objects have been found');
     Y.Assert.isNotNull(data, 'authentication event had no data');
-	return data;
+  	return data;
   };
 </script>  
 
@@ -105,18 +110,18 @@
     name : "Microformat parsing",
 
     "test values not specified" : function () {
-	  var data = suite.parse("#example1");
+	  var data = parse("#example1");
       Y.Assert.isUndefined(data['user-id'], 'user-id is not specified, it should be undefined');
       Y.Assert.isUndefined(data['auth-method'], 'auth-method is not specified, it should be undefined');
     },
 
     "test optional user-id value specified" : function () {
-	  var data = suite.parse("#example2");
+	  var data = parse("#example2");
       Y.Assert.areEqual("user one", data['user-id'], 'user-id is not the same as the hAuthentication userid declaration');
     },
 
     "test optional auth-method value specified" : function () {
-	  var data = suite.parse("#example3");
+	  var data = parse("#example3");
       Y.Assert.areEqual("user one", data['user-id'], 'user-id is not the same as the hAuthentication userid declaration');
       Y.Assert.areEqual("password", data['auth-method'], 'auth-method is not the same as the hAuthentication auth-method declaration');
     }

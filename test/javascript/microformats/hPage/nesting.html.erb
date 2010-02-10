@@ -49,21 +49,25 @@
   /* 
    * Capture the data from a hPage-found event
    */
-  suite.parse = function(selector, hPageCount) {
+  function parse(selector, expectedCount) {
     var data = null, count = 0;
-    if (typeof hPageCount != 'number') {
-      hPageCount = 1;
+    if (typeof expectedCount != 'number') {
+      expectedCount = 1;
     }
-    jsHub.bind("hpage-found", "unittest", function(evt) {
-	  count ++;
-      data = evt.data.hpage;
-    });
-    jsHub.trigger("page-view", {
-      context: selector
-    });
-    Y.Assert.areEqual(hPageCount, count, 'wrong number of hPage objects have been found');
-	return data;
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+    	  count ++;
+        data = evt.data;
+      }
+    };
+    jsHub.bind("page-view", listener);
+    jsHub.trigger("page-view", { context: selector });
+    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
+    Y.Assert.isNotNull(data, 'Event had no data');
+  	return data;
   };
+
 </script>
 
 <!-- 
@@ -85,7 +89,7 @@
     name: "Single hPage node",
     
     "test last name declared in page should be returned": function() {
-      var data = suite.parse("#example1");
+      var data = parse("#example1");
       Y.Assert.areEqual('Last name instance', data['page-name'], 'Page name');
     }
   }));
@@ -116,7 +120,7 @@
     name: "Single nested hPage node",
     
     "test last name should be returned even if nested": function() {
-      var data = suite.parse("#example2");
+      var data = parse("#example2");
       Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
     }
   }));
@@ -146,7 +150,7 @@
     name: "Outer declaration after nested data",
     
     "test outer value is declared last": function() {
-      var data = suite.parse("#example3");
+      var data = parse("#example3");
       Y.Assert.areEqual('Outer Page name', data['page-name'], 'Wrong page name used');
     }
   }));
@@ -193,13 +197,13 @@
     name: "Merging data from nested nodes",
     
     "test non-overlapping values": function() {
-      var data = suite.parse("#example4");
+      var data = parse("#example4");
       Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
       Y.Assert.areEqual('Outer Page title', data['page-title'], 'Wrong title used');
     },
 	
     "test multiple values": function() {
-      var data = suite.parse("#example5");
+      var data = parse("#example5");
       Y.Assert.areEqual('Inner Page name', data['page-name'], 'Wrong page name used');
       Y.ArrayAssert.itemsAreEqual('hpage nested values merge'.split(' '), data['page-category'], 
 	    "Categories are not merged correctly");
