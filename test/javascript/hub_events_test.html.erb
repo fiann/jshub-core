@@ -39,10 +39,14 @@
   // mock object
   function MockListener(authToken) {
     var self = this;
-    self.authToken = authToken;
-    self.events = [];
-    this.eventFired = function(evt) {
+    this.events = [];
+    var eventFired = function(evt) {
       self.events.push(evt);
+    };
+    this.metadata = {
+      id : authToken,
+      type : "data-capture",
+      eventHandler : eventFired
     };
   };
 
@@ -56,6 +60,10 @@
       window.listener2 = new MockListener("listener2");
       window.listener3 = new MockListener("listener3");
       window.listener4 = new MockListener("listener4");
+      window.listener5 = new MockListener("listener5");
+      window.listener6 = new MockListener("listener6");
+      window.listener7 = new MockListener("listener7");
+      window.listener8 = new MockListener("listener8");
     },
     
     "test event triggered with no listeners": function() {
@@ -64,8 +72,8 @@
     },
     
     "test registering listener explicitly multiple times": function() {
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener1.metadata);
+      jsHub.bind("page-view", listener1.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page"
@@ -75,7 +83,7 @@
     },
     
     "test registering listener globally with multiple events": function() {
-      jsHub.bind("*", listener2.authToken, listener2.eventFired);
+      jsHub.bind("*", listener2.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page"
@@ -87,8 +95,8 @@
     },
     
     "test registering listener globally multiple times": function() {
-      jsHub.bind("*", listener3.authToken, listener3.eventFired);
-      jsHub.bind("*", listener3.authToken, listener3.eventFired);
+      jsHub.bind("*", listener3.metadata);
+      jsHub.bind("*", listener3.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page"
@@ -98,17 +106,47 @@
     },
     
     "test registering listener explicitly and globally": function() {
-      jsHub.bind("page-view", listener4.authToken, listener4.eventFired);
-      jsHub.bind("*", listener4.authToken, listener4.eventFired);
+      jsHub.bind("page-view", listener4.metadata);
+      jsHub.bind("*", listener4.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page"
       };
       jsHub.trigger("page-view", eventData);
       Y.Assert.areEqual(1, listener4.events.length, "Event should be recorded once");
-    }
-  }));
+    },
     
+    "test registration order is preserved": function() {
+      var callbacks = [];
+      listener5.metadata.eventHandler = function () { callbacks.push("listener5"); };
+      listener6.metadata.eventHandler = function () { callbacks.push("listener6"); };
+      jsHub.bind("*", listener5.metadata);
+      jsHub.bind("*", listener6.metadata);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.ArrayAssert.itemsAreEqual(["listener5", "listener6"], callbacks);
+    },    
+    
+    "test data-capture plugins are called before data-transport": function() {
+      var callbacks = [];
+      listener7.metadata.eventHandler = function () { callbacks.push("listener7"); };
+      listener7.metadata.type = "data-transport";
+      listener8.metadata.eventHandler = function () { callbacks.push("listener8"); };
+      listener8.metadata.type = "data-capture";
+      jsHub.bind("*", listener7.metadata);
+      jsHub.bind("*", listener8.metadata);
+      var eventData = {
+        pageName: "test page",
+        referrer: "previous page"
+      };
+      jsHub.trigger("page-view", eventData);
+      Y.ArrayAssert.itemsAreEqual(["listener8", "listener7"], callbacks);
+    }    
+  }));
+
   // tests for hub events
   suite.add(new Y.Test.Case({
     name: "Event level security",
@@ -117,13 +155,13 @@
       window.listener1 = new MockListener("jshub");
       window.listener2 = new MockListener("adserver");
       window.listener3 = new MockListener("trustedService");
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
-      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
-      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
+      jsHub.bind("page-view", listener1.metadata);
+      jsHub.bind("page-view", listener2.metadata);
+      jsHub.bind("page-view", listener3.metadata);
     },
     
     "test custom event type, with implicit global visibility": function() {
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener1.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page"
@@ -132,14 +170,14 @@
       Y.Assert.areEqual(1, listener1.events.length, "First event recorded");
       evtRecorded = listener1.events[0];
       Y.Assert.areEqual("page-view", evtRecorded.type, "Event type");
-	  for (prop in evtRecorded.data) {
-        Y.Assert.areEqual(eventData[prop], evtRecorded.data[prop], 
-		  "Event data field does not match: "+prop);
-	  }
+  	  for (prop in evtRecorded.data) {
+          Y.Assert.areEqual(eventData[prop], evtRecorded.data[prop], 
+  		  "Event data field does not match: "+prop);
+  	  }
     },
     
     "test custom event type, with explicit '*' visibility": function() {
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
+      jsHub.bind("page-view", listener1.metadata);
       var eventData = {
         pageName: "test page",
         referrer: "previous page",
@@ -201,9 +239,9 @@
       window.listener1 = new MockListener("jshub");
       window.listener2 = new MockListener("adserver");
       window.listener3 = new MockListener("trustedService");
-      jsHub.bind("page-view", listener1.authToken, listener1.eventFired);
-      jsHub.bind("page-view", listener2.authToken, listener2.eventFired);
-      jsHub.bind("page-view", listener3.authToken, listener3.eventFired);
+      jsHub.bind("page-view", listener1.metadata);
+      jsHub.bind("page-view", listener2.metadata);
+      jsHub.bind("page-view", listener3.metadata);
     },
     
     "test validation of field level restrictions": function() {
