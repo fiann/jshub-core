@@ -8,7 +8,7 @@ class JsControllerTest < ActionController::TestCase
     assert_equal "text/html", @response.content_type
     # check for presence of an example file and folder link
     assert_select "ul" do
-      assert_select "li a[href$=jshub]", "jshub"
+      assert_select "li a[href$=hub]", "hub"
     end
   end
   
