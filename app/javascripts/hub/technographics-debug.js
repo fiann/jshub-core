@@ -2,7 +2,7 @@
  * A plugin to create an analytics object from technographic data 
  *
  * @module data-capture
- * @class technographic-plugin
+ * @class technographics
  *//*--------------------------------------------------------------------------*/
 
 // JSLint options
@@ -17,8 +17,8 @@
    * Metadata about this plug-in for use by UI tools and the Hub
    */
   var metadata = {
-    name: 'Technographic Plugin',
-    id: 'technographic-plugin',
+    name: 'Technographics Plugin',
+    id: 'technographic',
     version: 0.1,
     vendor: 'jsHub.org',
     type: 'data-capture'

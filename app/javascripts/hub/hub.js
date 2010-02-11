@@ -78,7 +78,7 @@
         var registered = cached(eventName);
         // Use only one of the valid phase names
         if (! registered[phase]) {
-//           jsHub.logger.warn("EventListenerCache: invalid phase name " + phase + ", using data-capture");
+//           jsHub.logger.info("EventListenerCache: invalid phase name " + phase + ", using data-capture");
           phase = "data-capture";
         }
         // if already present, then replace the callback function
@@ -269,9 +269,6 @@
           this.configure(data.id, config[data.id]);
         }
       }
-
-      // finally return the data object for the event
-      return data;
     };
     
     /**

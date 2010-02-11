@@ -17,4 +17,4 @@ ActionView::Helpers::AssetTagHelper.register_stylesheet_expansion :syntaxhighlig
 ActionView::Helpers::AssetTagHelper.register_javascript_expansion :syntaxhighlighter => ["yui3/assets/dpSyntaxHighlighter"]
 
 # jQuery is used by the jsHub microformats code
-ActionView::Helpers::AssetTagHelper.register_javascript_expansion :jquery => ["/js/src/modules/jquery/jquery-min.js"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :jquery => ["/js/src/modules/lib/jquery-min.js"]
