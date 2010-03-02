@@ -71,6 +71,15 @@
 </div>
 <script language="javascript" type="text/javascript">
   // tests for hub events
+  suite.attributeComparator = function (one, two) {
+    if (two.name === one.name && two.value === one.value) {
+      return true;
+    }
+    throw new Y.Assert.ComparisonFailure("Event attributes are not correct", 
+      /* expected */ "data["+one.name+"] = '"+one.value+"'",
+      /* actual */   "data["+two.name+"] = '"+two.value+"'");
+  }
+  
   suite.add(new Y.Test.Case({
     name: "Data dispatch",
 
@@ -125,13 +134,37 @@
           Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
         }
       }
-      // get a sensible error message
-      Object.prototype.toString = function () {
-        return Y.JSON.stringify(this);
+      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+    },
+
+    "test multiple value properties are sent as separate entries" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
       };
-      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, function (one, two) {
-        return two.name === one.name && two.value === one.value;
-      }, "Event attributes are not correct");
+      var eventData = {
+        "page-name" : "homepage",
+        "page-category" : [ "value 1", "value 2" ]
+      };
+      var expectedData = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp,
+        "attributes" : [
+          { "name" : "page-name", "value" : "homepage" },
+          { "name" : "page-category", "value" : "value 1" },
+          { "name" : "page-category", "value" : "value 2" }
+        ]
+      };
+      jsHub.trigger("page-view", eventData, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+        if (field !== "attributes") {
+          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+        }
+      }
+      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
     }
 
   })); 
