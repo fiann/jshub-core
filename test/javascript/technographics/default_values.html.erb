@@ -93,7 +93,7 @@
 	
     "test referrer field": function() {
       var data = parse("#example1");
-      Y.Assert.areEqual(document.referrer, data.referrer);
+      Y.Assert.areEqual(document.referrer, data['page-referrer']);
     }
   }));
 </script>  
