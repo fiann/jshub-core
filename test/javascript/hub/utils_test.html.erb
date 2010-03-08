@@ -116,7 +116,7 @@
       /*
        * Base URL expected for relative links. May not be correct if routes.rb changes.
        */
-      var baseURL = "/test/javascript/";
+      var baseURL = "/test/javascript/hub/";
       
       // Root relative
       var href = "/index.html";
@@ -150,27 +150,27 @@
       
       href = "../index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/test/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/javascript/index.html", uri);
       
       href = "../../index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/index.html", uri);
       
       href = "../somewhere/index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/test/somewhere/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/javascript/somewhere/index.html", uri);
       
       href = "../somewhere/else/index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/test/somewhere/else/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/javascript/somewhere/else/index.html", uri);
       
       href = "../../somewhere/index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/somewhere/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/somewhere/index.html", uri);
       
       href = "../../somewhere/else/index.html";
       uri = jsHub.util.qualifyHREF(href);
-      Y.Assert.areSame(server + appPrefix + "/somewhere/else/index.html", uri);
+      Y.Assert.areSame(server + appPrefix + "/test/somewhere/else/index.html", uri);
       
       href = "somewhere/else/../../index.html";
       uri = jsHub.util.qualifyHREF(href);
