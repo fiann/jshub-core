@@ -179,4 +179,79 @@
     }
   
   }));
+  
+  suite.checkQS = function (expected, actual, message) {
+    Y.Object.each(expected, function(value, key) {
+      Y.ObjectAssert.hasKey(key, actual, Y.Assert._formatMessage(message, "Missing key "+key+". "));
+      Y.ArrayAssert.itemsAreEqual(value, actual[key], "Incorrect values for key '"+key+"'. \n{message}");
+    });
+  },
+  
+  suite.add(new Y.Test.Case({
+    name: "Query string parsing",
+    
+    "test parse encoded query string" : function() {
+      var qs = "first=this+is+first&second=this+is+second";
+      var expected = {
+        "first" : [ "this is first" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test semicolon separator" : function() {
+      var qs = "first=this+is+first;second=this+is+second";
+      var expected = {
+        "first" : [ "this is first" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test multiple values for key" : function() {
+      var qs = "first=this+is+first&second=this+is+second&first=so+is+this";
+      var expected = {
+        "first" : [ "this is first", "so is this" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test missing value for key" : function() {
+      var qs = "first=this+is+first&first=&second=this+is+second";
+      var expected = {
+        "first" : [ "this is first", "" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test missing equals" : function() {
+      var qs = "first=this+is+first&first&second=this+is+second";
+      var expected = {
+        "first" : [ "this is first", "" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test missing trailing equals" : function() {
+      var qs = "first=this+is+first&second=this+is+second&first";
+      var expected = {
+        "first" : [ "this is first", "" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }, 
+    
+    "test URI encoding" : function() {
+      var qs = "first%21=complex+%28with%20%23%20%26%20%24%29&second=this+is+second";
+      var expected = {
+        "first!" : [ "complex (with # & $)" ],
+        "second" : [ "this is second" ]
+      };
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));
+    }
+  }));
+
 </script>
