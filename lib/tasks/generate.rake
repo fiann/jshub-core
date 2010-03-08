@@ -25,26 +25,44 @@ namespace :javascripts do
     # and we don't want to fork them
     debug = debug.grep /^(?:(?!jquery\/|yui\/|loader\/|debug\/|json\/).)*$/
     
-    compressor = YUICompressor.new
-    # remove logging statements
-    allok = compressor.strip(debug)
-    if !allok
-      fail "Logging strip errors"
-    end
-    # run through YUI compressor
-    allok = compressor.compress(debug)      
-    if !allok
-      fail "Compression errors"
+    # Don't reprocess if the compressed files is up to date
+    debug.reject! do |file|
+      min_file = file.gsub(/-debug\.js$/, "-min.js")
+      uptodate = File.exists?(min_file) && File.mtime(min_file) > File.mtime(file)
+      if uptodate
+        file = file["#{RAILS_ROOT}/app/javascripts/".length, file.length]
+        puts "Skipping #{file}, up to date"
+      end
+      uptodate
     end
     
-    # Remove comments from all -min files including external libraries
-    min = files.grep /-min\.js/
-    compressor = YUICompressor.new
-    compressor.yuicompressor_options = '--nomunge --line-break 6000 --preserve-semi -v'
-    allok = compressor.compress(min)      
-    if !allok
-      fail "Comment strip errors"
-    end
+    if debug.empty?
+      puts "All files up to date"
+    else
+      compressor = YUICompressor.new
+      # remove logging statements
+      puts "Stripping comments from #{debug.to_s}"
+      allok = compressor.strip(debug)
+      if !allok
+        fail "Logging strip errors"
+      end
+      # run through YUI compressor
+      puts "Compressing #{debug.to_s}"
+      allok = compressor.compress(debug)      
+      if !allok
+        fail "Compression errors"
+      end
+    end    
+
+    # # Remove comments from all -min files including external libraries
+    # min = files.grep /-min\.js/
+    # puts "Stripping comments from #{min.to_s}"
+    # compressor = YUICompressor.new
+    # compressor.yuicompressor_options = '--nomunge --line-break 6000 --preserve-semi -v'
+    # allok = compressor.compress(min)      
+    # if !allok
+    #   fail "Comment strip errors"
+    # end
     
   end
   
