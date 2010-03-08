@@ -133,7 +133,7 @@
     qs = qs || (location.search ? location.search : '');
 
     // remove the leading question mark if it is present
-    if (qs.charAt(0) == '?') {
+    if (qs.charAt(0) === '?') {
       qs = qs.substring(1);
     }
 
@@ -144,7 +144,7 @@
     components = qs.split(/[&;]/g);
 
     // loop over the query string components
-    for (i = 0; i < components.length; i++){
+    for (i = 0; i < components.length; i++) {
       pair = components[i].split('=');
       key = decodeURIComponent(pair[0]);
       value = decodeURIComponent(pair[1] || '');
