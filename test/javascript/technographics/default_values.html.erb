@@ -88,7 +88,7 @@
     
     "test title field": function() {
       var data = parse("#example1");
-      Y.Assert.areEqual(document.title, data.title);
+      Y.Assert.areEqual(document.title, data['page-title']);
     },
 	
     "test referrer field": function() {
