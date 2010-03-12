@@ -55,15 +55,10 @@
     name: "jsHub event dispatcher",
     
     setUp: function() {
-	  // use a different listener for each test to prevent collisions
-      window.listener1 = new MockListener("listener1");
-      window.listener2 = new MockListener("listener2");
-      window.listener3 = new MockListener("listener3");
-      window.listener4 = new MockListener("listener4");
-      window.listener5 = new MockListener("listener5");
-      window.listener6 = new MockListener("listener6");
-      window.listener7 = new MockListener("listener7");
-      window.listener8 = new MockListener("listener8");
+	    // use a different listener for each test to prevent collisions
+	    for (var i = 1; i < 11; i++) {
+        window['listener'+i] = new MockListener("listener" + i);	      
+	    }
     },
     
     "test event triggered with no listeners": function() {
@@ -144,7 +139,30 @@
       };
       jsHub.trigger("page-view", eventData);
       Y.ArrayAssert.itemsAreEqual(["listener8", "listener7"], callbacks);
-    }    
+    },
+    
+    "test event timestamp is preserved": function() {
+      var timestamp = 123456789;
+      jsHub.bind("*", listener9.metadata);
+      jsHub.trigger("test-timestamp-event", {}, timestamp);
+      var recorded = listener9.events[0];
+      Y.Assert.areEqual(timestamp, recorded.timestamp, "Timestamp is not correct");
+    },
+
+    "test nested event timestamp is transferred": function() {
+      jsHub.bind("test-timestamp-event", {
+        id : "child-event-trigger",
+        eventHandler : function (evt) {
+          jsHub.trigger("test-timestamp2-event", {}, evt.timestamp);
+        }
+      });
+      
+      jsHub.bind("*", listener10.metadata);
+      jsHub.trigger("test-timestamp-event", {});
+      var recorded = listener10.events;
+      Y.Assert.areEqual(2, recorded.length, "Expected 2 events");
+      Y.Assert.areEqual(recorded[0].timestamp, recorded[1].timestamp, "Timestamps are not the same");
+    }
   }));
 
   // tests for hub events
