@@ -73,7 +73,7 @@
     }
     
     // and send to output plugins
-    jsHub.trigger("technographic-parse-complete", data);
+    jsHub.trigger("technographic-parse-complete", found);
 
     return data;
   };
