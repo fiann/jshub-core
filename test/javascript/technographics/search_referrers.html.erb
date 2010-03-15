@@ -1,0 +1,201 @@
+<% set_title "Search referrers < Browser technographics" %>
+
+<% content_for :javascripts do %>  
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/hub/load-triggers-debug.js" %>
+<%= javascript_include_tag "/js/src/hub/technographics-debug.js" %>
+
+<% end %>
+
+<% content_for :intro do %>
+<p>
+  The <a href=".">technographics test suite</a> tests <strong>functionality for extracting
+  environment data from the user's browser</strong>.
+</p>
+<p>
+  This page tests extracting referrer information from the known list of search engines.
+</p>
+<p>The list is based on the <%= link_to 'Google Analytics traffic sources', 
+  'http://code.google.com/apis/analytics/docs/tracking/gaTrackingTraffic.html#searchEngine' %> 
+  documentation, using the English-language search engines on that list.
+</p>
+<% end %>
+
+
+<!-- Any HTML you may require for your tests to work properly -->
+<script language="javascript" type="text/javascript">
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+      Y.Assert.isFunction(jsHub.safe, "jsHub.safe() is not a Function");
+    }
+  }));
+
+  // mock object
+  function MockListener(authToken) {
+    var self = this;
+    this.events = [];
+    var eventFired = function(evt) {
+      self.events.push(evt);
+    };
+    this.metadata = {
+      id : authToken,
+      type : "data-capture",
+      eventHandler : eventFired
+    };
+    this.reset = function () {
+      self.events = [];
+    }
+  };
+    
+  /**
+   * Tests for search engine referrer parsing
+   */
+  suite.add(new Y.Test.Case({
+    name: "Search engine refer",
+    
+    setUp : function () {
+      window.listener = new MockListener("test-listener");
+      jsHub.bind("nat-search-ref", listener.metadata);
+    },
+    
+    "test empty referrer": function() {
+      jsHub.trigger("page-view", {
+        "page-referrer" : ""
+      });
+      Y.Assert.areEqual(0, listener.events.length, "Expected no search event to be fired");
+    },
+
+    "test valid referrer": function() {
+      var url = "http://www.google.co.uk/search?sourceid=chrome&ie=UTF-8&q=search";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
+      Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
+      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test subdomained referrer": function() {
+      var url = "http://uk.search.yahoo.com/search?rd=r1&p=search&toggle=1&cop=mss&ei=UTF-8&fr=yfp-t-702";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
+      Y.Assert.areEqual("uk.search.yahoo.com", data['search-engine'], "Search engine field is incorrect");
+      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test multiple query params": function() {
+      var url = "http://search.aol.co.uk/aol/search?s_it=hf_aoluk_po_ws40&q=search&lr=lang_en&rp=";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
+      Y.Assert.areEqual("search.aol.co.uk", data['search-engine'], "Search engine field is incorrect");
+      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test https referrer": function() {
+      var url = "https://www.google.co.uk/search?sourceid=chrome&ie=UTF-8&q=search";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
+      Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
+      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test referrer without www": function() {
+      var url = "http://google.co.uk/search?sourceid=chrome&ie=UTF-8&q=search";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
+      Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
+      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test search term is decoded": function() {
+      var url = "http://www.google.co.uk/search?sourceid=chrome&ie=UTF-8&q=complex+query%3F";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test search term position in querystring": function() {
+      var url = "http://www.google.co.uk/search?q=complex+query%3F";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test search term at end of querystring": function() {
+      var url = "http://www.google.co.uk/search?sourceid=chrome&q=complex+query%3F";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test search term at start of querystring": function() {
+      var url = "http://www.google.co.uk/search?q=complex+query%3F&sourceid=chrome";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
+      var data = listener.events[0].data;
+      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+    }, 
+
+    "test unknown referrer domain": function() {
+      var url = "http://www.example.com/search?sourceid=chrome&ie=UTF-8&q=complex+query%3F";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(0, listener.events.length, "Expected no search event to be fired");
+    },
+    
+    "test no query param": function() {
+      var url = "http://www.google.com/search?sourceid=chrome&ie=UTF-8&wrong=complex+query%3F";
+      jsHub.trigger("page-view", {
+        "page-referrer" : url
+      });
+      Y.Assert.areEqual(0, listener.events.length, "Expected no search event to be fired");
+    }, 
+
+    
+  }));
+</script>  
+
