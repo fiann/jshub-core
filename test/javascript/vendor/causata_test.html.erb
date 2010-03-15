@@ -137,6 +137,31 @@
       Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
     },
 
+    "test organizationID is set correctly": function() {
+      var recordedData, timestamp = new Date().getTime(), account = 12345;
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      jsHub.configure("causata-transport.account", account);
+      jsHub.trigger("page-view", {}, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var expectedData = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp,
+        "organizationId" : account, 
+        "attributes" : [ ]
+      };
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+        if (field == "attributes") {
+          Y.Assert.areEqual(0, expectedData[field].length, "Attributes should be empty");
+        } else {
+          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+        }
+      }
+    },
+
     "test multiple value properties are sent as separate entries" : function() {
       var recordedData, timestamp = new Date().getTime();
       jsHub.dispatchViaForm = function (method, url, data) {
