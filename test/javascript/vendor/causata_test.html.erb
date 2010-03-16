@@ -148,8 +148,7 @@
       var expectedData = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
-        "organization" : account, 
-        "attributes" : [ ]
+        "organization" : account
       };
       var data = Y.JSON.parse(recordedData.event);
       for (var field in expectedData) {
@@ -190,6 +189,25 @@
         }
       }
       Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+    },
+
+    "test attribute is not sent if no attributes set" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      var eventData = { };
+      var expectedData = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp
+      };
+      jsHub.trigger("page-view", eventData, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+      }
+      Y.Assert.isUndefined(data.attributes, "No attributes should be sent if empty");
     }
 
   })); 
