@@ -118,13 +118,17 @@
       jsHub.dispatchViaForm = function (method, url, data) {
         recordedData = data;
       };
-      jsHub.trigger("page-view", {"page-name" : "homepage"}, timestamp);
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage",
+          "page-referrer" : "http://www.google.com/"
+        }, timestamp);
       Y.Assert.isObject(recordedData, "No event data sent");
       var expectedData = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "attributes" : [
-          { "name" : "page-name", "value" : "homepage" }
+          { "name" : "page-name", "value" : "homepage" },
+          { "name" : "page-referrer", "value" : "http://www.google.com/" }
         ]
       };
       var data = Y.JSON.parse(recordedData.event);
@@ -208,8 +212,68 @@
         Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
       }
       Y.Assert.isUndefined(data.attributes, "No attributes should be sent if empty");
-    }
+    },
 
+    "test *-source attributes are not sent" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      var eventData = {
+        "page-name" : "homepage",
+        "page-category" : "value 1",
+        "page-category-source" : "window.location"
+      };
+      var expectedData = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp,
+        "attributes" : [
+          { "name" : "page-name", "value" : "homepage" },
+          { "name" : "page-category", "value" : "value 1" }
+        ]
+      };
+      jsHub.trigger("page-view", eventData, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+      }
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+        if (field !== "attributes") {
+          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+        }
+      }
+      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+    },
+
+    "test empty page-referrer is not sent" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage",
+          "page-referrer" : ""
+        }, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var expectedData = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp,
+        "attributes" : [
+          { "name" : "page-name", "value" : "homepage" },
+        ]
+      };
+      var data = Y.JSON.parse(recordedData.event);
+      for (var field in expectedData) {
+        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
+        if (field !== "attributes") {
+          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
+        }
+      }
+      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+    }
+    
   })); 
 </script>
 
