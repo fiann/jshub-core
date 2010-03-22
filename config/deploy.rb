@@ -101,6 +101,6 @@ end
 # e.g. before :deploy, :my_custom_task
 #      after  "deploy:symlink", :do_this, :and_do_that
 after "deploy:setup",   "custom:link_webroot"
-after "deploy:update",   "deploy:migrate", "custom:version", "custom:dist"
+after "deploy:update",   "deploy:migrate", "custom:version" # ?no need to regenerate files? "custom:dist"
 after "deploy:symlink",   "custom:link_app_config"
 after "deploy:restart", "custom:archive", "custom:website", "custom:changelog"
