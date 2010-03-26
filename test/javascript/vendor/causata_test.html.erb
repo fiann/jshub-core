@@ -272,8 +272,52 @@
         }
       }
       Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+    },
+
+    "test multiple events are sent together" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      jsHub.trigger("data-capture-start", {}, timestamp);
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage"
+        }, timestamp);
+      jsHub.trigger("product-view", {
+          "product-name" : "bicycle"
+        }, timestamp);
+      jsHub.trigger("data-capture-complete", {}, timestamp);
+      Y.Assert.isObject(recordedData, "No event data sent");
+      var expectedData = [
+        {
+          "eventType" : "page-view",
+          "timestamp" : timestamp,
+          "attributes" : [
+            { "name" : "page-name", "value" : "homepage" },
+          ]
+        }, {
+          "eventType" : "product-view",
+          "timestamp" : timestamp,
+          "attributes" : [
+            { "name" : "product-name", "value" : "bicycle" },
+          ]
+        }
+      ];
+      console.warn("DATATATATATATATATATAAT");
+      console.log(recordedData);
+      Y.Assert.areEqual(expectedData.length, recordedData.event.length, "Wrong number of events");
+      for (var i=0; i<expectedData.length; i++) {
+        var data = Y.JSON.parse(recordedData.event[i]);
+        console.log(data, expectedData[i]);
+        for (var field in expectedData[i]) {
+          Y.ObjectAssert.ownsKey(field, data, "Event " + i + " is missing field " + field);
+          if (field !== "attributes") {
+            Y.Assert.areEqual(expectedData[i][field], data[field], "Incorrect value for " + field);
+          }
+        }
+        Y.ArrayAssert.itemsAreEquivalent(expectedData[i].attributes, data.attributes, suite.attributeComparator);
+      }
     }
-    
   })); 
 </script>
 
