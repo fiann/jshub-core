@@ -27,7 +27,7 @@
     /**
      * The events that will be captured and sent to the Causata servers
      */
-    boundEvents = ['page-view', 'product-view', 'authentication', 'checkout', 'site-search'],
+    boundEvents = ['page-view', 'product-view', 'authentication', 'checkout', 'site-search', 'nat-search-ref'],
 
     /**
      * The config object for this plugin
