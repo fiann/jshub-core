@@ -49,8 +49,8 @@ Rails::Initializer.run do |config|
   config.gem "ci_reporter", :lib => "ci/reporter/core" if RAILS_ENV == 'test' || RAILS_ENV == 'hudson'
 
   # for running unit tests in JavaScript
-  config.gem "smparkes-johnson", :lib => 'johnson', :source => 'http://gems.github.com'
-  config.gem "smparkes-envjs", :lib => 'envjs', :source => 'http://gems.github.com'
+  config.gem "johnson", :prerelease => true
+  config.gem "envjs" 
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
