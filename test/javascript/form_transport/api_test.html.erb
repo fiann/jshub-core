@@ -52,6 +52,12 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
+        "test form contains fields": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test iframe has a transportState": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test return contains references to generated elements": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test skip functions in the data object": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test skip nested objects in the data object": (navigator.userAgent.match(/Rhino|Envjs/)),
         "test form contains fields with spaces in the name": (navigator.userAgent.match(/Rhino|Envjs/)),
         "test form contains fields from a nested array": (navigator.userAgent.match(/Rhino|Envjs/)),
         "test iframe sends a complete event": (navigator.userAgent.match(/Rhino|Envjs/))

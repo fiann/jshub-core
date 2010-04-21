@@ -60,24 +60,24 @@ runTest = function(test_file, isDebug) {
     // called when debug = false and does nothing with the message
     var discard = function() {};
     this.info = (!isDebug) ? discard :  function() {
-      print("info: " + indent + format.apply(this, arguments));
+      print("i: " + indent + format.apply(this, arguments));
     };
     this.log = (!isDebug) ? discard : function() {
-      print("log: " + indent + format.apply(this, arguments));
+      print("l: " + indent + format.apply(this, arguments));
     };
     this.warn = (!isDebug) ? discard : function() {
-      print("warn: " + indent + format.apply(this, arguments));
+      print("w: " + indent + format.apply(this, arguments));
     };
     this.error = (!isDebug) ? discard : function() {
-      print("error: " + indent + format.apply(this, arguments));
+      print("e: " + indent + format.apply(this, arguments));
     };
     this.debug = (!isDebug) ? discard : function() {
-      print("debug: " + indent + format.apply(this, arguments));
+      print("d: " + indent + format.apply(this, arguments));
     };
     // adds a '+ ' visual prefix to nest log messages
     this.group = (!isDebug) ? discard : function() {
       indent += "+ ";
-      print("log: " + indent + format.apply(this, arguments));
+      print("l: " + indent + format.apply(this, arguments));
     };
     this.groupEnd = (!isDebug) ? discard : function() {
       indent = indent.substring(0, indent.length - 2);
@@ -287,7 +287,7 @@ runTest = function(test_file, isDebug) {
   }
   
   // initialise test runner
-  var TestRunner = window.Y.Test.Runner, suite = window.suite;
+  var TestRunner = window.Y.Test.Runner, suite = window.suite, JSON = window.Y.JSON;
   // capture results
   TestRunner.subscribe(TestRunner.BEGIN_EVENT, function() {
     startTime = +new Date();
@@ -308,7 +308,7 @@ runTest = function(test_file, isDebug) {
   // clear any old tests from previous pages
   TestRunner.clear();
   // add the test cases and suites from the loaded HTML file
-  console.log("Env: Running tests " + Y.JSON.stringify(suite, null, 2));
+  console.log("Env: Running tests " + JSON.stringify(suite, null, 2));
   TestRunner.add(suite);
   // run all tests
   TestRunner.run();

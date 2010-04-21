@@ -40,7 +40,7 @@ class JshubTestRunner < ActiveSupport::TestCase
         puts "Creating JavaScript runtime" if DEBUG
         runtime = Johnson::Runtime.new
         runtime.extend Envjs::Runtime
-        runtime.load Envjs::ENVJS
+        # runtime.load Envjs::ENVJS
         runtime.load File.join( File.dirname(__FILE__), "jshub_test_utils.js" )
         runtime[:ruby_test_runner] = self
         
@@ -50,6 +50,7 @@ class JshubTestRunner < ActiveSupport::TestCase
             runTest("#{test_case_url}", #{DEBUG});
           EOJS
         rescue Exception => e
+          puts "Unexpected exception while loading page"
           callback_parse_failed(e, test_case_url, page)
         end
       end
@@ -76,15 +77,14 @@ class JshubTestRunner < ActiveSupport::TestCase
   
   def self.callback_parse_failed(error, url, page)
     full_test_name = "#{@test_case}.parse html file"
-    puts "Defining method ##{full_test_name}" if DEBUG
+    puts "Defining (parse failure) method ##{full_test_name}" if DEBUG
     define_method full_test_name do
-      e = Exception.new("Error while parsing HTML file")
+      e = Exception.new("Error while parsing HTML file: #{error}\n" + error.backtrace.join("\n"))
       unless page.instance_of? Net::HTTPOK
         puts "*** HTML file #{url} #{page.code} ***"
         puts page.body
         puts "*** HTML file ends ***"
       end
-      e.set_backtrace(error.backtrace)
       raise e
     end
   end

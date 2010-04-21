@@ -52,7 +52,8 @@
     _should: {
       ignore: {
         // FIXME Envjs has a problem with form.method
-        "test slow network delays complete event": (navigator.userAgent.match(/Rhino|Envjs/))
+        "test slow network delays complete event": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test rapid creation of multiple transports have unique ids": (navigator.userAgent.match(/Rhino|Envjs/))
       }
     },
     
