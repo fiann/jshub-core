@@ -44,56 +44,59 @@
     }
   }));
   
-  /* 
-   * Capture the data from a hPage-found event
-   */
-  function parse(selector, expectedCount) {
-    var data = null, count = 0;
-    if (typeof expectedCount != 'number') {
-      expectedCount = 1;
-    }
-    var listener = {
-      id : "unittest",
-      eventHandler : function(evt) {
-    	  count ++;
-        data = evt.data;
-      }
+  // mock object
+  function MockListener(authToken) {
+    var self = this;
+    this.events = [];
+    var eventFired = function(evt) {
+      self.events.push(evt);
     };
-    jsHub.bind("page-view", listener);
-    jsHub.trigger("page-view", { context: selector });
-    Y.Assert.areEqual(expectedCount, count, 'wrong number of events fired');
-    Y.Assert.isNotNull(data, 'Event had no data');
-  	return data;
+    this.metadata = {
+      id : authToken,
+      type : "data-capture",
+      eventHandler : eventFired
+    };
+    this.reset = function () {
+      self.events = [];
+    }
   };
-</script>
+  
+  function checkField(expectedValue, fieldName) {
+    window.listener = new MockListener("test-listener");
+    jsHub.bind("page-view", listener.metadata);
+    jsHub.trigger("page-view");
+    Y.Assert.areEqual(1, listener.events.length, "Expected a page view event to be fired");
+    var data = listener.events[0].data;
+    Y.Assert.areEqual(expectedValue, data[fieldName], "Technographic field '" + fieldName + "' was incorrect");
+  };
 
-<!-- 
-     Simple hPage with missing values
-  -->
-<div id="example1">
-  <h2>Example 1: Default values for text fields</h2>
-  <div class="hpage">
-    <p>Only the name is specified. The title and referrer should be inferred from default 
-	  values.</p>
-    <ul>
-      <li>name: <span class="name">implicit page name value</span>.</li>
-	  <li>title: not specified, should be inferred from <code>document.title</code></li>
-	  <li>referrer: not specified, should be inferred from <code>document.referrer</code></li>
-    </ul>
-  </div>
-</div>
-<script type="text/javascript">
   suite.add(new Y.Test.Case({
-    name: "Default text field values",
+    name: "Default technographic values",
     
-    "test title field": function() {
-      var data = parse("#example1");
-      Y.Assert.areEqual(document.title, data['page-title']);
+    "test title": function() {
+      checkField(document.title, 'page-title');
     },
 	
-    "test referrer field": function() {
-      var data = parse("#example1");
-      Y.Assert.areEqual(document.referrer, data['page-referrer']);
+    "test referrer": function() {
+      checkField(document.referrer, 'referrer');
+    },
+
+    "test url": function() {
+      checkField(window.location.href, 'url');
+    },
+
+    "test screen size": function() {
+      checkField(screen.width, 'sW');
+      checkField(screen.height, 'sH');
+    },
+    
+    "test window size": function() {
+      checkField(window.innerWidth, 'wW');
+      checkField(window.innerHeight, 'wH');
+    },
+    
+    "test timezone": function() {
+      checkField(-((new Date()).getTimezoneOffset()), 'tzOffset');
     }
   }));
 </script>  

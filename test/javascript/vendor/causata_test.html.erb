@@ -78,7 +78,56 @@
     throw new Y.Assert.ComparisonFailure("Event attributes are not correct", 
       /* expected */ "data["+one.name+"] = '"+one.value+"'",
       /* actual */   "data["+two.name+"] = '"+two.value+"'");
-  }
+  };
+  
+  /**
+   * Validate a request that has been received.
+   */
+  suite.checkRequest = function (expectedParams, expectedEvents, actualRequest) {
+    Y.Assert.isObject(actualRequest, "No request sent");
+    // check request parameters
+    expectedParams = expectedParams || {
+      "sender" : /^Causata Transport Plugin v[0-9\.]+$/      
+    };
+    for (var param in expectedParams) {
+      Y.ObjectAssert.ownsKey(param, actualRequest, "Request is missing parameter " + param);
+      if (expectedParams[param].constructor === RegExp) {
+        if (! expectedParams[param].test(actualRequest[param])) {
+          throw new Y.Assert.ComparisonFailure("No regexp match for request parameter '" + param + "'", 
+            /* expected */ expectedParams[param],
+            /* actual */   actualRequest[param]);
+        }
+      } else {
+        Y.Assert.areEqual(expectedParams[param], actualRequest[param], "Incorrect value for " + param);
+      }
+    }
+    for (param in actualRequest) {
+      if (param !== "event") {
+        Y.ObjectAssert.ownsKey(param, expectedParams, "Unexpected request parameter " + param);
+      }
+    }
+    // check event properties
+    if (! Y.Lang.isArray(actualRequest.event)) {
+      actualRequest.event = [ actualRequest.event ];
+    }
+    if (! Y.Lang.isArray(expectedEvents)) {
+      expectedEvents = [ expectedEvents ];
+    }
+    Y.Assert.areEqual(expectedEvents.length, actualRequest.event.length, "Wrong number of events");
+    for (var evt = 0; evt < expectedEvents.length; evt++) {
+      var eventData = Y.JSON.parse(actualRequest.event[evt]);
+      var expectedEvent = expectedEvents[evt];
+      for (var field in expectedEvent) {
+        Y.ObjectAssert.ownsKey(field, eventData, "Event " + evt + " is missing field " + field);
+        if (field !== "attributes") {
+          Y.Assert.areEqual(expectedEvent[field], eventData[field], "Event " + evt + " has incorrect value for " + field);
+        }
+      }
+      if (expectedEvent.attributes) {
+        Y.ArrayAssert.itemsAreEquivalent(expectedEvent.attributes, eventData.attributes, suite.attributeComparator);
+      }
+    }
+  };
   
   suite.add(new Y.Test.Case({
     name: "Data dispatch",
@@ -119,26 +168,42 @@
         recordedData = data;
       };
       jsHub.trigger("page-view", {
-          "page-name" : "homepage",
-          "page-referrer" : "http://www.google.com/"
+          "page-name" : "homepage"
         }, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var expectedData = {
+      var expectedEvent = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "attributes" : [
-          { "name" : "page-name", "value" : "homepage" },
-          { "name" : "page-referrer", "value" : "http://www.google.com/" }
+          { "name" : "page-name", "value" : "homepage" }
         ]
       };
-      var data = Y.JSON.parse(recordedData.event);
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-        if (field !== "attributes") {
-          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-        }
-      }
-      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+      suite.checkRequest(null, expectedEvent, recordedData);
+    },
+
+    "test url and referrer are pulled up to request param": function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage",
+          "url" : "http://www.causata.com/",
+          "referrer" : "http://www.google.com/"
+        }, timestamp);
+      var expectedParams = {
+        "sender" : /^Causata Transport Plugin v[0-9\.]+$/,
+        "url" : "http://www.causata.com/",
+        "referrer" : "http://www.google.com/"        
+      };
+      var expectedEvent = {
+        "eventType" : "page-view",
+        "timestamp" : timestamp,
+        "attributes" : [
+          { "name" : "page-name", "value" : "homepage" } 
+          // but not url or referrer
+        ]
+      };
+      suite.checkRequest(expectedParams, expectedEvent, recordedData);
     },
 
     "test organizationID is set correctly": function() {
@@ -148,21 +213,12 @@
       };
       jsHub.configure("causata-transport.account", account);
       jsHub.trigger("page-view", {}, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var expectedData = {
+      var expectedEvent = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "organization" : account
       };
-      var data = Y.JSON.parse(recordedData.event);
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-        if (field == "attributes") {
-          Y.Assert.areEqual(0, expectedData[field].length, "Attributes should be empty");
-        } else {
-          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-        }
-      }
+      suite.checkRequest(null, expectedEvent, recordedData);
     },
 
     "test multiple value properties are sent as separate entries" : function() {
@@ -170,11 +226,11 @@
       jsHub.dispatchViaForm = function (method, url, data) {
         recordedData = data;
       };
-      var eventData = {
-        "page-name" : "homepage",
-        "page-category" : [ "value 1", "value 2" ]
-      };
-      var expectedData = {
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage",
+          "page-category" : [ "value 1", "value 2" ]
+        }, timestamp);
+      var expectedEvent = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "attributes" : [
@@ -183,16 +239,7 @@
           { "name" : "page-category", "value" : "value 2" }
         ]
       };
-      jsHub.trigger("page-view", eventData, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var data = Y.JSON.parse(recordedData.event);
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-        if (field !== "attributes") {
-          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-        }
-      }
-      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+      suite.checkRequest(null, expectedEvent, recordedData);
     },
 
     "test attribute is not sent if no attributes set" : function() {
@@ -219,12 +266,12 @@
       jsHub.dispatchViaForm = function (method, url, data) {
         recordedData = data;
       };
-      var eventData = {
-        "page-name" : "homepage",
-        "page-category" : "value 1",
-        "page-category-source" : "window.location"
-      };
-      var expectedData = {
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage",
+          "page-category" : "value 1",
+          "page-category-source" : "window.location"
+        }, timestamp);
+      var expectedEvent = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "attributes" : [
@@ -232,46 +279,30 @@
           { "name" : "page-category", "value" : "value 1" }
         ]
       };
-      jsHub.trigger("page-view", eventData, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var data = Y.JSON.parse(recordedData.event);
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-      }
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-        if (field !== "attributes") {
-          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-        }
-      }
-      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+      suite.checkRequest(null, expectedEvent, recordedData);
     },
 
-    "test empty page-referrer is not sent" : function() {
+    "test empty page-referrer has correct value" : function() {
       var recordedData, timestamp = new Date().getTime();
       jsHub.dispatchViaForm = function (method, url, data) {
         recordedData = data;
       };
       jsHub.trigger("page-view", {
           "page-name" : "homepage",
-          "page-referrer" : ""
+          "referrer" : ""
         }, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var expectedData = {
+      var expectedParams = {
+        "sender" : /^Causata Transport Plugin v[0-9\.]+$/,
+        "referrer" : "(direct)"        
+      };
+      var expectedEvent = {
         "eventType" : "page-view",
         "timestamp" : timestamp,
         "attributes" : [
-          { "name" : "page-name", "value" : "homepage" },
+          { "name" : "page-name", "value" : "homepage" }
         ]
       };
-      var data = Y.JSON.parse(recordedData.event);
-      for (var field in expectedData) {
-        Y.ObjectAssert.ownsKey(field, data, "Data is missing field " + field);
-        if (field !== "attributes") {
-          Y.Assert.areEqual(expectedData[field], data[field], "Incorrect value for " + field);
-        }
-      }
-      Y.ArrayAssert.itemsAreEquivalent(expectedData.attributes, data.attributes, suite.attributeComparator);
+      suite.checkRequest(expectedParams, expectedEvent, recordedData);
     },
 
     "test multiple events are sent together" : function() {
@@ -287,8 +318,7 @@
           "product-name" : "bicycle"
         }, timestamp);
       jsHub.trigger("data-capture-complete", {}, timestamp);
-      Y.Assert.isObject(recordedData, "No event data sent");
-      var expectedData = [
+      var expectedEvents = [
         {
           "eventType" : "page-view",
           "timestamp" : timestamp,
@@ -303,20 +333,7 @@
           ]
         }
       ];
-      console.warn("DATATATATATATATATATAAT");
-      console.log(recordedData);
-      Y.Assert.areEqual(expectedData.length, recordedData.event.length, "Wrong number of events");
-      for (var i=0; i<expectedData.length; i++) {
-        var data = Y.JSON.parse(recordedData.event[i]);
-        console.log(data, expectedData[i]);
-        for (var field in expectedData[i]) {
-          Y.ObjectAssert.ownsKey(field, data, "Event " + i + " is missing field " + field);
-          if (field !== "attributes") {
-            Y.Assert.areEqual(expectedData[i][field], data[field], "Incorrect value for " + field);
-          }
-        }
-        Y.ArrayAssert.itemsAreEquivalent(expectedData[i].attributes, data.attributes, suite.attributeComparator);
-      }
+      suite.checkRequest(null, expectedEvents, recordedData);
     }
   })); 
 </script>
