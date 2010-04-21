@@ -185,10 +185,19 @@
       Y.ObjectAssert.hasKey(key, actual, Y.Assert._formatMessage(message, "Missing key "+key+". "));
       Y.ArrayAssert.itemsAreEqual(value, actual[key], "Incorrect values for key '"+key+"'. \n{message}");
     });
+    Y.Object.each(actual, function(value, key) {
+      Y.ObjectAssert.hasKey(key, expected, Y.Assert._formatMessage(message, "Unexpected key '"+key+"'. "));
+    });    
   },
   
   suite.add(new Y.Test.Case({
     name: "Query string parsing",
+    
+    "test parse empty query string" : function() {
+      var qs = "";
+      var expected = {};
+      suite.checkQS(expected, jsHub.util.parseQueryString(qs));      
+    },
     
     "test parse encoded query string" : function() {
       var qs = "first=this+is+first&second=this+is+second";
