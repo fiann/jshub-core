@@ -1,4 +1,5 @@
 # load a YAML file for use
+puts "Initializing plugin jshub_javascript_tester"
 raw_config = File.read(RAILS_ROOT + "/config/jshub_javascript_tester.yml")
 JSHUB_JAVASCRIPT_TESTER = YAML.load(raw_config)[RAILS_ENV].symbolize_keys!
 JSHUB_JAVASCRIPT_TESTER.each_value { |v| v.symbolize_keys! if v.respond_to? "symbolize_keys!" }
