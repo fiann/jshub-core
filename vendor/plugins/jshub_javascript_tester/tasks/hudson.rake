@@ -5,6 +5,7 @@ namespace "jshub" do
     
     desc "Run the Continuous Integration build tasks for Hudson"
     task :build => [
+      "environment",
       "gems:install", 
       "db:migrate"] do
       
@@ -36,6 +37,7 @@ namespace "jshub" do
         sh "cd '#{RAILS_ROOT}' && mongrel_rails start --port #{port} --pid tmp/pids/server.pid --daemonize"
       end
     end
+    
     desc "Stop the local Rails server"
     task "server:stop" do
       if FileTest.exists? "tmp/pids/server.pid"
