@@ -35,13 +35,22 @@ set :deploy_to,   "/var/capistrano/#{application}"
 set :scm,         "git"
 set :scm_verbose, true
 set :deploy_via,  :checkout
-set :branch,      "master"
 set :git_shallow_clone, 1
   
 #By default, Capistrano will try to use sudo to do certain operations (setting 
 #up your servers, restarting your application, etc.). If you are on a shared 
 #host, sudo might be unavailable to you, or maybe you just want to avoid using sudo.
 set :use_sudo,    false
+
+# Release from a Git tag, not head
+# ref: http://nathanhoad.net/deploy-from-a-git-tag-with-capistrano
+set :branch do
+  default_tag = `git tag`.split("\n").last
+
+  tag = Capistrano::CLI.ui.ask "Tag to deploy, or 'master' for head revision (make sure to push the tag first): [#{default_tag}] "
+  tag = default_tag if tag.empty?
+  tag
+end
 
 # Liam: overide the default task as we are using Passenger
 # ref: http://www.modrails.com/documentation/Users%20guide.html#capistrano
@@ -68,9 +77,9 @@ namespace :custom do
     run "ln -nfs #{current_path}/public #{webroot}"
   end
   
-  desc 'Output the Subversion version number'
+  desc 'Output the Git tag or revision'
   task :version do
-    run "echo \"r#{real_revision}\" > #{current_path}/app/views/shared/_version.html.erb"
+    run "echo \"#{branch}\" > #{current_path}/app/views/shared/_version.html.erb"
   end  
 
   desc "Make symlink for server specific jshub_javascript_tester yaml" 
