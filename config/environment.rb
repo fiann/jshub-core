@@ -44,14 +44,17 @@ Rails::Initializer.run do |config|
   # along with Apache integration
   config.gem "passenger", :lib => false if RAILS_ENV == 'jshub' || RAILS_ENV == 'gromit' || RAILS_ENV == 'passenger'
   
+  # Gems used for testing
+  test_mode = (RAILS_ENV == 'test' || RAILS_ENV == 'hudson')
+  
   # convert test output to XML for CI Servers like Hudson and CruiseControl
   # ref: http://blog.huikau.com/2008/01/09/jruby-ruby-continuous-integration-with-hudson/
-  config.gem "ci_reporter", :lib => "ci/reporter/core" if RAILS_ENV == 'test' || RAILS_ENV == 'hudson'
+  config.gem "ci_reporter", :lib => "ci/reporter/core" if test_mode
 
-  # for running unit tests in JavaScript
-  config.gem "johnson", :prerelease => true
-  config.gem "envjs" 
-
+  # for running unit tests in JavaScript from the command line
+  config.gem "johnson", :prerelease => true if test_mode
+  config.gem "envjs" if test_mode
+  
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
