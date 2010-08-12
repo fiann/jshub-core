@@ -8,6 +8,9 @@ doc/api
 doc/app
 public/website
 
+# Ignore custom files, they're only there so we can apply the build process to them
+app/javascripts/custom/*
+
 # Ignore generated static documentation
 website/_site
 
