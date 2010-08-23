@@ -1,0 +1,72 @@
+<% set_title "External script loader < Utilities" %>
+<% content_for :javascripts do %>
+
+<!-- jsHub source files -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/lib/script-loader-debug.js" %>
+
+<% end %>
+<% content_for :intro do %>
+<p>
+  This page tests the method for asynchronously loading external script files, which is used to include
+  third party modules and external tags, such as Google Analytics.
+</p>
+
+<% end %>
+<!-- Any HTML you may require for your tests to work properly -->
+
+<script language="javascript" type="text/javascript">
+(function() {
+	
+  suite.add(new Y.Test.Case({ 
+    name: "Script loader",
+  
+    "test jsHub script loader API" : function () {
+      Y.Assert.isNotUndefined(jsHub.util, "jsHub.util is not defined");
+      Y.Assert.isFunction(jsHub.util.loadScript, "jsHub.util.loadScript() is not a Function");
+    },
+    
+    "test loading script node with callback": function () {
+      Y.Assert.isFunction(jsHub.util.loadScript, "jsHub.util.loadScript() is not a Function");
+      var test = this;
+      // Resume from the callback when the external script has loaded
+      jsHub.util.loadScript("<%= javascript_path 'script-loader-testfile.js' %>", function () {
+        test.resume(function () {
+          Y.Assert.isTrue(window.TEST_FILE_LOADED, "script failed to load");
+        });
+      });
+      // Pause the test until the script has loaded
+      this.wait(1000);
+    },
+    
+    "test loading script node without callback": function () {
+      Y.Assert.isFunction(jsHub.util.loadScript, "jsHub.util.loadScript() is not a Function");
+      var test = this;
+      // Resume from the callback when the external script has loaded
+      jsHub.util.loadScript("<%= javascript_path 'script-loader-testfile.js' %>");
+      // Pause the test until the script has loaded
+      test.wait(function () {
+        Y.Assert.isTrue(window.TEST_FILE_LOADED, "script failed to load");
+      }, 100);
+    },
+    
+    "test callback is not executed if script does not load": function () {
+      Y.Assert.isFunction(jsHub.util.loadScript, "jsHub.util.loadScript() is not a Function");
+      var test = this;
+      // Resume from the callback when the external script has loaded
+      jsHub.util.loadScript("<%= javascript_path 'script-loader-badfile.js' %>", function () {
+        // the URL gives a 404, so this should not be executed
+        Y.Assert.fail("Callback should not be executed");
+      });
+      // Pause the test until the script has loaded
+      test.wait(function () {
+        Y.Assert.isTrue(true, "this is just to get a test pass, as long as the callback has not executed");
+      }, 1000);
+    }
+    
+  }));
+})();
+
+</script>
