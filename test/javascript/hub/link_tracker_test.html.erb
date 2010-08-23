@@ -1,0 +1,160 @@
+<% set_title "Link tracking < Libraries" %>
+
+<% content_for :javascripts do %>  
+
+<!-- jsHub dist file -->
+<%= javascript_include_tag "/js/src/hub/hub-debug.js" %>
+<%= javascript_include_tag "/js/src/debug/debug-debug.js" %>
+<%= javascript_include_tag "/js/src/logger/logger-debug.js" %>
+<%= javascript_include_tag "/js/src/hub/link-tracker-debug.js" %>
+
+<% end %>
+
+<% content_for :intro do %>
+<p>This file tests the functionality for capturing download links and external links.</p>
+<% end %>
+
+<script language="javascript" type="text/javascript">  
+  /* 
+   * Check the browser environment for required JS libraries and other 
+   * supporting functionality to avoid false test failure results due to 
+   * mis-configuration, etc
+   */
+  suite.add(new Y.Test.Case({ 
+    name : "Environment check",
+  
+    "test required test dependencies" : function () {
+      Y.Assert.isNotUndefined(window.jsHub, "The jsHub hub is required");
+    },
+  
+    "test jsHub API dependencies" : function () {
+      Y.Assert.isFunction(jsHub.bind, "jsHub.bind() is not a Function");
+      Y.Assert.isFunction(jsHub.trigger, "jsHub.trigger() is not a Function");
+    }
+  }));
+</script>
+
+<div id="example1">
+  <h2>HTML examples</h2>
+  <p>The links that should be tracked.</p>
+  <ul>
+    <li><a id="link1" href="/">Homepage</a> (not external, not download)</li>
+    <li><a id="link2" href="./download.pdf">PDF link</a> (download link)</li>
+    <li><a id="link3" href="http://www.google.com/">Google</a> (external link)</li>
+    <li><a id="link4" href="http://www.google.com/download.pdf">Google pdf link</a> (external link)</li>
+  </ul>
+</div>  
+
+<script type="text/javascript" charset="utf-8">
+
+  // Make sure the tracking is initialized
+  jsHub.trigger("data-capture-start");
+
+
+  /* 
+   * Capture the download event if it is fired
+   */
+  function clickLinkAndCaptureEvent(linkId, expectedEvent, expectedEventCount) {
+    var node = document.getElementById(linkId);
+    Y.Assert.isNotUndefined(node, "Element id " + linkId + " is not present in the html");
+  
+    var data = null, count = 0;
+    if (typeof expectedEventCount != 'number') {
+      expectedEventCount = 1;
+    }
+    var listener = {
+      id : "unittest",
+      eventHandler : function(evt) {
+        data = evt.data;
+        if (evt.type === expectedEvent) {
+          count++;
+          Y.Assert.isNotUndefined(data.timeoutId, "No timeout for leaving the page");    
+        }
+        if (data.timeoutId) {
+          // it's only a test, we don't really want to leave the page
+          Y.Assert.isNotUndefined(data.timeoutId, "no timeout ID in event data");
+          window.clearTimeout(data.timeoutId);          
+        }
+      }
+    };
+    jsHub.bind("*", listener);
+    // fire the click event
+    if (document.createEvent) {
+      // dispatch for firefox + others
+      var evt = document.createEvent("HTMLEvents");
+      evt.initEvent("click", true, true); // event type,bubbling,cancelable
+      node.dispatchEvent(evt);
+    } else {
+      // dispatch for IE
+      var evt = document.createEventObject();
+      node.fireEvent('onclick', evt)
+    }
+    // and check the results
+    Y.Assert.areEqual(expectedEventCount, count, 'wrong number of events were fired');
+    return data;
+  };
+  
+  /* 
+   * The test cases
+   */
+  suite.add(new Y.Test.Case({
+    name: "Download link tracking",
+    
+    _should: {
+      ignore: {
+        // Env.js has a bug in the handling of anchors
+        // http://envjs.lighthouseapp.com/projects/21590-envjs/tickets/177-anchor-doesnt-implement-url-decomposition-idl-attributes
+        "test download links": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test download links on external site": (navigator.userAgent.match(/Rhino|Envjs/))        
+      }
+    },
+    
+    "test regular non-download links": function () {
+      // load triggers plugin is not present so jsHub has not initialized
+      var data = clickLinkAndCaptureEvent("link1", "download", 0);
+    },
+
+    "test download links": function () {
+      var data = clickLinkAndCaptureEvent("link2", "download");
+      Y.Assert.isNotUndefined(data, "no data from event");
+      Y.Assert.areEqual(document.getElementById("link2").href, data.url, "url was not correct");
+    },
+
+    "test download links on external site": function () {
+      // external site trumps download link
+      var data = clickLinkAndCaptureEvent("link4", "download", 0);
+    }
+  }));
+
+  suite.add(new Y.Test.Case({
+    name: "External link tracking",
+    
+    _should: {
+      ignore: {
+        // Env.js has a bug in the handling of anchors
+        // http://envjs.lighthouseapp.com/projects/21590-envjs/tickets/177-anchor-doesnt-implement-url-decomposition-idl-attributes
+        "test onsite links": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test external links": (navigator.userAgent.match(/Rhino|Envjs/)),
+        "test external site download links": (navigator.userAgent.match(/Rhino|Envjs/))        
+      }
+    },
+    
+    "test onsite links": function () {
+      // load triggers plugin is not present so jsHub has not initialized
+      var data = clickLinkAndCaptureEvent("link1", "site-exit", 0);
+    },
+
+    "test external links": function () {
+      var data = clickLinkAndCaptureEvent("link3", "site-exit");
+      Y.Assert.isNotUndefined(data, "no data from event");
+      Y.Assert.areEqual(document.getElementById("link3").href, data.url, "url was not correct");
+    },
+    
+    "test external site download links": function () {
+      var data = clickLinkAndCaptureEvent("link4", "site-exit");
+      Y.Assert.isNotUndefined(data, "no data from event");
+      Y.Assert.areEqual(document.getElementById("link4").href, data.url, "url was not correct");
+    }
+  }));
+
+</script>
