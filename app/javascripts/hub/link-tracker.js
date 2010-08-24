@@ -18,7 +18,7 @@
    */
   var metadata = {
     name: 'Link tracker plugin',
-    id: 'links',
+    id: 'link-tracker',
     version: 0.1,
     vendor: 'jsHub.org',
     type: 'data-capture'
@@ -46,40 +46,32 @@
    * Receive a configuration update
    */
   metadata.configure = function (key, value) {
-    var types, domains, links, i;
     if (key === "downloadLinkTypes") {
       if (value === "") {
         trackDownloadLinks = false;
       } else {
-        types = value.split(/[,|\s]+/).join("|\\.");
         trackDownloadLinks = true;
-        downloadLinkRegexp = new RegExp("\\." + types + "$");
+        value = "\\." + value.split(/[,|\s]+?/).join("|\\.") + "$";
+        downloadLinkRegexp = new RegExp(value.replace(/\.+/, '.'));
       }
     } else if (key === "internalDomains") {
-      if (value === "") {
-        trackExternalLinks = false;
-      } else {
-        domains = value.split(/[,|\s]+/).join("|\\.").replace('*', '.*');
-        trackExternalLinks = true;
-        internalDomainNameRegexp = new RegExp("^" + domains + "$");
-      }
+      value = value.split(/[,|\s]+/).join("|\\.").replace('*', '.*');
+      internalDomainNameRegexp = new RegExp("^" + value + "$");
+    } else if (key === "trackExternalLinks") {
+      trackExternalLinks = (value === "true");
     }
   };
   
-  /*
-   * Set defaults
-   */
-  metadata.configure("downloadLinkTypes", "avi,doc,docx,exe,m4v,mov,mp3,mp4,mpg,pdf,wav,wmv,xls,xlsx,zip,zxp");
-  metadata.configure("internalDomains", window.location.host);
-  
-  
+    
   /**
    * Callback fired when a link is clicked
    */
   var linkHandler = function () {
     var link = this, target = link.target, timeoutId, eventName = null,
       goImmediately = (target !== "" && target !== "_self" && target !== window.name);
-    if (trackExternalLinks && ! internalDomainNameRegexp.test(link.hostname)) {
+    if (trackExternalLinks 
+      && link.hostname !== window.location.hostname 
+      && (! internalDomainNameRegexp || ! internalDomainNameRegexp.test(link.hostname))) {
       eventName = "site-exit";
     } else if (trackDownloadLinks && downloadLinkRegexp.test(link.pathname)) {
       eventName = "download";

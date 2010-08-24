@@ -41,7 +41,7 @@
     <li><a id="link1" href="/">Homepage</a> (not external, not download)</li>
     <li><a id="link2" href="./download.pdf">PDF link</a> (download link)</li>
     <li><a id="link3" href="http://www.google.com/">Google</a> (external link)</li>
-    <li><a id="link4" href="http://www.google.com/download.pdf">Google pdf link</a> (external link)</li>
+    <li><a id="link4" href="http://www.yahoo.com/download.pdf">Yahoo pdf link</a> (external link)</li>
   </ul>
 </div>  
 
@@ -50,6 +50,11 @@
   // Make sure the tracking is initialized
   jsHub.trigger("data-capture-start");
 
+  // Configure the link tracker
+  jsHub.configure("link-tracker", {
+    "downloadLinkTypes" : ".pdf",
+    "trackExternalLinks" : "true"
+  });
 
   /* 
    * Capture the download event if it is fired
@@ -154,6 +159,14 @@
       var data = clickLinkAndCaptureEvent("link4", "site-exit");
       Y.Assert.isNotUndefined(data, "no data from event");
       Y.Assert.areEqual(document.getElementById("link4").href, data.url, "url was not correct");
+    },
+    
+    "test external links marked as internal": function () {
+      jsHub.configure("link-tracker", { internalDomains : "*.google.com" });
+      // this is internal, no events
+      var data = clickLinkAndCaptureEvent("link3", "site-exit", 0);
+      // this is not excluded
+      var data = clickLinkAndCaptureEvent("link4", "site-exit", 1);
     }
   }));
 
