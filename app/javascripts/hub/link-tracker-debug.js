@@ -84,7 +84,6 @@
     } else if (trackDownloadLinks && downloadLinkRegexp.test(link.pathname)) {
       eventName = "download";
     }
-    print("Tracking link to " + link.href + " (" + link + "): " + eventName);
     if (eventName !== null && ! goImmediately) {
       // the link unloads this window, so wait a moment for the tags to send their requests
       timeoutId = setTimeout(function () {
