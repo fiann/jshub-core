@@ -66,7 +66,7 @@
   /**
    * Callback fired when a link is clicked
    */
-  var linkHandler = function () {
+  var linkHandler = function (event) {
     var link = this, target = link.target, timeoutId, eventName = null,
       goImmediately = (target !== "" && target !== "_self" && target !== window.name);
     if (trackExternalLinks 
@@ -78,6 +78,11 @@
     }
     if (eventName !== null && ! goImmediately) {
       // the link unloads this window, so wait a moment for the tags to send their requests
+      if (event.preventDefault) {
+  			event.preventDefault();
+      }
+  		// otherwise set the returnValue property of the original event to false (IE)
+  		event.returnValue = false;
       timeoutId = setTimeout(function () {
         window.location.href = link.href;
         // alert("go to " + link.href);
