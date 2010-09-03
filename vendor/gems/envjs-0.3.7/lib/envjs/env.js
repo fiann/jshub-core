@@ -145,7 +145,7 @@ try {
         this.window = this;
       }
 $env.log = function(msg, level){
-    debug(' '+ (level?level:'LOG') + ':\t['+ new Date()+"] {ENVJS} "+msg);
+    print(' '+ (level?level:'LOG') + ':\t['+ new Date()+"] {ENVJS} "+msg);
 };
 
 $env.location = function(path, base){
