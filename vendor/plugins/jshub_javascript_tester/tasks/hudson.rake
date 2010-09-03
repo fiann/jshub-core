@@ -20,7 +20,7 @@ namespace "jshub" do
         Rake::Task["test"].invoke
       ensure
         # stop server
-        Rake::Task["jshub:runcoderun:server:stop"].execute []
+        Rake::Task["jshub:hudson:server:stop"].execute []
         puts "Finished Hudson build task"
       end
     end
