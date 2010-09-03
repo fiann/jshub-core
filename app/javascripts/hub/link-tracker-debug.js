@@ -96,7 +96,7 @@
       });      
     }
     return goImmediately;
-   };
+  };
   
   /**
    * Instrument links to capture links to external sites and downloads, when triggered by the 'data-capture-start' event

@@ -60,7 +60,7 @@ class JslintTestRunner < ActiveSupport::TestCase
     
       # remove libraries and minimised files as they won't lint
       js_files = js_files.reject do |f|
-        if f.match /\/jquery\/|\/lib\/|\/debug\//
+        if f.match /\/jquery\/|\/lib\/|\/custom\/|\/debug\//
           print "Skip linting library #{f}\n" if ENV["JSHUB_DEBUG"]
           true
         elsif ! f.match /-debug\.js$/
