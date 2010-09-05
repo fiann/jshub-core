@@ -96,7 +96,7 @@
     // sample URLs:
     // local test: 
     // ... and send the results to the local data collection server
-    var resultsUrl = window.location.pathname.replace(/test\/unit\/.*/, "test/results");
+    var resultsUrl = window.location.pathname.replace(/test\/javascript\/.*/, "test/results");
     
     // or if its a External Vendor test, e.g. http://some.domain/core/test/external/:test_page_id/unit/hub_configuration_test posts to /test/external/:test_page_id/results so we can link the jvascript_test_results to the test_run
     if (/test\/external/.test(window.location.pathname)) {

@@ -37,7 +37,7 @@
         <%= link_to("##{result.id}", formatted_javascript_test_result_url(result, :format => 'xml')) %>
       </td>
       <td>
-        <%= result.user_agent.short_name %>
+        <%= result.user_agent ? result.user_agent.short_name : "?" %>
       </td>
       <td>
         <%= link_to("#{result.litmus_test_page.url}", result.litmus_test_page.url) if result.litmus_test_page %>

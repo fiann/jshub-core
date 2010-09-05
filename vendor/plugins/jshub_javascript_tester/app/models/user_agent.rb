@@ -18,7 +18,7 @@ class UserAgent < ActiveRecord::Base
         return "#{family} #{$~[1]}"
       end
     end
-    return nil
+    nil
   end
   
   def os_family
@@ -27,9 +27,14 @@ class UserAgent < ActiveRecord::Base
         return os_name
       end
     end
+    nil
   end
   
   def short_name
-    return "#{os_family}, #{browser_family}"
+    if (os_family && browser_family)
+      "#{browser_family}, #{os_family}"
+    else
+      ua_string
+    end
   end
 end
