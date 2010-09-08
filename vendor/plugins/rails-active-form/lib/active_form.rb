@@ -53,6 +53,14 @@ protected
     attribute_key_name.humanize
   end
 
+  def self.human_name
+    self.name.humanize
+  end
+
+  def self.self_and_descendants_from_active_record
+    [self]
+  end
+  
   # these methods must be defined before Validations include
   alias save raise_not_implemented_error
   alias update_attribute raise_not_implemented_error
