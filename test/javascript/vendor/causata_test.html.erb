@@ -334,7 +334,43 @@
         }
       ];
       suite.checkRequest(null, expectedEvents, recordedData);
+    },
+    
+    "test custom and error events are captured" : function() {
+      var recordedData, timestamp = new Date().getTime();
+      jsHub.dispatchViaForm = function (method, url, data) {
+        recordedData = data;
+      };
+      jsHub.trigger("data-capture-start", {}, timestamp);
+      jsHub.trigger("page-view", {
+          "page-name" : "homepage"
+        }, timestamp);
+      jsHub.trigger("plugin-initialization-start", {}, timestamp);
+      jsHub.trigger("error-404", {}, timestamp);
+      jsHub.trigger("funky-event", {
+          "custom-event" : "true"
+        }, timestamp);
+      jsHub.trigger("data-capture-complete", {}, timestamp);
+      var expectedEvents = [
+        {
+          "eventType" : "page-view",
+          "timestamp" : timestamp,
+          "attributes" : [
+            { "name" : "page-name", "value" : "homepage" },
+          ]
+        }, 
+          // but not the plugin-initialization-start event
+        {
+          "eventType" : "error-404",
+          "timestamp" : timestamp
+        }, {
+          "eventType" : "funky-event",
+          "timestamp" : timestamp
+        }
+      ];
+      suite.checkRequest(null, expectedEvents, recordedData);
     }
+    
   })); 
 </script>
 
