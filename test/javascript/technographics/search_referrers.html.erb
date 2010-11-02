@@ -88,7 +88,7 @@
       var data = listener.events[0].data;
       Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
       Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
-      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("search", data['search-string'], "Search string is incorrect");
     }, 
 
     "test subdomained referrer": function() {
@@ -100,7 +100,7 @@
       var data = listener.events[0].data;
       Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
       Y.Assert.areEqual("uk.search.yahoo.com", data['search-engine'], "Search engine field is incorrect");
-      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("search", data['search-string'], "Search string is incorrect");
     }, 
 
     "test multiple query params": function() {
@@ -112,7 +112,7 @@
       var data = listener.events[0].data;
       Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
       Y.Assert.areEqual("search.aol.co.uk", data['search-engine'], "Search engine field is incorrect");
-      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("search", data['search-string'], "Search string is incorrect");
     }, 
 
     "test https referrer": function() {
@@ -124,7 +124,7 @@
       var data = listener.events[0].data;
       Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
       Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
-      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("search", data['search-string'], "Search string is incorrect");
     }, 
 
     "test referrer without www": function() {
@@ -136,7 +136,7 @@
       var data = listener.events[0].data;
       Y.Assert.areEqual(url, data['external-referrer'], "External referrer field is incorrect");
       Y.Assert.areEqual("google.co.uk", data['search-engine'], "Search engine field is incorrect");
-      Y.Assert.areEqual("search", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("search", data['search-string'], "Search string is incorrect");
     }, 
 
     "test search term is decoded": function() {
@@ -146,7 +146,7 @@
       });
       Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
       var data = listener.events[0].data;
-      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("complex query?", data['search-string'], "Search string is incorrect");
     }, 
 
     "test search term position in querystring": function() {
@@ -156,7 +156,7 @@
       });
       Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
       var data = listener.events[0].data;
-      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("complex query?", data['search-string'], "Search string is incorrect");
     }, 
 
     "test search term at end of querystring": function() {
@@ -166,7 +166,7 @@
       });
       Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
       var data = listener.events[0].data;
-      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("complex query?", data['search-string'], "Search string is incorrect");
     }, 
 
     "test search term at start of querystring": function() {
@@ -176,7 +176,7 @@
       });
       Y.Assert.areEqual(1, listener.events.length, "Expected a search event to be fired");
       var data = listener.events[0].data;
-      Y.Assert.areEqual("complex query?", data['search-keyword'], "Search keyword is incorrect");
+      Y.Assert.areEqual("complex query?", data['search-string'], "Search string is incorrect");
     }, 
 
     "test unknown referrer domain": function() {
